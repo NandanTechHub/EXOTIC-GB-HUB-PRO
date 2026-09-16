@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login / Sign Up | EXOTIC GB HUB</title>
+
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    /* ==========================================================================
+       TROPICAL REEF LIGHT PALETTE
+       ========================================================================== */
+    :root {
+      --bg-primary: #fafcff;
+      --bg-gradient: linear-gradient(180deg, #fff5f8 0%, #f0fdf4 35%, #f0f9ff 70%, #ffffff 100%);
+      --grad-rainbow-text: linear-gradient(135deg, #ec4899 0%, #8b5cf6 35%, #06b6d4 70%, #10b981 100%);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary-blue: #0284c7;
+
+      --glass-bg: rgba(255, 255, 255, 0.88);
+      --glass-border: rgba(255, 255, 255, 0.95);
+      
+      /* Glowing Shadow for the Auth Card */
+      --glow-shadow: 0 20px 50px -10px rgba(236, 72, 153, 0.25), 0 0 30px rgba(6, 182, 212, 0.2);
+      
+      --card-radius: 28px;
+      --transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: var(--bg-primary); background-image: var(--bg-gradient); color: var(--text-main); min-height: 100vh; overflow-x: hidden; position: relative; display: flex; align-items: center; justify-content: center; padding: 20px; }
+
+    /* Aquarium Bubbles */
+    .aquarium-bg-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .bubble { position: absolute; bottom: -60px; border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, 0.85); animation: riseAndWobble linear infinite; }
+    .bubble.type-coral { background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9), rgba(255, 107, 107, 0.25) 50%, rgba(254, 202, 87, 0.15)); }
+    .bubble.type-cyan { background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9), rgba(6, 182, 212, 0.3) 50%, rgba(59, 130, 246, 0.15)); }
+    .bubble.type-purple { background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9), rgba(217, 70, 239, 0.25) 50%, rgba(139, 92, 246, 0.15)); }
+
+    @keyframes riseAndWobble {
+      0% { transform: translateY(0) translateX(0) scale(0.8); opacity: 0; }
+      10% { opacity: 0.75; }
+      50% { transform: translateY(-50vh) translateX(30px) scale(1); opacity: 0.85; }
+      100% { transform: translateY(-110vh) translateX(-25px) scale(1.15); opacity: 0; }
+    }
+
+    /* ==========================================================================
+       AUTHENTICATION CARD
+       ========================================================================== */
+    .auth-card {
+      width: 100%;
+      max-width: 540px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 2px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 40px;
+      box-shadow: var(--glow-shadow);
+      position: relative;
+      z-index: 2;
+      animation: formEntry 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    /* Scrollbar styling for the card */
+    .auth-card::-webkit-scrollbar { width: 6px; }
+    .auth-card::-webkit-scrollbar-track { background: transparent; }
+    .auth-card::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+    @keyframes formEntry {
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Brand Header */
+    .auth-header { text-align: center; margin-bottom: 30px; }
+    .brand-icon {
+      width: 60px; height: 60px; margin: 0 auto 16px auto;
+      background: linear-gradient(135deg, #ff007f, #7928ca, #0070f3);
+      border-radius: 18px; display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 1.8rem; box-shadow: 0 8px 20px rgba(236, 72, 153, 0.4);
+    }
+    .brand-title {
+      font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 800;
+      background: var(--grad-rainbow-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+    .brand-subtitle { font-size: 0.95rem; color: var(--text-muted); font-weight: 500; }
+
+    /* Tabs Container */
+    .auth-tabs {
+      display: flex; background: #f1f5f9; border-radius: 16px; padding: 6px; margin-bottom: 30px;
+      border: 1.5px solid #e2e8f0; position: relative;
+    }
+    .tab-btn {
+      flex: 1; text-align: center; padding: 12px; font-weight: 800; font-size: 0.95rem;
+      color: #64748b; cursor: pointer; border-radius: 12px; transition: var(--transition); z-index: 2;
+    }
+    .tab-btn.active { color: #ffffff; }
+
+    /* Moving background pill for tabs */
+    .tab-indicator {
+      position: absolute; top: 6px; bottom: 6px; width: calc(50% - 6px); background: linear-gradient(135deg, #ec4899, #8b5cf6);
+      border-radius: 12px; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3); z-index: 1;
+    }
+    .indicator-login { transform: translateX(0); }
+    .indicator-signup { transform: translateX(100%); }
+
+    /* Forms */
+    .auth-form { display: none; animation: fadeForm 0.4s ease forwards; }
+    .auth-form.active { display: block; }
+    @keyframes fadeForm { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
+
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 0.88rem; font-weight: 700; color: #334155; margin-bottom: 8px; }
+    .req-star { color: #ef4444; }
+
+    .input-wrapper { position: relative; }
+    .input-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 1.1rem; transition: var(--transition); }
+    .input-field {
+      width: 100%; padding: 14px 14px 14px 44px; border-radius: 14px; border: 2px solid #e2e8f0;
+      background: #ffffff; font-size: 0.98rem; font-weight: 500; color: var(--text-main); outline: none; transition: var(--transition);
+    }
+    .input-field:focus { border-color: #8b5cf6; box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15); }
+    .input-wrapper:focus-within i { color: #8b5cf6; }
+
+    /* Address Grid Section */
+    .address-section-title {
+      font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 800; color: #0f172a;
+      margin: 24px 0 16px 0; border-top: 2px dashed #cbd5e1; padding-top: 20px;
+    }
+    .address-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .address-grid .form-group { margin-bottom: 0; }
+    
+    /* Modify input wrapper for grid fields (no icon) */
+    .address-grid .input-wrapper i { display: none; }
+    .address-grid .input-field { padding: 12px 14px; font-size: 0.9rem; }
+
+    /* Submit Button */
+    .btn-submit {
+      width: 100%; padding: 16px; margin-top: 24px; border-radius: 14px; border: none;
+      background: linear-gradient(135deg, #06b6d4, #0284c7); color: #ffffff;
+      font-weight: 800; font-size: 1.05rem; cursor: pointer; transition: var(--transition);
+      box-shadow: 0 8px 20px rgba(2, 132, 199, 0.3); display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(2, 132, 199, 0.4); }
+
+    .back-to-home {
+      display: block; text-align: center; margin-top: 24px; font-size: 0.9rem; font-weight: 700;
+      color: #64748b; text-decoration: none; transition: var(--transition);
+    }
+    .back-to-home:hover { color: #ec4899; }
+
+    @media (max-width: 480px) {
+      .auth-card { padding: 24px; }
+      .address-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Background Bubbles -->
+  <div class="aquarium-bg-canvas" id="aquariumCanvas"></div>
+
+  <!-- Central Authentication Card -->
+  <div class="auth-card">
+    
+    <!-- Header -->
+    <div class="auth-header">
+      <div class="brand-icon">
+        <i class="fa-solid fa-fish-fins"></i>
+      </div>
+      <h1 class="brand-title">EXOTIC GB HUB</h1>
+      <p class="brand-subtitle">Your gateway to premium aquatics</p>
+    </div>
+
+    <!-- Toggle Tabs -->
+    <div class="auth-tabs">
+      <div class="tab-indicator indicator-login" id="tabIndicator"></div>
+      <div class="tab-btn active" id="tabLogin" onclick="switchTab('login')">Login</div>
+      <div class="tab-btn" id="tabSignup" onclick="switchTab('signup')">Sign Up</div>
+    </div>
+
+    <!-- ==========================================================================
+         LOGIN FORM
+         ========================================================================== -->
+    <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label>Gmail / Mobile Number <span class="req-star">*</span></label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-envelope"></i>
+          <input type="text" class="input-field" placeholder="Enter email or mobile" required />
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Password <span class="req-star">*</span></label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-lock"></i>
+          <input type="password" class="input-field" placeholder="Enter your password" required />
+        </div>
+      </div>
+
+      <div style="text-align: right; margin-bottom: 20px;">
+        <a href="#" style="color: #0284c7; font-size: 0.85rem; font-weight: 600; text-decoration: none;">Forgot Password?</a>
+      </div>
+
+      <button type="submit" class="btn-submit">
+        Login Securely <i class="fa-solid fa-arrow-right-to-bracket"></i>
+      </button>
+    </form>
+
+    <!-- ==========================================================================
+         SIGN UP FORM
+         ========================================================================== -->
+    <form id="signupForm" class="auth-form" onsubmit="handleSignUp(event)">
+      
+      <!-- Basic Info -->
+      <div class="form-group">
+        <label>Full Name <span class="req-star">*</span></label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-user"></i>
+          <input type="text" class="input-field" placeholder="e.g. John Doe" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Phone Number <span class="req-star">*</span></label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-phone"></i>
+          <input type="tel" class="input-field" placeholder="e.g. +91 98765 43210" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Email Address <span class="req-star">*</span></label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-envelope"></i>
+          <input type="email" class="input-field" placeholder="e.g. name@example.com" required />
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Create Password <span class="req-star">*</span></label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-lock"></i>
+          <input type="password" class="input-field" placeholder="Min. 8 characters" required />
+        </div>
+      </div>
+
+      <!-- Detailed Address Section -->
+      <h3 class="address-section-title"><i class="fa-solid fa-truck-fast" style="color: #ec4899; margin-right: 6px;"></i> Delivery Address</h3>
+      
+      <div class="address-grid">
+        <div class="form-group">
+          <label>Door No <span class="req-star">*</span></label>
+          <div class="input-wrapper">
+            <input type="text" class="input-field" placeholder="e.g. Flat 101" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Building Name</label>
+          <div class="input-wrapper">
+            <input type="text" class="input-field" placeholder="(Optional)" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Street / Cross <span class="req-star">*</span></label>
+          <div class="input-wrapper">
+            <input type="text" class="input-field" placeholder="e.g. 1st Cross" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Road <span class="req-star">*</span></label>
+          <div class="input-wrapper">
+            <input type="text" class="input-field" placeholder="e.g. Main Road" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Area (Taluk) <span class="req-star">*</span></label>
+          <div class="input-wrapper">
+            <input type="text" class="input-field" placeholder="e.g. Indiranagar" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>City <span class="req-star">*</span></label>
+          <div class="input-wrapper">
+            <input type="text" class="input-field" placeholder="e.g. Bengaluru" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>State <span class="req-star">*</span></label>
+          <div class="input-wrapper">
+            <input type="text" class="input-field" placeholder="e.g. Karnataka" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Country <span class="req-star">*</span></label>
+          <div class="input-wrapper">
+            <input type="text" class="input-field" value="India" required />
+          </div>
+        </div>
+        <div class="form-group" style="grid-column: 1 / -1;">
+          <label>Landmark</label>
+          <div class="input-wrapper">
+            <input type="text" class="input-field" placeholder="e.g. Near Metro Station (Optional)" />
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #ec4899, #8b5cf6);">
+        Create Account <i class="fa-solid fa-user-plus"></i>
+      </button>
+    </form>
+
+    <a href="dashboard.html" class="back-to-home"><i class="fa-solid fa-arrow-left"></i> Return to Store</a>
+
+  </div>
+
+  <!-- ==========================================================================
+       JAVASCRIPT LOGIC
+       ========================================================================== -->
+  <script>
+    const API_BASE = "https://exotic-gb-hub-backend-1.onrender.com/api";
+
+    // Toggle Between Login and Sign Up
+    function switchTab(tab) {
+      const loginForm = document.getElementById('loginForm');
+      const signupForm = document.getElementById('signupForm');
+      const tabLogin = document.getElementById('tabLogin');
+      const tabSignup = document.getElementById('tabSignup');
+      const indicator = document.getElementById('tabIndicator');
+
+      if (tab === 'login') {
+        loginForm.classList.add('active');
+        signupForm.classList.remove('active');
+        tabLogin.classList.add('active');
+        tabSignup.classList.remove('active');
+        indicator.className = 'tab-indicator indicator-login';
+      } else {
+        signupForm.classList.add('active');
+        loginForm.classList.remove('active');
+        tabSignup.classList.add('active');
+        tabLogin.classList.remove('active');
+        indicator.className = 'tab-indicator indicator-signup';
+      }
+    }
+
+    // Connect to FastAPI Login Endpoint
+    async function handleLogin(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.btn-submit');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Authenticating...`;
+      btn.disabled = true;
+
+      const inputs = e.target.querySelectorAll('.input-field');
+      const identifier = inputs[0].value.trim();
+      const password = inputs[1].value.trim();
+
+      try {
+        const res = await fetch(`${API_BASE}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ identifier, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          // SAVE ROLE ALONG WITH NAME & EMAIL
+          localStorage.setItem('currentUser', JSON.stringify({ 
+            name: data.name, 
+            email: data.email,
+            role: data.role
+          }));
+          window.location.href = "dashboard.html";
+        } else {
+          alert(data.detail || "Login failed. Please check your credentials.");
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }
+      } catch (err) {
+        alert("Failed to connect to the server. Is FastAPI running?");
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    }
+
+    // Connect to FastAPI Sign Up Endpoint
+    async function handleSignUp(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.btn-submit');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Creating Profile...`;
+      btn.disabled = true;
+
+      const inputs = e.target.querySelectorAll('.input-field');
+      
+      const payload = {
+        name: inputs[0].value.trim(),
+        phone: inputs[1].value.trim(),
+        email: inputs[2].value.trim(),
+        password: inputs[3].value.trim(),
+        address: {
+          door_no: inputs[4].value.trim(),
+          building: inputs[5].value.trim() || null,
+          street: inputs[6].value.trim(),
+          road: inputs[7].value.trim(),
+          area: inputs[8].value.trim(),
+          city: inputs[9].value.trim(),
+          state: inputs[10].value.trim(),
+          country: inputs[11].value.trim() || "India",
+          landmark: inputs[12].value.trim() || null
+        }
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/signup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          // SAVE DEFAULT 'USER' ROLE TO SESSION ON SIGN UP
+          localStorage.setItem('currentUser', JSON.stringify({ 
+            name: data.name, 
+            email: payload.email,
+            role: "user" 
+          }));
+          alert("Account created successfully!");
+          window.location.href = "dashboard.html";
+        } else {
+          alert(data.detail || "Registration failed.");
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }
+      } catch (err) {
+        alert("Failed to connect to the server. Is FastAPI running?");
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    }
+
+    // Initialize Background Bubbles
+    function initBubbles() {
+      const container = document.getElementById('aquariumCanvas');
+      const types = ['type-coral', 'type-cyan', 'type-purple'];
+      for (let i = 0; i < 20; i++) {
+        const b = document.createElement('div');
+        b.className = `bubble ${types[Math.floor(Math.random() * types.length)]}`;
+        const s = Math.random() * 26 + 10;
+        b.style.width = `${s}px`; b.style.height = `${s}px`;
+        b.style.left = `${Math.random() * 100}%`;
+        b.style.animationDuration = `${Math.random() * 10 + 8}s`;
+        b.style.animationDelay = `${Math.random() * 8}s`;
+        container.appendChild(b);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initBubbles);
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aquarium Accessories | EXOTIC GB HUB</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg-primary: #fafcff;
+      --bg-gradient: linear-gradient(180deg, #fff5f8 0%, #f0fdf4 35%, #f0f9ff 70%, #ffffff 100%);
+      --grad-rainbow-text: linear-gradient(135deg, #059669 0%, #10b981 50%, #06b6d4 100%);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary-blue: #0284c7;
+      --glass-bg: rgba(255, 255, 255, 0.84);
+      --glass-border: rgba(255, 255, 255, 0.95);
+      --glass-shadow: 0 12px 35px -8px rgba(16, 185, 129, 0.08), 0 4px 16px -2px rgba(255, 65, 108, 0.05);
+      --card-radius: 24px;
+      --transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: var(--bg-primary); background-image: var(--bg-gradient); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+
+    /* DASHBOARD MATCHING FLOATING NAVBAR */
+    .nav-container {
+      position: sticky;
+      top: 20px;
+      z-index: 1000;
+      margin: 20px auto 30px auto;
+      max-width: 1340px;
+      padding: 0 24px;
+    }
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1.5px solid var(--glass-border);
+      border-radius: 22px;
+      padding: 12px 28px;
+      box-shadow: var(--glass-shadow);
+      transition: var(--transition);
+    }
+    .nav-left { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .nav-logo-icon { width: 44px; height: 44px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.35rem; }
+    .nav-logo-text { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 1.35rem; background: var(--grad-rainbow-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .nav-middle { flex: 1; max-width: 480px; margin: 0 15px; }
+    .search-box { display: flex; align-items: center; background: rgba(248, 250, 252, 0.9); border-radius: 999px; padding: 9px 20px; transition: var(--transition); border: 2px solid transparent; }
+    .search-box:focus-within { background: #ffffff; border-color: #10b981; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.18); }
+    .search-box i { color: #10b981; margin-right: 12px; }
+    .search-box input { border: none; background: transparent; outline: none; width: 100%; font-size: 0.94rem; font-weight: 600; color: var(--text-main); }
+    .nav-right { display: flex; align-items: center; }
+    .profile-avatar-logged-in { width: 44px; height: 44px; border-radius: 50%; background: var(--primary-blue); color: white; font-weight: 800; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45); }
+    .profile-icon-logged-out { width: 44px; height: 44px; border-radius: 50%; background: #ecfdf5; color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; text-decoration: none; border: 1.5px solid #a7f3d0; }
+
+    .main-wrapper { max-width: 1340px; margin: 0 auto; padding: 0 24px 80px 24px; position: relative; z-index: 2; }
+
+    /* MASTER BANNER */
+    .master-banner {
+      height: 380px; border-radius: var(--card-radius); overflow: hidden; margin-bottom: 40px;
+      background: url('https://images.unsplash.com/photo-1546445317-29f4545e9d53?auto=format&fit=crop&w=1600&q=80') center/cover;
+      box-shadow: 0 16px 40px -10px rgba(16, 185, 129, 0.2); border: 2px solid rgba(255, 255, 255, 0.9); display: flex; align-items: center; position: relative;
+    }
+    .banner-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.4) 100%); display: flex; align-items: center; padding: 0 50px; }
+    .banner-tags { display: flex; gap: 10px; margin-bottom: 14px; }
+    .tag-badge { padding: 6px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 800; text-transform: uppercase; }
+    .tag-limited { background: linear-gradient(135deg, #ef4444, #f97316); color: white; }
+    .tag-golden { background: linear-gradient(135deg, #eab308, #ca8a04); color: white; }
+    .tag-premium { background: linear-gradient(135deg, #8b5cf6, #d946ef); color: white; }
+    .tag-offer { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+
+    /* 3 IN A LINE GRID */
+    .products-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+    .product-card { background: var(--glass-bg); backdrop-filter: blur(16px); border: 2px solid var(--glass-border); border-radius: var(--card-radius); padding: 18px; box-shadow: var(--glass-shadow); transition: var(--transition); display: flex; flex-direction: column; }
+    .product-card:hover { transform: translateY(-8px); border-color: #10b981; }
+    .product-img-wrapper { width: 100%; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; margin-bottom: 16px; position: relative; }
+    .product-img { width: 100%; height: 100%; object-fit: cover; }
+    .product-name { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 1.25rem; margin-bottom: 6px; }
+    .product-price { font-size: 1.4rem; font-weight: 800; color: #059669; margin-bottom: 14px; }
+    .controls-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; background: #f8fafc; padding: 8px 12px; border-radius: 14px; border: 1px solid #e2e8f0; }
+    .qty-selector { display: flex; align-items: center; gap: 8px; }
+    .qty-btn { width: 30px; height: 30px; border-radius: 50%; border: none; background: #ffffff; font-weight: 800; cursor: pointer; }
+    .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: auto; }
+    .btn-card { padding: 11px; border-radius: 999px; font-weight: 800; font-size: 0.9rem; cursor: pointer; border: none; text-align: center; }
+    .btn-add-cart { background: #f1f5f9; border: 1.5px solid #cbd5e1; }
+    .btn-buy-now { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+
+    .floating-cart-btn {
+      position: fixed; bottom: 28px; right: 28px; width: 65px; height: 65px; border-radius: 50%;
+      background: linear-gradient(135deg, #10b981, #059669); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; text-decoration: none; box-shadow: 0 12px 30px rgba(16, 185, 129, 0.4); z-index: 9999;
+    }
+    .cart-badge-count { position: absolute; top: -4px; right: -4px; background: #ec4899; color: white; font-size: 0.8rem; font-weight: 800; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; }
+
+    @media (max-width: 1024px) { .products-grid-3 { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) {
+      .navbar { flex-wrap: wrap; padding: 12px 18px; }
+      .nav-middle { order: 3; flex: 100%; max-width: 100%; margin: 10px 0 0 0; }
+      .products-grid-3 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="nav-container">
+    <nav class="navbar">
+      <a href="dashboard.html" class="nav-left">
+        <div class="nav-logo-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+        <div class="nav-logo-text">EXOTIC GB HUB</div>
+      </a>
+      <div class="nav-middle">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search filters, lights, CO2 kits..." />
+        </div>
+      </div>
+      <div class="nav-right" id="profileContainer"></div>
+    </nav>
+  </header>
+
+  <main class="main-wrapper">
+    <div class="master-banner">
+      <div class="banner-overlay">
+        <div>
+          <div class="banner-tags">
+            <span class="tag-badge tag-limited">Limited Edition</span>
+            <span class="tag-badge tag-golden">Golden Edition</span>
+            <span class="tag-badge tag-premium">Premium Edition</span>
+            <span class="tag-badge tag-offer">Today Offer</span>
+          </div>
+          <h1 style="color: white; font-family: 'Space Grotesk', sans-serif; font-size: 2.6rem; font-weight: 800; margin-bottom: 12px;">
+            High-Performance Equipment
+          </h1>
+          <p style="color: #e2e8f0; font-size: 1.05rem;">Canister filters, RGB-W lighting systems, and CO2 injection hardware.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 800; margin-bottom: 24px;">
+      Precision <span style="color: #059669;">Accessories</span>
+    </h2>
+    <div class="products-grid-3" id="accessContainer"></div>
+  </main>
+
+  <a href="cart.html" class="floating-cart-btn" title="View Cart">
+    <i class="fa-solid fa-cart-shopping"></i>
+    <span class="cart-badge-count" id="cartCountBadge">0</span>
+  </a>
+
+  <script>
+    const DEFAULT_ACCESSORIES = [
+      { id: "a1", name: "External Canister Filter 1200L/H", price: 3800, img: "https://images.unsplash.com/photo-1546445317-29f4545e9d53?auto=format&fit=crop&w=800&q=80" },
+      { id: "a2", name: "Chihiros Style RGB-W Planted Light", price: 2900, img: "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&w=800&q=80" },
+      { id: "a3", name: "Pro Aluminum CO2 Dual-Gauge Regulator", price: 2400, img: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80" },
+      { id: "a4", name: "Stainless Steel Surface Skimmer & Lily Pipe", price: 1450, img: "https://images.unsplash.com/photo-1535591273668-578e31182c4f?auto=format&fit=crop&w=800&q=80" },
+      { id: "a5", name: "Digital Submersible Heater 300W", price: 1100, img: "https://images.unsplash.com/photo-1508873696983-2df5703bc20d?auto=format&fit=crop&w=800&q=80" },
+      { id: "a6", name: "Ultra-Quiet USB Wavemaker Pump", price: 850, img: "https://images.unsplash.com/photo-1524704654690-b56c05c78a00?auto=format&fit=crop&w=800&q=80" }
+    ];
+
+    function getAccessories() {
+      const data = JSON.parse(localStorage.getItem('exotic_gb_data') || '{}');
+      if (data.stocks && data.stocks.access) {
+        return data.stocks.access.filter(a => a.isActive !== false);
+      }
+      return DEFAULT_ACCESSORIES;
+    }
+
+    const qtys = {};
+
+    function renderAccessories() {
+      const items = getAccessories();
+      items.forEach(a => { if (!qtys[a.id]) qtys[a.id] = 1; });
+
+      document.getElementById('accessContainer').innerHTML = items.map(a => `
+        <div class="product-card">
+          <div class="product-img-wrapper">
+            <img src="${a.img}" class="product-img" alt="${a.name}" />
+          </div>
+          <h3 class="product-name">${a.name}</h3>
+          <div class="product-price">₹${a.price.toLocaleString('en-IN')}</div>
+          <div class="controls-row">
+            <span style="font-weight:700; color:var(--text-muted); font-size:0.9rem;">Quantity</span>
+            <div class="qty-selector">
+              <button class="qty-btn" onclick="updateQty('${a.id}', -1)">-</button>
+              <span id="qty_${a.id}" style="font-weight:800;">1</span>
+              <button class="qty-btn" onclick="updateQty('${a.id}', 1)">+</button>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn-card btn-add-cart" onclick="addToCart('${a.id}')">Add Cart</button>
+            <button class="btn-card btn-buy-now" onclick="buyNow('${a.id}')">Buy Now</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateQty(id, delta) {
+      if (qtys[id] + delta >= 1) {
+        qtys[id] += delta;
+        document.getElementById(`qty_${id}`).innerText = qtys[id];
+      }
+    }
+
+    function addToCart(id) {
+      const items = getAccessories();
+      const item = items.find(a => a.id === id);
+      const cart = JSON.parse(localStorage.getItem('exotic_cart') || '[]');
+      const exist = cart.find(c => c.id === id);
+      if (exist) exist.quantity += qtys[id];
+      else cart.push({ id: item.id, name: item.name, category: "Accessories", price: item.price, quantity: qtys[id], isPair: false, img: item.img });
+      localStorage.setItem('exotic_cart', JSON.stringify(cart));
+      updateBadge();
+      alert(`Added ${item.name} to cart!`);
+    }
+
+    function buyNow(id) { addToCart(id); window.location.href = "cart.html"; }
+
+    function updateBadge() {
+      const cart = JSON.parse(localStorage.getItem('exotic_cart') || '[]');
+      document.getElementById('cartCountBadge').innerText = cart.reduce((a, b) => a + b.quantity, 0);
+    }
+
+    function renderNavProfile() {
+      const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+      document.getElementById('profileContainer').innerHTML = user && user.name 
+        ? `<div class="profile-avatar-logged-in">${user.name.charAt(0).toUpperCase()}</div>`
+        : `<a href="login.html" class="profile-icon-logged-out"><i class="fa-regular fa-user"></i></a>`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => { renderNavProfile(); renderAccessories(); updateBadge(); });
+  </script>
+</body>
+</html>

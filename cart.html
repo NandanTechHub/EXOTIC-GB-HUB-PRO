@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Aquatic Cart | EXOTIC GB HUB</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg-primary: #fafcff;
+      --bg-gradient: linear-gradient(180deg, #fff5f8 0%, #f0fdf4 35%, #f0f9ff 70%, #ffffff 100%);
+      --grad-rainbow-text: linear-gradient(135deg, #ec4899 0%, #8b5cf6 35%, #06b6d4 70%, #10b981 100%);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary-blue: #0284c7;
+      --glass-bg: rgba(255, 255, 255, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.95);
+      --glass-shadow: 0 12px 35px -8px rgba(139, 92, 246, 0.08);
+      --card-radius: 22px;
+      --transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: var(--bg-primary); background-image: var(--bg-gradient); color: var(--text-main); min-height: 100vh; }
+
+    .main-wrapper { max-width: 1100px; margin: 0 auto; padding: 30px 20px 80px 20px; }
+
+    /* Header Nav */
+    .cart-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      padding: 14px 28px;
+      border-radius: 20px;
+      border: 1.5px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      margin-bottom: 30px;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 800;
+      font-size: 1.3rem;
+      background: var(--grad-rainbow-text);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .continue-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary-blue);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+    .continue-btn:hover { transform: translateX(-4px); }
+
+    /* Cart Card */
+    .cart-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border-radius: var(--card-radius);
+      border: 2px solid var(--glass-border);
+      padding: 36px;
+      box-shadow: var(--glass-shadow);
+    }
+
+    .cart-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      border-bottom: 1.5px solid #f1f5f9;
+      padding-bottom: 16px;
+    }
+
+    .cart-heading {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    /* Items Table */
+    .cart-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .cart-table th {
+      padding: 12px 14px;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      border-bottom: 1.5px solid #e2e8f0;
+    }
+
+    .cart-table td {
+      padding: 18px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: middle;
+    }
+
+    .item-preview {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .item-thumb {
+      width: 65px;
+      height: 48px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .item-name {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text-main);
+    }
+
+    .pair-badge {
+      display: inline-block;
+      background: #fdf2f8;
+      color: #db2777;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 999px;
+      margin-left: 6px;
+      border: 1px solid #fbcfe8;
+    }
+
+    .qty-control {
+      display: inline-flex;
+      align-items: center;
+      background: #f1f5f9;
+      border-radius: 999px;
+      padding: 4px;
+    }
+
+    .qty-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: none;
+      background: #ffffff;
+      color: #0f172a;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+    .qty-btn:hover { background: var(--primary-blue); color: #fff; }
+
+    .qty-val {
+      min-width: 32px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .remove-btn {
+      background: none;
+      border: none;
+      color: #ef4444;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: var(--transition);
+    }
+    .remove-btn:hover { transform: scale(1.15); color: #b91c1c; }
+
+    /* Summary Section */
+    .cart-summary {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 2px dashed #cbd5e1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .grand-total-box {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .grand-total-label { font-size: 1rem; color: var(--text-muted); font-weight: 600; }
+    .grand-total-val { font-size: 2.2rem; font-weight: 800; color: #059669; }
+
+    .btn-place-order {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      color: #ffffff;
+      padding: 16px 36px;
+      border-radius: 999px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
+      transition: var(--transition);
+    }
+    .btn-place-order:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 14px 30px rgba(37, 211, 102, 0.55);
+    }
+
+    .empty-cart-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .empty-cart-icon { font-size: 4rem; color: #cbd5e1; margin-bottom: 16px; }
+
+    @media (max-width: 768px) {
+      .cart-table th:nth-child(4), .cart-table td:nth-child(4) { display: none; }
+      .cart-summary { flex-direction: column; align-items: stretch; text-align: center; }
+      .btn-place-order { justify-content: center; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-wrapper">
+    <!-- Top Navigation -->
+    <nav class="cart-nav">
+      <a href="dashboard.html" class="brand-logo">
+        <i class="fa-solid fa-fish-fins"></i> EXOTIC GB HUB
+      </a>
+      <a href="javascript:history.back()" class="continue-btn">
+        <i class="fa-solid fa-arrow-left"></i> Continue Shopping
+      </a>
+    </nav>
+
+    <!-- Cart Card Container -->
+    <div class="cart-card">
+      <div class="cart-title-row">
+        <h1 class="cart-heading">Your Shopping Cart</h1>
+        <button onclick="clearCart()" style="background:none; border:none; color:#ef4444; font-weight:700; cursor:pointer;">
+          <i class="fa-solid fa-trash-can"></i> Clear All
+        </button>
+      </div>
+
+      <div id="cartContentArea">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function getCart() {
+      return JSON.parse(localStorage.getItem('exotic_cart') || '[]');
+    }
+
+    function saveCart(cart) {
+      localStorage.setItem('exotic_cart', JSON.stringify(cart));
+      renderCart();
+    }
+
+    function updateQty(index, change) {
+      const cart = getCart();
+      if (!cart[index]) return;
+      cart[index].quantity += change;
+      if (cart[index].quantity <= 0) {
+        cart.splice(index, 1);
+      }
+      saveCart(cart);
+    }
+
+    function removeItem(index) {
+      const cart = getCart();
+      cart.splice(index, 1);
+      saveCart(cart);
+    }
+
+    function clearCart() {
+      if (confirm("Clear all items from your cart?")) {
+        localStorage.removeItem('exotic_cart');
+        renderCart();
+      }
+    }
+
+    function renderCart() {
+      const cart = getCart();
+      const area = document.getElementById('cartContentArea');
+
+      if (!cart || cart.length === 0) {
+        area.innerHTML = `
+          <div class="empty-cart-state">
+            <div class="empty-cart-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+            <h2>Your cart is empty!</h2>
+            <p style="color: var(--text-muted); margin: 8px 0 24px 0;">Add vibrant live fishes, tanks, decors or food to view them here.</p>
+            <a href="dashboard.html" class="btn-place-order" style="background: linear-gradient(135deg, #ec4899, #8b5cf6);">
+              Explore Collections
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      let grandTotal = 0;
+      let rowsHtml = cart.map((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        grandTotal += itemTotal;
+        return `
+          <tr>
+            <td style="font-weight: 700; color: var(--text-muted);">${index + 1}</td>
+            <td>
+              <div class="item-preview">
+                <img src="${item.img}" class="item-thumb" alt="${item.name}" />
+                <div>
+                  <div class="item-name">
+                    ${item.name}
+                    ${item.isPair ? '<span class="pair-badge"><i class="fa-solid fa-venus-mars"></i> Pair (M+F)</span>' : ''}
+                  </div>
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">${item.category || 'Aquatics'}</div>
+                </div>
+              </div>
+            </td>
+            <td style="font-weight: 700;">₹${item.price.toLocaleString('en-IN')}</td>
+            <td>
+              <div class="qty-control">
+                <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
+                <span class="qty-val">${item.quantity}</span>
+                <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
+              </div>
+            </td>
+            <td style="font-weight: 800; color: #059669;">₹${itemTotal.toLocaleString('en-IN')}</td>
+            <td>
+              <button class="remove-btn" title="Remove Item" onclick="removeItem(${index})">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      area.innerHTML = `
+        <table class="cart-table">
+          <thead>
+            <tr>
+              <th>S.No</th>
+              <th>Product Details</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+          </tbody>
+        </table>
+
+        <div class="cart-summary">
+          <div class="grand-total-box">
+            <div class="grand-total-label">Grand Total (${cart.reduce((a,b) => a + b.quantity, 0)} items)</div>
+            <div class="grand-total-val">₹${grandTotal.toLocaleString('en-IN')}</div>
+          </div>
+
+          <button onclick="placeWhatsAppOrder()" class="btn-place-order">
+            <i class="fa-brands fa-whatsapp"></i> PLACE ORDER ON WHATSAPP
+          </button>
+        </div>
+      `;
+    }
+
+    function placeWhatsAppOrder() {
+      const cart = getCart();
+      if (!cart.length) return;
+
+      const userSession = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      const customerName = userSession.name || 'Valued Customer';
+
+      let grandTotal = 0;
+      let orderItemsText = cart.map((item, idx) => {
+        const itemTotal = item.price * item.quantity;
+        grandTotal += itemTotal;
+        const pairTag = item.isPair ? " (Pair: Male & Female)" : "";
+        return `${idx + 1}. *${item.name}${pairTag}* | Qty: ${item.quantity} | Total: ₹${itemTotal.toLocaleString('en-IN')}`;
+      }).join('\n');
+
+      const message = `*WELCOME TO EXOTIC GB HUB - ORDER INQUIRY* 🐠🌿\n\n` +
+                      `*Customer Name:* ${customerName}\n` +
+                      `-------------------------------------------\n` +
+                      `*ORDERED ITEMS:*\n${orderItemsText}\n` +
+                      `-------------------------------------------\n` +
+                      `*GRAND TOTAL:* ₹${grandTotal.toLocaleString('en-IN')}\n` +
+                      `-------------------------------------------\n` +
+                      `Please confirm stock availability and payment details. Looking forward to your prompt response! 📦🌊`;
+
+      const whatsappUrl = `https://wa.me/918884730939?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+    }
+
+    document.addEventListener('DOMContentLoaded', renderCart);
+  </script>
+</body>
+</html>

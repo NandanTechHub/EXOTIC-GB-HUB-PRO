@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Fishes Collection | EXOTIC GB HUB</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg-primary: #fafcff;
+      --bg-gradient: linear-gradient(180deg, #fff5f8 0%, #f0fdf4 35%, #f0f9ff 70%, #ffffff 100%);
+      --grad-rainbow-text: linear-gradient(135deg, #ec4899 0%, #8b5cf6 35%, #06b6d4 70%, #10b981 100%);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary-blue: #0284c7;
+      --glass-bg: rgba(255, 255, 255, 0.84);
+      --glass-border: rgba(255, 255, 255, 0.95);
+      --glass-shadow: 0 12px 35px -8px rgba(139, 92, 246, 0.08), 0 4px 16px -2px rgba(255, 65, 108, 0.05);
+      --card-radius: 24px;
+      --transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: var(--bg-primary); background-image: var(--bg-gradient); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+
+    /* Bubbles Background */
+    .aquarium-bg-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .bubble { position: absolute; bottom: -60px; border-radius: 50%; animation: rise linear infinite; }
+    @keyframes rise { 0% { transform: translateY(0); opacity: 0; } 50% { opacity: 0.7; } 100% { transform: translateY(-110vh); opacity: 0; } }
+
+    /* ==========================================================================
+       EXACT DASHBOARD MATCHING FLOATING NAVBAR (1340px centered container)
+       ========================================================================== */
+    .nav-container {
+      position: sticky;
+      top: 20px;
+      z-index: 1000;
+      margin: 20px auto 30px auto;
+      max-width: 1340px;
+      padding: 0 24px;
+    }
+
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1.5px solid var(--glass-border);
+      border-radius: 22px;
+      padding: 12px 28px;
+      box-shadow: var(--glass-shadow);
+      transition: var(--transition);
+    }
+    .navbar:hover { box-shadow: 0 16px 38px -4px rgba(244, 63, 94, 0.18), 0 0 20px rgba(139, 92, 246, 0.2); }
+
+    .nav-left { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .nav-logo-icon { width: 44px; height: 44px; background: linear-gradient(135deg, #ff007f, #7928ca, #0070f3); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.35rem; }
+    .nav-logo-text { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 1.35rem; background: var(--grad-rainbow-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    .nav-middle { flex: 1; max-width: 480px; margin: 0 15px; }
+    .search-box { display: flex; align-items: center; background: rgba(248, 250, 252, 0.9); border-radius: 999px; padding: 9px 20px; transition: var(--transition); border: 2px solid transparent; }
+    .search-box:focus-within { background: #ffffff; border-color: #d946ef; box-shadow: 0 0 0 4px rgba(217, 70, 239, 0.18); }
+    .search-box i { color: #ec4899; margin-right: 12px; font-size: 1rem; }
+    .search-box input { border: none; background: transparent; outline: none; width: 100%; font-size: 0.94rem; font-weight: 600; color: var(--text-main); }
+
+    .nav-right { display: flex; align-items: center; }
+    .profile-avatar-logged-in { width: 44px; height: 44px; border-radius: 50%; background: var(--primary-blue); color: white; font-weight: 800; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45); }
+    .profile-icon-logged-out { width: 44px; height: 44px; border-radius: 50%; background: #fdf2f8; color: #ec4899; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; text-decoration: none; border: 1.5px solid #fbcfe8; }
+
+    /* MAIN WRAPPER */
+    .main-wrapper { max-width: 1340px; margin: 0 auto; padding: 0 24px 80px 24px; position: relative; z-index: 2; }
+
+    /* MASTER BANNER WITH TAGS */
+    .master-banner {
+      position: relative;
+      height: 380px;
+      border-radius: var(--card-radius);
+      overflow: hidden;
+      margin-bottom: 40px;
+      background: url('https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&w=1600&q=80') center/cover;
+      box-shadow: 0 16px 40px -10px rgba(236, 72, 153, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      display: flex;
+      align-items: center;
+    }
+    .banner-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.4) 100%); display: flex; align-items: center; padding: 0 50px; }
+    .banner-tags { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+    .tag-badge { padding: 6px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 800; text-transform: uppercase; }
+    .tag-limited { background: linear-gradient(135deg, #ef4444, #f97316); color: white; }
+    .tag-golden { background: linear-gradient(135deg, #eab308, #ca8a04); color: white; }
+    .tag-premium { background: linear-gradient(135deg, #8b5cf6, #d946ef); color: white; }
+    .tag-offer { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+
+    /* 3 IN A LINE CARDS GRID */
+    .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 800; margin-bottom: 24px; }
+    .products-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+
+    .product-card {
+      background: var(--glass-bg); backdrop-filter: blur(16px);
+      border: 2px solid var(--glass-border); border-radius: var(--card-radius);
+      padding: 18px; box-shadow: var(--glass-shadow); transition: var(--transition);
+      display: flex; flex-direction: column;
+    }
+    .product-card:hover { transform: translateY(-8px); border-color: #ec4899; box-shadow: 0 20px 40px rgba(236, 72, 153, 0.18); }
+
+    /* 4:3 Aspect Ratio */
+    .product-img-wrapper {
+      width: 100%; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; margin-bottom: 16px; position: relative;
+    }
+    .product-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .product-card:hover .product-img { transform: scale(1.08); }
+
+    .product-badge-float {
+      position: absolute; top: 12px; left: 12px; padding: 4px 10px; border-radius: 999px;
+      font-size: 0.72rem; font-weight: 800; text-transform: uppercase; background: rgba(15, 23, 42, 0.75); color: white; backdrop-filter: blur(8px);
+    }
+
+    .product-name { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 1.25rem; margin-bottom: 6px; }
+    .product-price-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+    .product-price { font-size: 1.4rem; font-weight: 800; color: #059669; }
+
+    .controls-row {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 16px;
+      background: #f8fafc; padding: 8px 12px; border-radius: 14px; border: 1px solid #e2e8f0;
+    }
+    .btn-pair {
+      background: #ffffff; border: 1.5px solid #e2e8f0; color: #64748b; padding: 6px 14px;
+      border-radius: 999px; font-size: 0.84rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: var(--transition);
+    }
+    .btn-pair.active { background: linear-gradient(135deg, #f43f5e, #e11d48); color: white; border-color: #f43f5e; box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3); }
+
+    .qty-selector { display: flex; align-items: center; gap: 8px; }
+    .qty-btn { width: 30px; height: 30px; border-radius: 50%; border: none; background: #ffffff; font-weight: 800; cursor: pointer; }
+    .qty-val { font-weight: 800; min-width: 22px; text-align: center; }
+
+    .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: auto; }
+    .btn-card { padding: 11px; border-radius: 999px; font-weight: 800; font-size: 0.9rem; cursor: pointer; border: none; text-align: center; transition: var(--transition); }
+    .btn-add-cart { background: #f1f5f9; border: 1.5px solid #cbd5e1; color: var(--text-main); }
+    .btn-buy-now { background: linear-gradient(135deg, #ec4899, #8b5cf6); color: white; }
+
+    /* FLOATING CART BUTTON */
+    .floating-cart-btn {
+      position: fixed; bottom: 28px; right: 28px; width: 65px; height: 65px; border-radius: 50%;
+      background: linear-gradient(135deg, #ff007f, #7928ca); color: #ffffff; display: flex; align-items: center;
+      justify-content: center; font-size: 1.6rem; text-decoration: none; box-shadow: 0 12px 30px rgba(236, 72, 153, 0.45); z-index: 9999; transition: var(--transition);
+    }
+    .floating-cart-btn:hover { transform: scale(1.1) rotate(-6deg); }
+    .cart-badge-count {
+      position: absolute; top: -4px; right: -4px; background: #10b981; color: white; font-size: 0.8rem; font-weight: 800; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white;
+    }
+
+    @media (max-width: 1024px) { .products-grid-3 { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) {
+      .navbar { flex-wrap: wrap; padding: 12px 18px; }
+      .nav-middle { order: 3; flex: 100%; max-width: 100%; margin: 10px 0 0 0; }
+      .products-grid-3 { grid-template-columns: 1fr; }
+      .master-banner { height: 320px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="aquarium-bg-canvas" id="aquariumCanvas"></div>
+
+  <!-- FLOATING NAVBAR (EXACT DASHBOARD DIMENSIONS) -->
+  <header class="nav-container">
+    <nav class="navbar">
+      <a href="dashboard.html" class="nav-left">
+        <div class="nav-logo-icon"><i class="fa-solid fa-fish-fins"></i></div>
+        <div class="nav-logo-text">EXOTIC GB HUB</div>
+      </a>
+      <div class="nav-middle">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search live exotic fishes..." onkeyup="searchFishes(this.value)" />
+        </div>
+      </div>
+      <div class="nav-right" id="profileContainer"></div>
+    </nav>
+  </header>
+
+  <main class="main-wrapper">
+    <!-- MASTER BANNER -->
+    <div class="master-banner">
+      <div class="banner-overlay">
+        <div>
+          <div class="banner-tags">
+            <span class="tag-badge tag-limited">Limited Edition</span>
+            <span class="tag-badge tag-golden">Golden Edition</span>
+            <span class="tag-badge tag-premium">Premium Edition</span>
+            <span class="tag-badge tag-offer">Today Offer</span>
+          </div>
+          <h1 style="color: white; font-family: 'Space Grotesk', sans-serif; font-size: 2.6rem; font-weight: 800; margin-bottom: 12px;">
+            Exotic Live Fishes Showroom
+          </h1>
+          <p style="color: #e2e8f0; font-size: 1.05rem; max-width: 580px;">
+            Sustainably vetted, quarantined, and conditioned for disease resistance with a 100% live arrival assurance.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 IN A LINE CARDS -->
+    <h2 class="section-title">Available <span style="background: var(--grad-rainbow-text); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Live Fishes</span></h2>
+    <div class="products-grid-3" id="fishesContainer"></div>
+  </main>
+
+  <a href="cart.html" class="floating-cart-btn" title="View Cart">
+    <i class="fa-solid fa-cart-shopping"></i>
+    <span class="cart-badge-count" id="cartCountBadge">0</span>
+  </a>
+
+  <script>
+    const DEFAULT_FISH = [
+      { id: "f1", name: "Super Red Pigeon Discus", tag: "Golden Edition", price: 1450, pairPrice: 2600, img: "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&w=800&q=80", isActive: true },
+      { id: "f2", name: "Albino Full Platinum Guppy", tag: "Limited Edition", price: 350, pairPrice: 600, img: "https://images.unsplash.com/photo-1524704654690-b56c05c78a00?auto=format&fit=crop&w=800&q=80", isActive: true },
+      { id: "f3", name: "Electric Blue Ramirezi", tag: "Premium Edition", price: 420, pairPrice: 750, img: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80", isActive: true },
+      { id: "f4", name: "Halfmoon Avatar Betta", tag: "Today Offer", price: 650, pairPrice: 1200, img: "https://images.unsplash.com/photo-1546445317-29f4545e9d53?auto=format&fit=crop&w=800&q=80", isActive: true },
+      { id: "f5", name: "Blue Diamond Angelfish", tag: "Premium Edition", price: 550, pairPrice: 950, img: "https://images.unsplash.com/photo-1508873696983-2df5703bc20d?auto=format&fit=crop&w=800&q=80", isActive: true },
+      { id: "f6", name: "Ocellaris Clownfish (Marine)", tag: "Limited Edition", price: 850, pairPrice: 1550, img: "https://images.unsplash.com/photo-1535591273668-578e31182c4f?auto=format&fit=crop&w=800&q=80", isActive: true }
+    ];
+
+    function getFishProducts() {
+      const data = JSON.parse(localStorage.getItem('exotic_gb_data') || '{}');
+      if (data.stocks && data.stocks.fish) {
+        return data.stocks.fish.filter(f => f.isActive !== false);
+      }
+      return DEFAULT_FISH;
+    }
+
+    const cardStates = {};
+
+    function renderFishes(items) {
+      items.forEach(p => {
+        if (!cardStates[p.id]) cardStates[p.id] = { qty: 1, isPair: false };
+      });
+
+      const container = document.getElementById('fishesContainer');
+      container.innerHTML = items.map(f => {
+        const state = cardStates[f.id];
+        const effectivePrice = state.isPair ? (f.pairPrice || f.price * 2) : f.price;
+        return `
+          <div class="product-card" id="card_${f.id}">
+            <div class="product-img-wrapper">
+              <span class="product-badge-float">${f.tag || 'Standard'}</span>
+              <img src="${f.img}" class="product-img" alt="${f.name}" />
+            </div>
+            <h3 class="product-name">${f.name}</h3>
+            <div class="product-price-row">
+              <span class="product-price" id="price_${f.id}">₹${effectivePrice.toLocaleString('en-IN')}</span>
+              <span style="font-size:0.8rem; color:var(--text-muted);">${state.isPair ? 'Per Pair' : 'Per Piece'}</span>
+            </div>
+            <div class="controls-row">
+              <button class="btn-pair ${state.isPair ? 'active' : ''}" onclick="togglePair('${f.id}')">
+                <i class="fa-solid fa-venus-mars"></i> ${state.isPair ? 'Pair (M+F)' : 'Single (1pc)'}
+              </button>
+              <div class="qty-selector">
+                <button class="qty-btn" onclick="changeQty('${f.id}', -1)">-</button>
+                <span class="qty-val" id="qty_${f.id}">${state.qty}</span>
+                <button class="qty-btn" onclick="changeQty('${f.id}', 1)">+</button>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-card btn-add-cart" onclick="addToCart('${f.id}')">
+                <i class="fa-solid fa-cart-plus"></i> Add Cart
+              </button>
+              <button class="btn-card btn-buy-now" onclick="buyNow('${f.id}')">Buy Now</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function togglePair(id) {
+      const fishes = getFishProducts();
+      const fish = fishes.find(f => f.id === id);
+      if (!fish) return;
+      cardStates[id].isPair = !cardStates[id].isPair;
+      
+      const priceEl = document.getElementById(`price_${id}`);
+      const btnEl = document.querySelector(`#card_${id} .btn-pair`);
+      const pairP = fish.pairPrice || fish.price * 2;
+      const effective = cardStates[id].isPair ? pairP : fish.price;
+      
+      priceEl.innerText = `₹${effective.toLocaleString('en-IN')}`;
+      btnEl.classList.toggle('active', cardStates[id].isPair);
+      btnEl.innerHTML = `<i class="fa-solid fa-venus-mars"></i> ${cardStates[id].isPair ? 'Pair (M+F)' : 'Single (1pc)'}`;
+    }
+
+    function changeQty(id, delta) {
+      if (cardStates[id].qty + delta >= 1) {
+        cardStates[id].qty += delta;
+        document.getElementById(`qty_${id}`).innerText = cardStates[id].qty;
+      }
+    }
+
+    function addToCart(id) {
+      const fishes = getFishProducts();
+      const fish = fishes.find(f => f.id === id);
+      const state = cardStates[id];
+      const cart = JSON.parse(localStorage.getItem('exotic_cart') || '[]');
+
+      const itemPrice = state.isPair ? (fish.pairPrice || fish.price * 2) : fish.price;
+      const existingIdx = cart.findIndex(c => c.id === id && c.isPair === state.isPair);
+
+      if (existingIdx > -1) {
+        cart[existingIdx].quantity += state.qty;
+      } else {
+        cart.push({
+          id: fish.id,
+          name: fish.name,
+          category: "Live Fishes",
+          price: itemPrice,
+          quantity: state.qty,
+          isPair: state.isPair,
+          img: fish.img
+        });
+      }
+
+      localStorage.setItem('exotic_cart', JSON.stringify(cart));
+      updateCartBadge();
+      alert(`Added ${state.qty}x ${fish.name} ${state.isPair ? '(Pair)' : ''} to cart!`);
+    }
+
+    function buyNow(id) { addToCart(id); window.location.href = "cart.html"; }
+
+    function updateCartBadge() {
+      const cart = JSON.parse(localStorage.getItem('exotic_cart') || '[]');
+      document.getElementById('cartCountBadge').innerText = cart.reduce((a, b) => a + b.quantity, 0);
+    }
+
+    function renderNavProfile() {
+      const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+      document.getElementById('profileContainer').innerHTML = user && user.name 
+        ? `<div class="profile-avatar-logged-in">${user.name.charAt(0).toUpperCase()}</div>`
+        : `<a href="login.html" class="profile-icon-logged-out"><i class="fa-regular fa-user"></i></a>`;
+    }
+
+    function searchFishes(keyword) {
+      const fishes = getFishProducts();
+      const filtered = fishes.filter(f => f.name.toLowerCase().includes(keyword.toLowerCase()));
+      renderFishes(filtered);
+    }
+
+    function initBubbles() {
+      const canvas = document.getElementById('aquariumCanvas');
+      for (let i = 0; i < 18; i++) {
+        const b = document.createElement('div');
+        b.className = 'bubble';
+        const s = Math.random() * 24 + 8;
+        b.style.width = `${s}px`; b.style.height = `${s}px`;
+        b.style.left = `${Math.random() * 100}%`;
+        b.style.background = 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(236,72,153,0.3))';
+        b.style.animationDuration = `${Math.random() * 10 + 8}s`;
+        b.style.animationDelay = `${Math.random() * 8}s`;
+        canvas.appendChild(b);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderNavProfile();
+      renderFishes(getFishProducts());
+      updateCartBadge();
+      initBubbles();
+    });
+  </script>
+</body>
+</html>
