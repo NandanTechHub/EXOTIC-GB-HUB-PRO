@@ -16,14 +16,13 @@
        TROPICAL REEF LIGHT PALETTE
        ========================================================================== */
     :root {
-      --bg-primary: #fafcff;
-      --bg-gradient: linear-gradient(180deg, #fff5f8 0%, #f0fdf4 35%, #f0f9ff 70%, #ffffff 100%);
+      --bg-primary: #f2f9fc;
       --grad-rainbow-text: linear-gradient(135deg, #ec4899 0%, #8b5cf6 35%, #06b6d4 70%, #10b981 100%);
       --text-main: #0f172a;
       --text-muted: #64748b;
       --primary-blue: #0284c7;
 
-      --glass-bg: rgba(255, 255, 255, 0.85);
+      --glass-bg: rgba(255, 255, 255, 0.88);
       --glass-border: rgba(255, 255, 255, 0.95);
       --glass-shadow: 0 12px 35px -8px rgba(139, 92, 246, 0.08), 0 4px 16px -2px rgba(255, 65, 108, 0.05);
       --card-radius: 24px;
@@ -32,7 +31,7 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
     html { scroll-behavior: smooth; }
-    body { background: var(--bg-primary); background-image: var(--bg-gradient); color: var(--text-main); min-height: 100vh; overflow-x: hidden; position: relative; }
+    body { background: var(--bg-primary); color: var(--text-main); min-height: 100vh; overflow-x: hidden; position: relative; }
 
     .color-text-gradient {
       background: var(--grad-rainbow-text);
@@ -41,18 +40,16 @@
       display: inline-block;
     }
 
-    /* Floating Bubbles Canvas */
-    .aquarium-bg-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-    .bubble { position: absolute; bottom: -60px; border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, 0.85); animation: riseAndWobble linear infinite; }
-    .bubble.type-coral { background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9), rgba(255, 107, 107, 0.25) 50%, rgba(254, 202, 87, 0.15)); }
-    .bubble.type-cyan { background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9), rgba(6, 182, 212, 0.3) 50%, rgba(59, 130, 246, 0.15)); }
-    .bubble.type-purple { background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9), rgba(217, 70, 239, 0.25) 50%, rgba(139, 92, 246, 0.15)); }
-
-    @keyframes riseAndWobble {
-      0% { transform: translateY(0) translateX(0) scale(0.8); opacity: 0; }
-      10% { opacity: 0.75; }
-      50% { transform: translateY(-50vh) translateX(30px) scale(1); opacity: 0.85; }
-      100% { transform: translateY(-110vh) translateX(-25px) scale(1.15); opacity: 0; }
+    /* Fixed Canvas Background from a.html */
+    #aquariumCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      display: block;
     }
 
     .reveal-on-scroll {
@@ -64,25 +61,35 @@
     .main-wrapper { max-width: 1340px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
 
     /* ==========================================================================
-       FLOATING NAVBAR
+       NAVBAR OVERLAY (FLOATING DIRECTLY OVER HERO BANNER - ZERO GAP)
        ========================================================================== */
-    .nav-container { position: sticky; top: 20px; z-index: 1000; margin: 20px auto 30px auto; max-width: 1340px; padding: 0 24px; }
+    .nav-container {
+      position: fixed;
+      top: 18px;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      margin: 0 auto;
+      max-width: 1340px;
+      padding: 0 24px;
+    }
     .navbar {
       display: flex; align-items: center; justify-content: space-between; gap: 20px;
-      background: var(--glass-bg); backdrop-filter: blur(24px); border: 1.5px solid var(--glass-border);
-      border-radius: 22px; padding: 12px 28px; box-shadow: var(--glass-shadow); transition: var(--transition);
+      background: var(--glass-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border: 1.5px solid var(--glass-border); border-radius: 22px; padding: 12px 28px;
+      box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.18), 0 0 20px rgba(236, 72, 153, 0.12);
+      transition: var(--transition);
     }
-    .navbar:hover { box-shadow: 0 16px 38px -4px rgba(244, 63, 94, 0.18); }
+    .navbar:hover { box-shadow: 0 20px 42px -4px rgba(244, 63, 94, 0.22); }
 
     .nav-left { display: flex; align-items: center; gap: 12px; text-decoration: none; padding-right: 15px; }
     .nav-logo-icon { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; z-index: 5; }
     
-    /* ANIMATED SWIMMING FISH & REVEAL TEXT */
     .brand-anim-wrapper {
       position: relative;
       display: flex;
       align-items: center;
-      width: 185px; /* Ensures space for the text */
+      width: 185px;
       height: 40px;
     }
 
@@ -100,12 +107,11 @@
 
     .swimming-fish-icon {
       position: absolute; top: 50%; transform: translateY(-50%);
-      font-size: 1.3rem; color: #ec4899; /* Pink to match the gradient */
+      font-size: 1.3rem; color: #ec4899;
       animation: swimFishLoop 10s ease-in-out infinite;
       z-index: 2;
     }
 
-    /* Text reveals over 2s, stays for 6.5s, fades out over 1s, resets */
     @keyframes revealTextLoop {
       0% { width: 0%; opacity: 1; }
       20% { width: 100%; opacity: 1; }
@@ -114,7 +120,6 @@
       100% { width: 0%; opacity: 0; }
     }
 
-    /* Fish moves from left to right covering text, then vanishes until loop resets */
     @keyframes swimFishLoop {
       0% { left: 0%; opacity: 1; }
       20% { left: 100%; opacity: 0; }
@@ -124,8 +129,18 @@
     }
 
     .nav-middle { flex: 1; max-width: 480px; margin: 0 15px; }
-    .search-box { display: flex; align-items: center; background: rgba(248, 250, 252, 0.9); border-radius: 999px; padding: 9px 20px; border: 2px solid transparent; transition: var(--transition); }
-    .search-box:focus-within { background: #ffffff; border-color: #d946ef; box-shadow: 0 0 0 4px rgba(217, 70, 239, 0.18); }
+
+    /* PERMANENT ACTIVE BORDER & GLOW ON SEARCH BAR */
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: #ffffff;
+      border-radius: 999px;
+      padding: 9px 20px;
+      border: 2px solid #d946ef;
+      box-shadow: 0 0 0 4px rgba(217, 70, 239, 0.18);
+      transition: var(--transition);
+    }
     .search-box i { color: #ec4899; margin-right: 12px; font-size: 1rem; }
     .search-box input { border: none; background: transparent; outline: none; width: 100%; font-size: 0.94rem; font-weight: 600; color: var(--text-main); }
 
@@ -135,41 +150,102 @@
     .profile-avatar-logged-in { width: 44px; height: 44px; border-radius: 50%; background: var(--primary-blue); color: #ffffff; font-weight: 800; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; border: 2px solid #ffffff; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45); }
 
     /* ==========================================================================
-       MASTER BANNER (10-SECOND LOOP)
+       FULL SCREEN MASTER BANNER (100VH - FLUSH WITH PAGE TOP)
        ========================================================================== */
-    .banner-section { margin-bottom: 48px; }
+    .banner-section {
+      width: 100vw;
+      position: relative;
+      left: 50%;
+      right: 50%;
+      margin-left: -50vw;
+      margin-right: -50vw;
+      margin-top: 0;
+      margin-bottom: 60px;
+      z-index: 1;
+    }
+    
     .carousel-container {
-      position: relative; height: 470px; border-radius: var(--card-radius); overflow: hidden;
-      box-shadow: 0 16px 40px -10px rgba(236, 72, 153, 0.2); border: 2px solid rgba(255, 255, 255, 0.85);
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 640px;
+      overflow: hidden;
       background: linear-gradient(135deg, #1e1b4b, #311042, #0f172a);
     }
+
     .carousel-slide {
       position: absolute; inset: 0; opacity: 0; visibility: hidden;
       transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
       transform: scale(1.05); background-size: cover; background-position: center; display: flex; align-items: center;
     }
     .carousel-slide.active { opacity: 1; visibility: visible; transform: scale(1); }
-    .carousel-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(15, 12, 41, 0.88) 0%, rgba(48, 28, 77, 0.65) 55%, rgba(0, 0, 0, 0.2) 100%); display: flex; align-items: center; padding: 0 60px; }
-    .carousel-content { max-width: 660px; color: #ffffff; z-index: 2; }
-    .carousel-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(236, 72, 153, 0.3); border: 1px solid rgba(244, 114, 182, 0.7); padding: 7px 18px; border-radius: 999px; font-size: 0.86rem; font-weight: 700; color: #fbcfe8; margin-bottom: 18px; }
-    .carousel-title { font-family: 'Space Grotesk', sans-serif; font-size: 2.9rem; font-weight: 800; line-height: 1.15; margin-bottom: 16px; }
-    .carousel-desc { font-size: 1.05rem; line-height: 1.65; color: #f1f5f9; margin-bottom: 26px; }
-    .carousel-btn { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #ec4899, #8b5cf6, #06b6d4); color: #ffffff; padding: 14px 34px; border-radius: 999px; font-weight: 700; font-size: 0.98rem; border: none; cursor: pointer; text-decoration: none; }
-    .carousel-indicators { position: absolute; bottom: 24px; left: 60px; display: flex; gap: 10px; z-index: 10; }
+    
+    .carousel-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, rgba(15, 12, 41, 0.92) 0%, rgba(48, 28, 77, 0.72) 55%, rgba(0, 0, 0, 0.35) 100%);
+      display: flex; align-items: center; padding: 110px calc(max(30px, (100vw - 1340px) / 2 + 24px)) 0;
+    }
+    
+    .carousel-content { max-width: 720px; color: #ffffff; z-index: 2; }
+    .carousel-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(236, 72, 153, 0.3); border: 1px solid rgba(244, 114, 182, 0.7); padding: 8px 20px; border-radius: 999px; font-size: 0.88rem; font-weight: 700; color: #fbcfe8; margin-bottom: 20px; }
+    .carousel-title { font-family: 'Space Grotesk', sans-serif; font-size: 3.5rem; font-weight: 800; line-height: 1.12; margin-bottom: 18px; }
+    .carousel-desc { font-size: 1.15rem; line-height: 1.7; color: #f1f5f9; margin-bottom: 32px; }
+    
+    /* HERO BUTTONS */
+    .hero-btns-row { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+
+    @keyframes pulseGlow {
+      0% {
+        box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7), 0 0 16px rgba(139, 92, 246, 0.5);
+        transform: scale(1);
+      }
+      50% {
+        box-shadow: 0 0 0 14px rgba(236, 72, 153, 0), 0 0 30px rgba(6, 182, 212, 0.8);
+        transform: scale(1.03);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(236, 72, 153, 0), 0 0 16px rgba(139, 92, 246, 0.5);
+        transform: scale(1);
+      }
+    }
+
+    .btn-live-aquatic {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: linear-gradient(135deg, #ec4899, #8b5cf6, #06b6d4);
+      color: #ffffff; padding: 16px 36px; border-radius: 999px;
+      font-weight: 800; font-size: 1.05rem; border: none; cursor: pointer;
+      text-decoration: none; animation: pulseGlow 2.2s infinite ease-in-out;
+      transition: var(--transition); letter-spacing: 0.3px;
+    }
+    .btn-live-aquatic:hover { filter: brightness(1.12); }
+
+    .btn-contact-hero {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border: 2px solid rgba(255, 255, 255, 0.85); color: #ffffff; padding: 15px 34px;
+      border-radius: 999px; font-weight: 800; font-size: 1.05rem; text-decoration: none;
+      transition: var(--transition);
+    }
+    .btn-contact-hero:hover {
+      background: #ffffff; color: var(--text-main); border-color: #ffffff;
+      transform: translateY(-2px); box-shadow: 0 10px 24px rgba(255, 255, 255, 0.25);
+    }
+
+    .carousel-indicators { position: absolute; bottom: 32px; left: calc(max(30px, (100vw - 1340px) / 2 + 24px)); display: flex; gap: 10px; z-index: 10; }
     .indicator-bar { width: 50px; height: 5px; background: rgba(255, 255, 255, 0.3); border-radius: 999px; overflow: hidden; cursor: pointer; }
     .indicator-progress { width: 0%; height: 100%; background: linear-gradient(90deg, #ec4899, #f59e0b, #10b981); border-radius: 999px; }
     .indicator-bar.active .indicator-progress { animation: progress10s 10s linear infinite; }
     @keyframes progress10s { 0% { width: 0%; } 100% { width: 100%; } }
 
     /* ==========================================================================
-       5 CATEGORIES (DIRECT LINKS TO FILES)
+       5 CATEGORIES
        ========================================================================== */
     .categories-section { margin-bottom: 60px; }
     .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 2.1rem; font-weight: 800; margin-bottom: 20px; }
     .categories-grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; }
     
     .category-card {
-      background: var(--glass-bg); backdrop-filter: blur(14px); border-radius: 22px; padding: 18px 16px;
+      background: var(--glass-bg); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 22px; padding: 18px 16px;
       text-align: center; text-decoration: none; box-shadow: var(--glass-shadow); transition: var(--transition);
       display: flex; flex-direction: column; align-items: center; border: 2.5px solid transparent; cursor: pointer;
     }
@@ -201,7 +277,7 @@
     /* TRUST BADGES */
     .trust-section { margin-bottom: 60px; }
     .trust-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-    .trust-card { background: var(--glass-bg); backdrop-filter: blur(14px); border-radius: 22px; padding: 34px 26px; text-align: center; box-shadow: var(--glass-shadow); }
+    .trust-card { background: var(--glass-bg); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 22px; padding: 34px 26px; text-align: center; box-shadow: var(--glass-shadow); }
     .trust-card.coral-theme { border: 2px solid rgba(255, 65, 108, 0.2); }
     .trust-card.coral-theme .trust-icon-box { background: #ffe4e6; color: #e11d48; }
     .trust-card.emerald-theme { border: 2px solid rgba(16, 185, 129, 0.2); }
@@ -211,10 +287,12 @@
     .trust-icon-box { width: 62px; height: 62px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 1.65rem; margin: 0 auto 18px auto; }
     .trust-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 12px; }
 
-    /* ABOUT SECTION */
+    /* ==========================================================================
+       ABOUT SECTION (SINGLE LINE COMPACT STATS BOX)
+       ========================================================================== */
     .about-section { margin-bottom: 60px; }
     .about-card {
-      background: var(--glass-bg); backdrop-filter: blur(20px); border: 2px solid rgba(255, 255, 255, 0.9);
+      background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 2px solid rgba(255, 255, 255, 0.9);
       border-radius: var(--card-radius); padding: 50px; box-shadow: 0 16px 40px -10px rgba(139, 92, 246, 0.12);
       display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 40px; align-items: center;
     }
@@ -223,11 +301,28 @@
     .about-text { font-size: 1.04rem; color: #334155; line-height: 1.75; margin-bottom: 18px; }
     .about-visual { border-radius: 22px; overflow: hidden; height: 320px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; }
 
+    .stats-compact-bar {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1.5px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 14px 26px;
+      gap: 24px;
+      margin-top: 24px;
+      box-shadow: 0 8px 24px -4px rgba(139, 92, 246, 0.08);
+      max-width: 100%;
+    }
+    .stat-compact-item { display: flex; align-items: baseline; gap: 8px; }
+    .stat-compact-num { font-family: 'Space Grotesk', sans-serif; font-size: 1.45rem; font-weight: 800; line-height: 1; }
+    .stat-compact-label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+    .stat-compact-divider { width: 1.5px; height: 24px; background: #cbd5e1; }
+
     /* CONTACT / NEWSLETTER */
     .contact-section { margin-bottom: 60px; }
     .contact-card {
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 241, 242, 0.8), rgba(245, 243, 255, 0.9));
-      backdrop-filter: blur(20px); border: 2px solid rgba(255, 255, 255, 0.95); border-radius: var(--card-radius);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 2px solid rgba(255, 255, 255, 0.95); border-radius: var(--card-radius);
       padding: 52px; text-align: center;
     }
     .contact-heading { font-family: 'Space Grotesk', sans-serif; font-size: 2.3rem; font-weight: 800; text-transform: uppercase; margin-bottom: 14px; background: linear-gradient(135deg, #e11d48, #c026d3, #2563eb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -241,12 +336,14 @@
     .social-btn { width: 52px; height: 52px; border-radius: 50%; background: #ffffff; border: 1.5px solid #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; text-decoration: none; transition: var(--transition); }
     .social-btn:hover { transform: translateY(-4px); }
 
-    /* MAP SECTION */
+    /* ==========================================================================
+       MAP SECTION (FULLY RELIABLE EMBED FALLBACK)
+       ========================================================================== */
     .map-section { margin-bottom: 60px; }
-    .map-card { background: var(--glass-bg); backdrop-filter: blur(20px); border: 2px solid rgba(255, 255, 255, 0.95); border-radius: var(--card-radius); padding: 38px; }
+    .map-card { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 2px solid rgba(255, 255, 255, 0.95); border-radius: var(--card-radius); padding: 38px; }
     .btn-google-map { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #059669, #0d9488); color: #ffffff; padding: 13px 28px; border-radius: 999px; font-weight: 800; text-decoration: none; }
-    .map-frame-container { width: 100%; height: 350px; border-radius: 20px; overflow: hidden; border: 2px solid #f1f5f9; margin-top: 20px; }
-    .map-frame-container iframe { width: 100%; height: 100%; border: 0; }
+    .map-frame-container { width: 100%; height: 380px; border-radius: 20px; overflow: hidden; border: 2px solid #e2e8f0; margin-top: 20px; background: #e2e8f0; }
+    .map-frame-container iframe { width: 100%; height: 100%; border: 0; display: block; }
 
     /* FLOATING CART BUTTON */
     .floating-cart-btn {
@@ -256,22 +353,92 @@
     }
     .cart-badge-count { position: absolute; top: -4px; right: -4px; background: #10b981; color: white; font-size: 0.8rem; font-weight: 800; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; }
 
-    @media (max-width: 1100px) { .categories-grid-5 { grid-template-columns: repeat(3, 1fr); } .about-card { grid-template-columns: 1fr; } }
+    /* RESPONSIVE DESIGN */
+    @media (max-width: 1100px) {
+      .categories-grid-5 { grid-template-columns: repeat(3, 1fr); }
+      .about-card { grid-template-columns: 1fr; }
+    }
     @media (max-width: 768px) {
-      .navbar { flex-wrap: wrap; }
-      .search-box { order: 3; flex: 100%; max-width: 100%; margin-top: 10px; }
-      .categories-grid-5 { grid-template-columns: repeat(2, 1fr); }
-      .trust-grid { grid-template-columns: 1fr; }
-      .carousel-container { height: 420px; }
-      .carousel-title { font-size: 2rem; }
+      .nav-container { top: 10px; padding: 0 12px; }
+      .navbar { flex-wrap: wrap; padding: 10px 16px; gap: 10px; }
+      .nav-left { padding-right: 0; gap: 8px; }
+      .nav-logo-icon { width: 40px; height: 40px; }
+      .brand-anim-wrapper { width: 155px; height: 36px; }
+      .nav-logo-text { font-size: 1.15rem; }
+      .swimming-fish-icon { font-size: 1.15rem; }
+
+      .nav-middle { order: 3; flex: 1 1 100%; max-width: 100%; margin: 4px 0 0 0; }
+      .search-box { width: 100%; padding: 8px 16px; }
+
+      .main-wrapper { padding: 0 14px; }
+
+      .banner-section { margin-bottom: 40px; }
+      .carousel-container { height: 100vh; min-height: 540px; }
+      .carousel-overlay { padding: 140px 18px 40px; }
+      .carousel-title { font-size: 2.1rem; line-height: 1.2; margin-bottom: 14px; }
+      .carousel-desc { font-size: 0.95rem; line-height: 1.55; margin-bottom: 24px; }
+      .hero-btns-row { flex-direction: column; align-items: stretch; gap: 12px; }
+      .btn-live-aquatic, .btn-contact-hero { justify-content: center; width: 100%; padding: 14px 24px; font-size: 0.95rem; }
+      .carousel-indicators { left: 20px; bottom: 20px; gap: 6px; }
+      .indicator-bar { width: 36px; height: 4px; }
+
+      .categories-section { margin-bottom: 40px; }
+      .section-title { font-size: 1.6rem; }
+      .categories-grid-5 { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .category-card { padding: 14px 10px; border-radius: 18px; }
+      .category-img-wrapper { height: 110px; border-radius: 12px; margin-bottom: 10px; }
+      .category-name { font-size: 1rem; }
+      .category-count { font-size: 0.76rem; }
+
+      .trust-section { margin-bottom: 40px; }
+      .trust-grid { grid-template-columns: 1fr; gap: 14px; }
+      .trust-card { padding: 24px 18px; border-radius: 18px; }
+
+      .about-section { margin-bottom: 40px; }
+      .about-card { padding: 24px 16px; border-radius: 20px; gap: 24px; }
+      .about-title { font-size: 1.75rem; }
+      .about-text { font-size: 0.94rem; }
+      
+      .stats-compact-bar {
+        display: flex; flex-direction: row; justify-content: space-between;
+        padding: 10px 14px; gap: 8px; width: 100%;
+      }
+      .stat-compact-item { flex-direction: column; align-items: center; gap: 2px; text-align: center; }
+      .stat-compact-num { font-size: 1.15rem; }
+      .stat-compact-label { font-size: 0.65rem; }
+      .stat-compact-divider { height: 22px; }
+      .about-visual { height: 220px; border-radius: 16px; }
+
+      .contact-section { margin-bottom: 40px; }
+      .contact-card { padding: 28px 16px; border-radius: 20px; }
+      .contact-heading { font-size: 1.5rem; line-height: 1.25; }
+      .subscribe-form { flex-direction: column; background: transparent; border: none; padding: 0; gap: 10px; }
+      .subscribe-form input { border-radius: 999px; border: 2px solid #fecdd3; background: #ffffff; padding: 12px 20px; width: 100%; }
+      .subscribe-form button { width: 100%; padding: 13px 24px; }
+
+      .map-section { margin-bottom: 40px; }
+      .map-card { padding: 22px 16px; border-radius: 20px; }
+      .map-card > div:first-child { flex-direction: column; align-items: stretch; }
+      .btn-google-map { width: 100%; justify-content: center; }
+      .map-frame-container { height: 260px; border-radius: 16px; }
+
+      .floating-cart-btn { bottom: 20px; right: 20px; width: 54px; height: 54px; font-size: 1.3rem; }
+      .cart-badge-count { width: 22px; height: 22px; font-size: 0.72rem; }
+    }
+
+    @media (max-width: 380px) {
+      .brand-anim-wrapper { width: 130px; }
+      .nav-logo-text { font-size: 1rem; }
+      .categories-grid-5 { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-  <div class="aquarium-bg-canvas" id="aquariumCanvas"></div>
+  <!-- CANVAS BACKGROUND (AQUARIUM CREATURES & WATER FROM A.HTML) -->
+  <canvas id="aquariumCanvas"></canvas>
 
-  <!-- FLOATING NAVBAR -->
+  <!-- FLOATING NAVBAR DIRECTLY OVER HERO BANNER -->
   <header class="nav-container">
     <nav class="navbar">
       
@@ -282,7 +449,7 @@
           <img src="ChatGPT_Image_Jun_23__2026__10_40_41_AM-removebg-preview.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;" 
                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
           
-          <!-- Fallback Icon (Hidden by default, shown ONLY if image breaks or is missing) -->
+          <!-- Fallback Icon -->
           <div style="display: none; width:100%; height:100%; background: linear-gradient(135deg, #ff007f, #0070f3); border-radius: 12px; align-items: center; justify-content: center; color: white; font-size: 1.35rem;">
             <i class="fa-solid fa-fish-fins"></i>
           </div>
@@ -297,7 +464,7 @@
         </div>
       </a>
 
-      <!-- Middle: Search Bar -->
+      <!-- Middle: Search Bar (Permanent Active Glow) -->
       <div class="nav-middle">
         <div class="search-box">
           <i class="fa-solid fa-magnifying-glass"></i>
@@ -305,7 +472,7 @@
         </div>
       </div>
 
-      <!-- Right: User Profile (Admin button removed) -->
+      <!-- Right: User Profile -->
       <div class="nav-right">
         <a href="profile.html">
         <div id="profileContainer"></div></a>
@@ -313,14 +480,29 @@
     </nav>
   </header>
 
-  <main class="main-wrapper">
-    <!-- MASTER BANNER (CONTROLLED BY ADMIN JSON) -->
-    <section class="banner-section reveal-on-scroll">
-      <div class="carousel-container" id="masterCarousel"></div>
-      <div class="carousel-indicators" id="carouselIndicators"></div>
-    </section>
+  <!-- FULL SCREEN HERO BANNER (NO TOP GAP) -->
+  <section class="banner-section reveal-on-scroll">
+    <div class="carousel-container" id="masterCarousel">
+      <!-- Fallback Default Slide with CSS Gradient Background -->
+      <div class="carousel-slide active" style="background: linear-gradient(135deg, #1e1b4b, #311042, #0f172a);">
+        <div class="carousel-overlay">
+          <div class="carousel-content">
+            <span class="carousel-badge"><i class="fa-solid fa-sparkles"></i> PREMIUM AQUATICS</span>
+            <h1 class="carousel-title">Exotic Live Fishes & Aquatic World</h1>
+            <p class="carousel-desc">Quarantined rare breeds, rimless crystal tanks, and specialized aquascaping essentials delivered safely.</p>
+            <div class="hero-btns-row">
+              <a href="fish.html" class="btn-live-aquatic"><span>⚡ VIEW LIVE AQUATIC</span></a>
+              <a href="#contactSection" class="btn-contact-hero"><span>CONTACT US</span> <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="carousel-indicators" id="carouselIndicators"></div>
+  </section>
 
-    <!-- 5 CATEGORIES (SYNCED TO ADMIN TEXT & BASE64 IMAGES) -->
+  <main class="main-wrapper">
+    <!-- 5 CATEGORIES -->
     <section class="categories-section reveal-on-scroll" id="categoriesSection">
       <h2 class="section-title">Explore By <span class="color-text-gradient">Categories</span></h2>
       <div class="categories-grid-5" id="categoriesContainer">
@@ -389,29 +571,34 @@
       </div>
     </section>
 
-    <!-- ABOUT SECTION -->
+    <!-- ABOUT SECTION (SINGLE LINE COMPACT STATS BOX) -->
     <section class="about-section reveal-on-scroll">
       <div class="about-card" id="aboutCard">
         <div class="about-info">
           <span class="about-badge" id="d_about_badge"><i class="fa-solid fa-heart"></i> Passion For Aquatic Nature</span>
           <h2 class="about-title" id="d_about_title">Welcome to EXOTIC GB HUB</h2>
-          <p class="about-text" id="d_about_text1">Awaiting description from Admin Panel...</p>
-          <p class="about-text" id="d_about_text2">Please navigate to Admin Control to update text and image.</p>
-          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; margin-top:24px;">
-            <div style="background:#fff1f2; border:1px solid #fecdd3; padding:14px; border-radius:14px; text-align:center;">
-              <div id="d_stat_num1" style="font-size:1.6rem; font-weight:800; color:#e11d48;">150+</div>
-              <div id="d_stat_label1" style="font-size:0.75rem; font-weight:700; color:#64748b; text-transform:uppercase;">Rare Breeds</div>
+          <p class="about-text" id="d_about_text1">EXOTIC GB HUB is dedicated to elevating the ornamental fishkeeping journey.</p>
+          <p class="about-text" id="d_about_text2">Every single fish goes through an extensive conditioning protocol ensuring health and vitality.</p>
+          
+          <!-- SINGLE LINE COMPACT BOX STATS -->
+          <div class="stats-compact-bar">
+            <div class="stat-compact-item">
+              <span class="stat-compact-num" id="d_stat_num1" style="color:#e11d48;">150+</span>
+              <span class="stat-compact-label" id="d_stat_label1">Rare Breeds</span>
             </div>
-            <div style="background:#ecfdf5; border:1px solid #a7f3d0; padding:14px; border-radius:14px; text-align:center;">
-              <div id="d_stat_num2" style="font-size:1.6rem; font-weight:800; color:#059669;">100%</div>
-              <div id="d_stat_label2" style="font-size:0.75rem; font-weight:700; color:#64748b; text-transform:uppercase;">Quarantine Safe</div>
+            <div class="stat-compact-divider"></div>
+            <div class="stat-compact-item">
+              <span class="stat-compact-num" id="d_stat_num2" style="color:#059669;">100%</span>
+              <span class="stat-compact-label" id="d_stat_label2">Quarantine Safe</span>
             </div>
-            <div style="background:#f5f3ff; border:1px solid #ddd6fe; padding:14px; border-radius:14px; text-align:center;">
-              <div id="d_stat_num3" style="font-size:1.6rem; font-weight:800; color:#7c3aed;">5000+</div>
-              <div id="d_stat_label3" style="font-size:0.75rem; font-weight:700; color:#64748b; text-transform:uppercase;">Happy Aquarists</div>
+            <div class="stat-compact-divider"></div>
+            <div class="stat-compact-item">
+              <span class="stat-compact-num" id="d_stat_num3" style="color:#7c3aed;">5000+</span>
+              <span class="stat-compact-label" id="d_stat_label3">Happy Aquarists</span>
             </div>
           </div>
         </div>
+
         <div class="about-visual" id="aboutVisualWrap">
           <div class="clean-placeholder" style="border-radius: 20px;">
             <i class="fa-solid fa-image" style="font-size: 3rem;"></i>
@@ -422,7 +609,7 @@
     </section>
 
     <!-- CONTACT / NEWSLETTER -->
-    <section class="contact-section reveal-on-scroll">
+    <section class="contact-section reveal-on-scroll" id="contactSection">
       <div class="contact-card">
         <h2 class="contact-heading">STAY UP TO DATE ABOUT OUR LATEST STOCKS</h2>
         <p style="color: var(--text-muted); margin-bottom: 24px;">Be the first to receive notifications on rare species arrivals, weekend discount drops, and restocked specialty items.</p>
@@ -446,7 +633,7 @@
       </div>
     </section>
 
-    <!-- MAP SECTION -->
+    <!-- MAP SECTION (FULLY WORKING WITH RELIABLE EMBED FALLBACK) -->
     <section class="map-section reveal-on-scroll">
       <div class="map-card">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
@@ -454,12 +641,19 @@
             <h3 id="d_map_heading" style="font-family:'Space Grotesk'; font-size:1.75rem; font-weight:800;">Visit Our Store</h3>
             <p id="d_map_desc" style="color: var(--text-muted); font-size: 0.95rem;">Witness our thriving display aquascapes, plant galleries, and quarantine tanks in person.</p>
           </div>
-          <a href="#" id="btn_open_google_map" target="_blank" class="btn-google-map">
+          <a href="https://maps.google.com/?q=Bengaluru,+Karnataka,+India" id="btn_open_google_map" target="_blank" class="btn-google-map">
             OPEN IN GOOGLE MAP <i class="fa-solid fa-arrow-right"></i>
           </a>
         </div>
         <div class="map-frame-container">
-          <iframe id="d_map_iframe" title="Store Location Map" src="" loading="lazy"></iframe>
+          <iframe 
+            id="d_map_iframe" 
+            title="Store Location Map" 
+            src="https://maps.google.com/maps?q=Bengaluru%2C%20Karnataka%2C%20India&t=&z=13&ie=UTF8&iwloc=&output=embed" 
+            loading="lazy"
+            allowfullscreen=""
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
         </div>
       </div>
     </section>
@@ -474,8 +668,200 @@
     <span class="cart-badge-count" id="cartCountBadge">0</span>
   </a>
 
+  <!-- AQUARIUM CANVAS ANIMATION SCRIPT (FROM A.HTML) -->
   <script>
-    /* 1. AUTH / PROFILE STATE */
+    const canvas = document.getElementById("aquariumCanvas");
+    const ctx = canvas.getContext("2d");
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    window.addEventListener("resize", () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      initAllCanvas();
+    });
+
+    let time = 0;
+    let bubbles = [], jellies = [], kelpStalks = [], sunGlints = [];
+
+    function initBubbles() {
+      bubbles = [];
+      const count = Math.floor(width / 24);
+      for (let i = 0; i < count; i++) {
+        bubbles.push({
+          x: Math.random() * width, y: Math.random() * height,
+          radius: Math.random() * 8 + 3, speed: Math.random() * 1.1 + 0.5,
+          wobbleSpeed: Math.random() * 0.035 + 0.02, wobbleAmp: Math.random() * 16 + 6,
+          wobbleSeed: Math.random() * 100, opacity: Math.random() * 0.35 + 0.3
+        });
+      }
+    }
+
+    function initJellies() {
+      jellies = [];
+      const count = Math.max(4, Math.floor(width / 260));
+      for (let i = 0; i < count; i++) {
+        jellies.push({
+          x: Math.random() * (width - 120) + 60, y: Math.random() * height,
+          size: Math.random() * 26 + 22, speed: Math.random() * 0.42 + 0.28,
+          pulseRate: Math.random() * 0.03 + 0.02, seed: Math.random() * Math.PI * 2, tentacles: 5
+        });
+      }
+    }
+
+    function initKelpAndGlints() {
+      kelpStalks = [];
+      const stalkCount = Math.floor(width / 55) + 4;
+      for (let i = 0; i < stalkCount; i++) {
+        kelpStalks.push({
+          x: i * (width / stalkCount) + (Math.random() * 20 - 10),
+          baseWidth: Math.random() * 8 + 6,
+          height: Math.random() * (height * 0.12) + height * 0.10,
+          segments: 8, speed: Math.random() * 0.025 + 0.015,
+          phase: Math.random() * Math.PI * 2,
+          color: i % 2 === 0 ? "rgba(43, 147, 137, 0.35)" : "rgba(30, 126, 120, 0.22)"
+        });
+      }
+
+      sunGlints = [];
+      for (let i = 0; i < 45; i++) {
+        sunGlints.push({
+          x: Math.random() * width, y: Math.random() * height,
+          radius: Math.random() * 2.2 + 1.2, speedY: Math.random() * 0.3 + 0.1,
+          speedX: Math.random() * 0.3 - 0.15, alpha: Math.random() * 0.45 + 0.2
+        });
+      }
+    }
+
+    function initAllCanvas() { initBubbles(); initJellies(); initKelpAndGlints(); }
+
+    function drawBackground() {
+      const grad = ctx.createLinearGradient(0, 0, 0, height);
+      grad.addColorStop(0, "#f4fafc");
+      grad.addColorStop(0.5, "#e1f3f7");
+      grad.addColorStop(0.85, "#cdecf1");
+      grad.addColorStop(1, "#c2e6de");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    function drawGlints() {
+      sunGlints.forEach(p => {
+        p.x += p.speedX; p.y -= p.speedY;
+        if (p.x < 0) p.x = width; if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height; if (p.y > height) p.y = 0;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
+        ctx.shadowColor = "rgba(255, 255, 255, 0.8)";
+        ctx.shadowBlur = 6;
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    function drawJellies() {
+      jellies.forEach(j => {
+        const pulse = Math.sin(time * j.pulseRate + j.seed);
+        const contraction = 1 + pulse * 0.22;
+        j.y -= j.speed * (1 + pulse * 0.4);
+        if (j.y + j.size * 3 < 0) { j.y = height + j.size * 2; j.x = Math.random() * (width - 120) + 60; }
+        ctx.save();
+        ctx.translate(j.x, j.y);
+        ctx.beginPath();
+        ctx.arc(0, 0, j.size * contraction, Math.PI, 0, false);
+        ctx.bezierCurveTo(j.size * 0.5, j.size * 0.25, -j.size * 0.5, j.size * 0.25, -j.size * contraction, 0);
+        ctx.fillStyle = "rgba(14, 165, 233, 0.12)";
+        ctx.strokeStyle = "rgba(2, 132, 199, 0.4)";
+        ctx.lineWidth = 1.4;
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(0, -2, j.size * 0.58 * contraction, Math.PI, 0, false);
+        ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+        ctx.fill();
+
+        ctx.lineWidth = 1.1;
+        ctx.strokeStyle = "rgba(2, 132, 199, 0.25)";
+        for (let t = -j.tentacles / 2; t <= j.tentacles / 2; t++) {
+          const startX = (t / (j.tentacles / 2)) * (j.size * 0.65);
+          ctx.beginPath();
+          ctx.moveTo(startX, 0);
+          const tLen = j.size * 2.1;
+          const wave1 = Math.sin(time * 0.05 + t) * 9;
+          const wave2 = Math.cos(time * 0.04 + t) * 12;
+          ctx.bezierCurveTo(startX + wave1, tLen * 0.4, startX - wave2, tLen * 0.7, startX + wave1, tLen);
+          ctx.stroke();
+        }
+        ctx.restore();
+      });
+    }
+
+    function drawBubbles() {
+      bubbles.forEach(b => {
+        b.y -= b.speed;
+        const currentX = b.x + Math.sin(time * b.wobbleSpeed + b.wobbleSeed) * b.wobbleAmp;
+        if (b.y + b.radius < 0) { b.y = height + b.radius + 10; b.x = Math.random() * width; }
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(currentX, b.y, b.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(14, 165, 233, ${b.opacity * 0.6})`;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+        ctx.fillStyle = `rgba(255, 255, 255, ${b.opacity * 0.45})`;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(currentX - b.radius * 0.35, b.y - b.radius * 0.35, b.radius * 0.28, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    function drawReducedKelp() {
+      kelpStalks.forEach(k => {
+        ctx.save();
+        ctx.fillStyle = k.color;
+        ctx.beginPath();
+        const segLen = k.height / k.segments;
+        ctx.moveTo(k.x - k.baseWidth / 2, height);
+        for (let s = 1; s <= k.segments; s++) {
+          const sway = Math.sin(time * k.speed + k.phase + s * 0.35) * (s * 2.2);
+          const currentY = height - s * segLen;
+          const currentWidth = k.baseWidth * (1 - s / (k.segments * 1.25));
+          ctx.lineTo(k.x + sway - currentWidth / 2, currentY);
+        }
+        const tipSway = Math.sin(time * k.speed + k.phase + k.segments * 0.35) * (k.segments * 2.2);
+        ctx.lineTo(k.x + tipSway, height - k.height);
+        for (let s = k.segments; s >= 1; s--) {
+          const sway = Math.sin(time * k.speed + k.phase + s * 0.35) * (s * 2.2);
+          const currentY = height - s * segLen;
+          const currentWidth = k.baseWidth * (1 - s / (k.segments * 1.25));
+          ctx.lineTo(k.x + sway + currentWidth / 2, currentY);
+        }
+        ctx.lineTo(k.x + k.baseWidth / 2, height);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    function animate() {
+      time += 1;
+      drawBackground();
+      drawGlints();
+      drawJellies();
+      drawBubbles();
+      drawReducedKelp();
+      requestAnimationFrame(animate);
+    }
+
+    initAllCanvas();
+    animate();
+
+    /* AUTH & DYNAMIC STORE DATA LOGIC */
     function renderProfileStatus() {
       const container = document.getElementById('profileContainer');
       const storedUser = localStorage.getItem('currentUser');
@@ -492,21 +878,19 @@
         } catch (e) {}
       }
       container.innerHTML = `
-        <a href="login.html" class="profile-action-btn" title="Sign In">
-          <div class="profile-icon-logged-out"><i class="fa-regular fa-user"></i></div>
+        <a href="login.html" class="profile-icon-logged-out" title="Sign In">
+          <i class="fa-regular fa-user"></i>
         </a>
       `;
     }
 
-    /* 2. FETCH DATA FROM FASTAPI BACKEND (V3 BASE64 READY) */
     let currentSlide = 0;
     let carouselTimer = null;
 
     async function loadDashboardData() {
       let data = null;
       try {
-        // Look for fetch calls in admin.html or dashboard.html like this:
-const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store');
+        const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store');
         if (res.ok) {
           data = await res.json();
         }
@@ -515,13 +899,13 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
       }
 
       if (!data || Object.keys(data).length === 0) {
-        const local = localStorage.getItem('exotic_gb_data_v3');
+        const local = localStorage.getItem('exotic_gb_data_v4') || localStorage.getItem('exotic_gb_data_v3');
         if (local) data = JSON.parse(local);
       }
 
-      if (!data) return; // Completely empty, wait for admin input
+      if (!data) return;
 
-      // --- Sync Banners ---
+      // Sync Banners with Full Screen Buttons
       const activeBanners = (data.dashBanners || []).filter(b => b.isActive !== false);
       const bannerContainer = document.getElementById('masterCarousel');
       const indicators = document.getElementById('carouselIndicators');
@@ -531,10 +915,13 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
           <div class="carousel-slide ${i === 0 ? 'active' : ''}" style="${b.img ? `background-image: url('${b.img}');` : ''}">
             <div class="carousel-overlay">
               <div class="carousel-content">
-                <span class="carousel-badge"><i class="fa-solid fa-sparkles"></i> ${b.badge}</span>
+                <span class="carousel-badge"><i class="fa-solid fa-sparkles"></i> ${b.badge || 'PREMIUM SELECTION'}</span>
                 <h1 class="carousel-title">${b.title}</h1>
                 <p class="carousel-desc">${b.desc}</p>
-                <a href="#categoriesSection" class="carousel-btn">Explore Collection <i class="fa-solid fa-arrow-right"></i></a>
+                <div class="hero-btns-row">
+                  <a href="fish.html" class="btn-live-aquatic"><span>⚡ VIEW LIVE AQUATIC</span></a>
+                  <a href="#contactSection" class="btn-contact-hero"><span>CONTACT US</span> <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
               </div>
             </div>
           </div>
@@ -549,11 +936,11 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
         startBannerLoop(activeBanners.length);
       }
 
-      // --- Sync 5 Categories ---
+      // Sync Categories
       if (data.dashCategories) {
         ['fish', 'access', 'food', 'decor', 'tank'].forEach(key => {
           const c = data.dashCategories[key];
-          if(!c) return;
+          if (!c) return;
           const nameEl = document.getElementById(`name_cat_${key}`);
           const countEl = document.getElementById(`count_cat_${key}`);
           const imgWrap = document.getElementById(`imgWrap_${key}`);
@@ -567,12 +954,12 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
         });
       }
 
-      // --- Sync About Content ---
+      // Sync About Content
       if (data.about) {
-        document.getElementById('d_about_badge').innerHTML = `<i class="fa-solid fa-heart"></i> ${data.about.badge}`;
-        document.getElementById('d_about_title').innerText = data.about.title;
-        document.getElementById('d_about_text1').innerText = data.about.text1;
-        document.getElementById('d_about_text2').innerText = data.about.text2;
+        if (data.about.badge) document.getElementById('d_about_badge').innerHTML = `<i class="fa-solid fa-heart"></i> ${data.about.badge}`;
+        if (data.about.title) document.getElementById('d_about_title').innerText = data.about.title;
+        if (data.about.text1) document.getElementById('d_about_text1').innerText = data.about.text1;
+        if (data.about.text2) document.getElementById('d_about_text2').innerText = data.about.text2;
 
         if (data.about.stats && data.about.stats.length >= 3) {
           document.getElementById('d_stat_num1').innerText = data.about.stats[0].num;
@@ -589,7 +976,7 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
         }
       }
 
-      // --- Sync Trust Section ---
+      // Sync Trust Section
       if (data.trust) {
         document.getElementById('d_trust_t1').innerText = data.trust.t1;
         document.getElementById('d_trust_d1').innerText = data.trust.d1;
@@ -599,7 +986,7 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
         document.getElementById('d_trust_d3').innerText = data.trust.d3;
       }
 
-      // --- Sync Social Links & Map ---
+      // Sync Social Links & Google Maps
       if (data.social) {
         document.getElementById('link_instagram').href = data.social.instagram || "#";
         document.getElementById('link_whatsapp').href = data.social.whatsapp || "#";
@@ -608,12 +995,12 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
       }
 
       if (data.map) {
-        document.getElementById('d_map_heading').innerText = data.map.heading;
-        document.getElementById('d_map_desc').innerText = data.map.desc;
-        document.getElementById('btn_open_google_map').href = data.map.btnUrl || "https://maps.google.com";
-
-        const query = encodeURIComponent(data.map.embedQuery || "Bengaluru, Karnataka, India");
-        document.getElementById('d_map_iframe').src = `https://maps.google.com/maps?q=${query}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+        if (data.map.heading) document.getElementById('d_map_heading').innerText = data.map.heading;
+        if (data.map.desc) document.getElementById('d_map_desc').innerText = data.map.desc;
+        
+        const mapQuery = data.map.embedQuery ? encodeURIComponent(data.map.embedQuery) : "Bengaluru%2C%20Karnataka%2C%20India";
+        document.getElementById('d_map_iframe').src = `https://maps.google.com/maps?q=${mapQuery}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+        document.getElementById('btn_open_google_map').href = data.map.btnUrl || `https://maps.google.com/?q=${mapQuery}`;
       }
     }
 
@@ -647,21 +1034,6 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
       document.getElementById('cartCountBadge').innerText = cart.reduce((a, b) => a + b.quantity, 0);
     }
 
-    function initBubbles() {
-      const container = document.getElementById('aquariumCanvas');
-      const types = ['type-coral', 'type-cyan', 'type-purple'];
-      for (let i = 0; i < 20; i++) {
-        const b = document.createElement('div');
-        b.className = `bubble ${types[Math.floor(Math.random() * types.length)]}`;
-        const s = Math.random() * 26 + 10;
-        b.style.width = `${s}px`; b.style.height = `${s}px`;
-        b.style.left = `${Math.random() * 100}%`;
-        b.style.animationDuration = `${Math.random() * 10 + 8}s`;
-        b.style.animationDelay = `${Math.random() * 8}s`;
-        container.appendChild(b);
-      }
-    }
-
     function initScrollObserver() {
       const obs = new IntersectionObserver((entries) => {
         entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); });
@@ -671,7 +1043,6 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
 
     document.addEventListener('DOMContentLoaded', () => {
       renderProfileStatus();
-      initBubbles();
       loadDashboardData();
       updateCartBadge();
       initScrollObserver();

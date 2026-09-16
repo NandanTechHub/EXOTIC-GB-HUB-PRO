@@ -94,9 +94,17 @@
       color: var(--text-main);
     }
 
-    /* Items Table */
+    /* Items Table Container for Mobile Horizontal Scroll */
+    .cart-table-container {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 10px;
+    }
+
     .cart-table {
       width: 100%;
+      min-width: 540px;
       border-collapse: collapse;
       text-align: left;
     }
@@ -127,6 +135,7 @@
       height: 48px;
       border-radius: 10px;
       object-fit: cover;
+      flex-shrink: 0;
     }
 
     .item-name {
@@ -145,6 +154,7 @@
       border-radius: 999px;
       margin-left: 6px;
       border: 1px solid #fbcfe8;
+      white-space: nowrap;
     }
 
     .qty-control {
@@ -233,27 +243,33 @@
     }
     .empty-cart-icon { font-size: 4rem; color: #cbd5e1; margin-bottom: 16px; }
 
+    /* RESPONSIVE STYLING */
     @media (max-width: 768px) {
-      .cart-table th:nth-child(4), .cart-table td:nth-child(4) { display: none; }
-      .cart-summary { flex-direction: column; align-items: stretch; text-align: center; }
-      .btn-place-order { justify-content: center; width: 100%; }
+      .main-wrapper { padding: 16px 12px 60px 12px; }
+      .cart-nav { padding: 10px 16px; margin-bottom: 20px; }
+      .brand-logo { font-size: 1.1rem; }
+      .cart-card { padding: 20px 14px; border-radius: 18px; }
+      .cart-title-row { margin-bottom: 18px; padding-bottom: 12px; }
+      .cart-heading { font-size: 1.4rem; }
+      .cart-summary { flex-direction: column; align-items: stretch; text-align: center; gap: 16px; }
+      .grand-total-val { font-size: 1.8rem; }
+      .btn-place-order { justify-content: center; width: 100%; padding: 14px 20px; font-size: 0.98rem; }
     }
   </style>
 </head>
 <body>
 
   <div class="main-wrapper">
-    <!-- Top Navigation -->
     <nav class="cart-nav">
       <a href="dashboard.html" class="brand-logo">
-        <i class="fa-solid fa-fish-fins"></i> EXOTIC GB HUB
-      </a>
+  <img src="ChatGPT_Image_Jun_23__2026__10_40_41_AM-removebg-preview.png" alt="Logo" style="width: 36px; height: 36px; object-fit: contain; border-radius: 6px;" />
+  EXOTIC GB HUB
+</a>
       <a href="javascript:history.back()" class="continue-btn">
         <i class="fa-solid fa-arrow-left"></i> Continue Shopping
       </a>
     </nav>
 
-    <!-- Cart Card Container -->
     <div class="cart-card">
       <div class="cart-title-row">
         <h1 class="cart-heading">Your Shopping Cart</h1>
@@ -262,9 +278,7 @@
         </button>
       </div>
 
-      <div id="cartContentArea">
-        <!-- Rendered dynamically -->
-      </div>
+      <div id="cartContentArea"></div>
     </div>
   </div>
 
@@ -357,21 +371,23 @@
       }).join('');
 
       area.innerHTML = `
-        <table class="cart-table">
-          <thead>
-            <tr>
-              <th>S.No</th>
-              <th>Product Details</th>
-              <th>Price</th>
-              <th>Quantity</th>
-              <th>Total</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            ${rowsHtml}
-          </tbody>
-        </table>
+        <div class="cart-table-container">
+          <table class="cart-table">
+            <thead>
+              <tr>
+                <th>S.No</th>
+                <th>Product Details</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+        </div>
 
         <div class="cart-summary">
           <div class="grand-total-box">

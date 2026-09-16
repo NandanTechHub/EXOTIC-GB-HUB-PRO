@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fish Food & Nutrition | EXOTIC GB HUB</title>
+  <title>Rimless Glass Tanks | EXOTIC GB HUB</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
@@ -172,7 +172,7 @@
       <div class="nav-middle">
         <div class="search-box">
           <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" placeholder="Search pellets, spirulina, baby brine shrimp..." onkeyup="searchFood(this.value)" />
+          <input type="text" placeholder="Search rimless 60p, nano cube, low-iron tanks..." onkeyup="searchTanks(this.value)" />
         </div>
       </div>
       <div class="nav-right" id="profileContainer"></div>
@@ -189,14 +189,14 @@
             <span class="tag-badge tag-premium">Premium Edition</span>
             <span class="tag-badge tag-offer">Today Offer</span>
           </div>
-          <h1 style="color:white; font-family:'Space Grotesk'; font-size:2.5rem; font-weight:800; margin:14px 0 10px 0;">Nutritional Diets & Color Enhancers</h1>
-          <p style="color:#fde68a;">Formulated with fresh krill, astaxanthin, and immune stimulants for vibrant health.</p>
+          <h1 style="color:white; font-family:'Space Grotesk'; font-size:2.5rem; font-weight:800; margin:14px 0 10px 0;">Ultra-Clear Low-Iron Aquariums</h1>
+          <p style="color:#e0f2fe;">Mitered 45° edges, German high-tensile silicone, and 99% light transmittance.</p>
         </div>
       </div>
     </div>
 
-    <h2 class="section-title">Nutrition & <span style="background: var(--grad-rainbow-text); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Feeds</span></h2>
-    <div class="products-grid-3" id="foodContainer"></div>
+    <h2 class="section-title">Rimless <span style="background: var(--grad-rainbow-text); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Tanks</span></h2>
+    <div class="products-grid-3" id="tankContainer"></div>
   </main>
 
   <a href="cart.html" class="floating-cart-btn"><i class="fa-solid fa-cart-shopping"></i><span class="cart-badge-count" id="cartCountBadge">0</span></a>
@@ -395,44 +395,44 @@
     animate();
 
     /* INVENTORY DYNAMIC LOGIC - ZERO HARDCODED DEFAULT ITEMS */
-    function getFoodItems() {
+    function getTanks() {
       const raw = localStorage.getItem('exotic_gb_data_v4') || localStorage.getItem('exotic_gb_data') || localStorage.getItem('exotic_gb_data_v3') || '{}';
       const data = JSON.parse(raw);
-      if (data.stocks && data.stocks.food) {
-        return data.stocks.food.filter(f => f.isActive !== false);
+      if (data.stocks && data.stocks.tank) {
+        return data.stocks.tank.filter(t => t.isActive !== false);
       }
       return [];
     }
 
     const qtys = {};
 
-    function renderFood(items) {
-      const foodItems = items || getFoodItems();
-      const container = document.getElementById('foodContainer');
+    function renderTanks(items) {
+      const tankItems = items || getTanks();
+      const container = document.getElementById('tankContainer');
 
-      if (!foodItems || foodItems.length === 0) {
-        container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-muted); font-weight: 700; font-size: 1.05rem; background: var(--glass-bg); border-radius: var(--card-radius); border: 2px dashed #cbd5e1;">No food items currently available. Check back soon!</div>`;
+      if (!tankItems || tankItems.length === 0) {
+        container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-muted); font-weight: 700; font-size: 1.05rem; background: var(--glass-bg); border-radius: var(--card-radius); border: 2px dashed #cbd5e1;">No tanks currently available. Check back soon!</div>`;
         return;
       }
 
-      foodItems.forEach(f => { if (!qtys[f.id]) qtys[f.id] = 1; });
+      tankItems.forEach(t => { if (!qtys[t.id]) qtys[t.id] = 1; });
 
-      container.innerHTML = foodItems.map(f => `
+      container.innerHTML = tankItems.map(t => `
         <div class="product-card">
-          <div class="product-img-wrapper"><img src="${f.img || ''}" class="product-img" alt="${f.name}" /></div>
-          <h3 class="product-name">${f.name}</h3>
-          <div class="product-price">₹${f.price.toLocaleString('en-IN')}</div>
+          <div class="product-img-wrapper"><img src="${t.img || ''}" class="product-img" alt="${t.name}" /></div>
+          <h3 class="product-name">${t.name}</h3>
+          <div class="product-price">₹${t.price.toLocaleString('en-IN')}</div>
           <div class="controls-row">
-            <span style="font-weight:700; color:var(--text-muted); font-size:0.9rem;">Pack Qty</span>
+            <span style="font-weight:700; color:var(--text-muted); font-size:0.9rem;">Quantity</span>
             <div class="qty-selector">
-              <button class="qty-btn" onclick="updateQty('${f.id}', -1)">-</button>
-              <span id="qty_${f.id}" style="font-weight:800;">${qtys[f.id]}</span>
-              <button class="qty-btn" onclick="updateQty('${f.id}', 1)">+</button>
+              <button class="qty-btn" onclick="updateQty('${t.id}', -1)">-</button>
+              <span id="qty_${t.id}" style="font-weight:800;">${qtys[t.id]}</span>
+              <button class="qty-btn" onclick="updateQty('${t.id}', 1)">+</button>
             </div>
           </div>
           <div class="card-actions">
-            <button class="btn-card btn-add-cart" onclick="addToCart('${f.id}')">Add Cart</button>
-            <button class="btn-card btn-buy-now" onclick="buyNow('${f.id}')">Buy Now</button>
+            <button class="btn-card btn-add-cart" onclick="addToCart('${t.id}')">Add Cart</button>
+            <button class="btn-card btn-buy-now" onclick="buyNow('${t.id}')">Buy Now</button>
           </div>
         </div>
       `).join('');
@@ -443,13 +443,13 @@
     }
 
     function addToCart(id) {
-      const items = getFoodItems();
-      const item = items.find(f => f.id === id);
+      const items = getTanks();
+      const item = items.find(t => t.id === id);
       if (!item) return;
       const cart = JSON.parse(localStorage.getItem('exotic_cart') || '[]');
       const exist = cart.find(c => c.id === id);
       if (exist) exist.quantity += qtys[id];
-      else cart.push({ id: item.id, name: item.name, category: "Fish Food", price: item.price, quantity: qtys[id], isPair: false, img: item.img });
+      else cart.push({ id: item.id, name: item.name, category: "Tanks", price: item.price, quantity: qtys[id], isPair: false, img: item.img });
       localStorage.setItem('exotic_cart', JSON.stringify(cart));
       updateBadge();
       alert(`Added ${item.name} to cart!`);
@@ -469,15 +469,15 @@
         : `<a href="login.html" class="profile-icon-logged-out"><i class="fa-regular fa-user"></i></a>`;
     }
 
-    function searchFood(keyword) {
-      const items = getFoodItems();
-      const filtered = items.filter(f => f.name.toLowerCase().includes(keyword.toLowerCase()));
-      renderFood(filtered);
+    function searchTanks(keyword) {
+      const items = getTanks();
+      const filtered = items.filter(t => t.name.toLowerCase().includes(keyword.toLowerCase()));
+      renderTanks(filtered);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       renderNavProfile();
-      renderFood();
+      renderTanks();
       updateBadge();
     });
   </script>

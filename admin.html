@@ -86,7 +86,7 @@
     .category-card.selected { border-color: #4f46e5; background: #eef2ff; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2); transform: translateY(-4px); }
     .category-img-wrapper { width: 100%; height: 110px; border-radius: 12px; overflow: hidden; margin-bottom: 12px; position: relative; }
 
-    /* 3. Category Manager (Dynamic Sub-section) */
+    /* 3. Category Manager */
     .manager-section { border: 2px solid #4f46e5; background: #f8fafc; border-radius: var(--card-radius); padding: 36px; margin-bottom: 40px; box-shadow: 0 16px 40px -10px rgba(79, 70, 229, 0.15); display: none; animation: fadeIn 0.4s ease; }
     @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 
@@ -119,11 +119,46 @@
     .btn-save { background: #4f46e5; color: white; border: none; padding: 10px 24px; border-radius: 999px; font-weight: 700; cursor: pointer; }
     .btn-cancel { background: #f1f5f9; border: none; padding: 10px 20px; border-radius: 999px; font-weight: 700; cursor: pointer; }
 
-    /* Base64 Upload Preview */
     .img-preview { max-width: 100%; height: auto; border-radius: 8px; margin-top: 10px; border: 1px solid #cbd5e1; display: none; }
 
-    @media (max-width: 1024px) { .categories-grid-5 { grid-template-columns: repeat(3, 1fr); } .products-grid-3 { grid-template-columns: repeat(2, 1fr); } .about-preview { grid-template-columns: 1fr; } }
-    @media (max-width: 768px) { .categories-grid-5 { grid-template-columns: repeat(2, 1fr); } .products-grid-3 { grid-template-columns: 1fr; } }
+    /* RESPONSIVE STYLING */
+    @media (max-width: 1024px) {
+      .categories-grid-5 { grid-template-columns: repeat(3, 1fr); }
+      .products-grid-3 { grid-template-columns: repeat(2, 1fr); }
+      .about-preview { grid-template-columns: 1fr; }
+    }
+    
+    @media (max-width: 768px) {
+      .admin-top-bar { padding: 8px 14px; flex-wrap: wrap; gap: 8px; font-size: 0.8rem; }
+      .nav-container { top: 0; margin: 10px auto 18px auto; padding: 0 14px; }
+      .navbar { padding: 10px 16px; border-radius: 16px; }
+      .nav-logo-text { font-size: 1.05rem; }
+      .main-wrapper { padding: 0 14px 60px 14px; }
+
+      .admin-section, .manager-section { padding: 20px 14px; border-radius: 18px; margin-bottom: 24px; }
+      .section-header { gap: 12px; margin-bottom: 18px; }
+      .section-title { font-size: 1.25rem; }
+      .btn-create { padding: 8px 16px; font-size: 0.82rem; }
+
+      .banner-preview-box { height: 220px; border-radius: 14px; }
+      .banner-preview-overlay { padding: 0 16px; }
+      .banner-preview-overlay h2 { font-size: 1.3rem !important; }
+      .banner-preview-overlay p { font-size: 0.85rem !important; }
+
+      .cat-poster-box { height: 220px; border-radius: 14px; margin-bottom: 24px; }
+      .cat-poster-overlay { padding: 16px; }
+      .cat-poster-overlay h2 { font-size: 1.4rem !important; }
+      .cat-poster-overlay p { font-size: 0.86rem !important; }
+
+      .categories-grid-5 { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .products-grid-3 { grid-template-columns: 1fr; gap: 14px; }
+      
+      .modal-card { padding: 22px 16px; border-radius: 16px; }
+    }
+
+    @media (max-width: 480px) {
+      .categories-grid-5 { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -166,7 +201,7 @@
       <div class="categories-grid-5" id="dashCategoriesContainer"></div>
     </section>
 
-    <!-- 3. DYNAMIC CATEGORY MANAGER (APPEARS WHEN CATEGORY CLICKED) -->
+    <!-- 3. DYNAMIC CATEGORY MANAGER -->
     <section class="manager-section" id="categoryManagerPanel">
       <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px;">
         <span style="background:#4f46e5; color:white; padding:6px 14px; border-radius:999px; font-size:0.8rem; font-weight:800; text-transform:uppercase;">NOW MANAGING</span>
@@ -225,9 +260,6 @@
   </div>
 
   <script>
-    /* ==========================================================================
-       1. DATA STRUCTURE (Matches FastAPI Pydantic Models)
-       ========================================================================== */
     const CANONICAL_CATS = [
       { key: "fish", name: "Live Fishes", file: "fish.html", count: "120+ Exotic Breeds", icon: "fa-fish-fins" },
       { key: "access", name: "Accessories", file: "access.html", count: "Filters, CO2 & Lights", icon: "fa-screwdriver-wrench" },
@@ -261,15 +293,11 @@
       }
     };
 
-    /* ==========================================================================
-       2. ASYNC DATA LOAD/SAVE (Syncs with FastAPI)
-       ========================================================================== */
     let _storeCache = null;
 
     async function loadStore() {
       try {
-        // Look for fetch calls in admin.html or dashboard.html like this:
-const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store');
+        const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store');
         if (res.ok) {
           const data = await res.json();
           if (Object.keys(data).length > 0) {
@@ -289,7 +317,7 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
       localStorage.setItem('exotic_gb_data_v4', JSON.stringify(data));
       
       try {
-        await fetch('http://127.0.0.1:8000/api/store', {
+        await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
@@ -303,9 +331,6 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
       return _storeCache || JSON.parse(JSON.stringify(DEFAULT_STORE));
     }
 
-    /* ==========================================================================
-       3. CLIENT-SIDE IMAGE COMPRESSION (Base64)
-       ========================================================================== */
     function compressImageToBase64(file, callback) {
       if (!file) return;
       const reader = new FileReader();
@@ -315,7 +340,7 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
         img.src = event.target.result;
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 800; // Resize to max 800px width to save database space
+          const MAX_WIDTH = 800;
           let scaleSize = 1;
           if (img.width > MAX_WIDTH) scaleSize = MAX_WIDTH / img.width;
           
@@ -325,7 +350,7 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           
-          const b64 = canvas.toDataURL('image/jpeg', 0.7); // 70% quality JPEG
+          const b64 = canvas.toDataURL('image/jpeg', 0.7);
           callback(b64);
         };
       };
@@ -350,7 +375,6 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
       });
     }
 
-    /* Helper: Image Uploader UI Generator */
     function buildImageUploader(existingBase64) {
       const displayVal = existingBase64 ? 'block' : 'none';
       return `
@@ -363,11 +387,7 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
       `;
     }
 
-    /* ==========================================================================
-       4. RENDER UI SECTIONS
-       ========================================================================== */
     async function initAdmin() {
-      // Show admin name if available
       try {
         const u = JSON.parse(localStorage.getItem('currentUser'));
         if(u && u.name) document.getElementById('adminNameDisplay').innerText = `Welcome, ${u.name}`;
@@ -444,7 +464,6 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
       const catInfo = CANONICAL_CATS.find(c => c.key === key);
       document.getElementById('mgrCatTitle').innerText = catInfo.name;
 
-      // Render Poster Preview
       const poster = data.catPosters[key];
       const tagsHtml = poster.tags.split(',').map(t => `<span style="background:rgba(15,23,42,0.8); color:white; padding:4px 10px; border-radius:999px; font-size:0.7rem; font-weight:800; margin-right:6px;">${t.trim()}</span>`).join('');
       
@@ -457,7 +476,6 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
         </div>
       `;
 
-      // Render Stocks
       const stocks = data.stocks[key] || [];
       const sCon = document.getElementById('mgrCatStocks');
       if (!stocks.length) {
@@ -503,9 +521,6 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
       `;
     }
 
-    /* --------------------------------------------------------------------------
-       5. CRUD ACTIONS
-       -------------------------------------------------------------------------- */
     function deleteDashBanner(id) {
       if(!confirm("Delete this banner?")) return;
       const d = getStore(); d.dashBanners = d.dashBanners.filter(b => b.id !== id); saveStore(d);
@@ -520,9 +535,6 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
       const d = getStore(); d.stocks[d.selectedCat] = d.stocks[d.selectedCat].filter(x => x.id !== id); saveStore(d);
     }
 
-    /* --------------------------------------------------------------------------
-       6. MODAL SYSTEM
-       -------------------------------------------------------------------------- */
     function closeModal() { document.getElementById('adminModal').classList.remove('active'); }
 
     function openModal(type, id = null) {
@@ -593,7 +605,6 @@ const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store'
       const id = document.getElementById('m_id').value;
       const d = getStore();
 
-      // Retrieve compressed image Base64 string
       const b64Img = document.getElementById('i_img_b64').value;
 
       if (type === 'create_dash_banner') {
