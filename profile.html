@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Profile | EXOTIC GB HUB</title>
+
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg-primary: #fafcff;
+      --bg-gradient: linear-gradient(180deg, #fff5f8 0%, #f0fdf4 35%, #f0f9ff 70%, #ffffff 100%);
+      --grad-rainbow-text: linear-gradient(135deg, #ec4899 0%, #8b5cf6 35%, #06b6d4 70%, #10b981 100%);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary-blue: #0284c7;
+
+      --glass-bg: rgba(255, 255, 255, 0.88);
+      --glass-border: rgba(255, 255, 255, 0.95);
+      --glass-shadow: 0 16px 40px -10px rgba(139, 92, 246, 0.12);
+      --card-radius: 26px;
+      --transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: var(--bg-primary); background-image: var(--bg-gradient); color: var(--text-main); min-height: 100vh; overflow-x: hidden; position: relative; }
+
+    /* Floating Bubbles Canvas */
+    .aquarium-bg-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .bubble { position: absolute; bottom: -60px; border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, 0.85); animation: riseAndWobble linear infinite; }
+    .bubble.type-coral { background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9), rgba(255, 107, 107, 0.25) 50%, rgba(254, 202, 87, 0.15)); }
+    .bubble.type-cyan { background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9), rgba(6, 182, 212, 0.3) 50%, rgba(59, 130, 246, 0.15)); }
+    .bubble.type-purple { background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9), rgba(217, 70, 239, 0.25) 50%, rgba(139, 92, 246, 0.15)); }
+
+    @keyframes riseAndWobble {
+      0% { transform: translateY(0) translateX(0) scale(0.8); opacity: 0; }
+      10% { opacity: 0.75; }
+      50% { transform: translateY(-50vh) translateX(30px) scale(1); opacity: 0.85; }
+      100% { transform: translateY(-110vh) translateX(-25px) scale(1.15); opacity: 0; }
+    }
+
+    .main-wrapper { max-width: 900px; margin: 0 auto; padding: 40px 20px 80px 20px; position: relative; z-index: 2; }
+
+    /* Top Nav */
+    .profile-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--glass-bg); backdrop-filter: blur(20px);
+      border: 1.5px solid var(--glass-border); border-radius: 20px;
+      padding: 14px 28px; box-shadow: var(--glass-shadow); margin-bottom: 30px;
+    }
+    .brand-logo {
+      display: flex; align-items: center; gap: 12px; text-decoration: none;
+      font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 1.3rem;
+      background: var(--grad-rainbow-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 8px; color: var(--primary-blue);
+      text-decoration: none; font-weight: 700; font-size: 0.95rem; transition: var(--transition);
+    }
+    .back-btn:hover { transform: translateX(-4px); }
+
+    /* Profile Card */
+    .profile-card {
+      background: var(--glass-bg); backdrop-filter: blur(24px);
+      border: 2px solid var(--glass-border); border-radius: var(--card-radius);
+      padding: 40px; box-shadow: var(--glass-shadow);
+    }
+
+    .profile-header {
+      display: flex; align-items: center; gap: 20px; margin-bottom: 30px;
+      border-bottom: 2px solid #f1f5f9; padding-bottom: 24px; flex-wrap: wrap;
+    }
+    .profile-avatar-large {
+      width: 75px; height: 75px; border-radius: 50%; background: var(--primary-blue);
+      color: white; font-size: 2.2rem; font-weight: 800; display: flex; align-items: center;
+      justify-content: center; box-shadow: 0 8px 20px rgba(2, 132, 199, 0.4); text-transform: uppercase;
+    }
+    .profile-meta h1 { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--text-main); }
+    .profile-meta p { color: var(--text-muted); font-size: 0.95rem; font-weight: 600; margin-top: 4px; }
+    
+    .role-badge {
+      display: inline-block; background: #e0f2fe; color: #0369a1; font-size: 0.75rem;
+      font-weight: 800; padding: 4px 12px; border-radius: 999px; text-transform: uppercase; margin-top: 6px;
+    }
+
+    /* Section Info Layout */
+    .info-section-title {
+      font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 800;
+      color: #1e1b4b; margin: 24px 0 14px 0; display: flex; align-items: center; gap: 8px;
+    }
+    .info-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; background: #ffffff;
+      padding: 20px; border-radius: 18px; border: 1.5px solid #e2e8f0;
+    }
+    .info-item label { display: block; font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; }
+    .info-item span { font-size: 0.98rem; font-weight: 700; color: var(--text-main); }
+
+    /* Action Buttons Row */
+    .profile-actions {
+      display: flex; justify-content: flex-end; align-items: center; gap: 14px; margin-top: 36px;
+      border-top: 2px solid #f1f5f9; padding-top: 24px; flex-wrap: wrap;
+    }
+    
+    /* Admin Panel Button Style (Only appears for admin role) */
+    .btn-admin-panel {
+      display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #4f46e5, #4338ca);
+      color: white; border: none; padding: 12px 28px; border-radius: 999px; font-weight: 800;
+      font-size: 0.95rem; cursor: pointer; text-decoration: none; transition: var(--transition);
+      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35);
+    }
+    .btn-admin-panel:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(79, 70, 229, 0.5); }
+
+    .btn-logout {
+      display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white; border: none; padding: 12px 28px; border-radius: 999px; font-weight: 800;
+      font-size: 0.95rem; cursor: pointer; transition: var(--transition); box-shadow: 0 6px 18px rgba(239, 68, 68, 0.35);
+    }
+    .btn-logout:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(239, 68, 68, 0.5); }
+
+    .loading-state { text-align: center; padding: 50px; font-weight: 700; color: var(--text-muted); }
+
+    @media (max-width: 768px) {
+      .info-grid { grid-template-columns: 1fr; }
+      .profile-actions { flex-direction: column; align-items: stretch; }
+      .btn-logout, .btn-admin-panel { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Bubbles -->
+  <div class="aquarium-bg-canvas" id="aquariumCanvas"></div>
+
+  <main class="main-wrapper">
+    <!-- Navigation Bar -->
+    <nav class="profile-nav">
+      <a href="dashboard.html" class="brand-logo">
+        <i class="fa-solid fa-fish-fins"></i> EXOTIC GB HUB
+      </a>
+      <a href="dashboard.html" class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i> Back to Store
+      </a>
+    </nav>
+
+    <!-- Profile Details Card -->
+    <div class="profile-card" id="profileCardContainer">
+      <div class="loading-state">
+        <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: #0284c7; margin-bottom: 10px;"></i>
+        <p>Loading your profile from database...</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const API_BASE = "https://exotic-gb-hub-backend-1.onrender.com/api";
+
+    async function loadUserProfile() {
+      const container = document.getElementById('profileCardContainer');
+      const sessionData = localStorage.getItem('currentUser');
+
+      if (!sessionData) {
+        alert("Please log in to view your profile.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      const sessionUser = JSON.parse(sessionData);
+      const identifier = sessionUser.email || sessionUser.phone;
+
+      try {
+        const response = await fetch(`${API_BASE}/profile/${encodeURIComponent(identifier)}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch profile details.");
+        }
+
+        const user = await response.json();
+        const initial = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+        const addr = user.address || {};
+
+        // Conditionally generate the Admin Panel button ONLY if role is 'admin'
+        const adminPanelButtonHtml = (user.role === 'admin') ? `
+          <a href="admin.html" class="btn-admin-panel">
+            <i class="fa-solid fa-sliders"></i> Admin Panel
+          </a>
+        ` : '';
+
+        container.innerHTML = `
+          <div class="profile-header">
+            <div class="profile-avatar-large">${initial}</div>
+            <div class="profile-meta">
+              <h1>${user.name}</h1>
+              <p><i class="fa-solid fa-envelope" style="color: #ec4899; margin-right: 6px;"></i> ${user.email}</p>
+              <p><i class="fa-solid fa-phone" style="color: #10b981; margin-right: 6px;"></i> ${user.phone}</p>
+              <span class="role-badge">Role: ${user.role || 'user'}</span>
+            </div>
+          </div>
+
+          <h3 class="info-section-title"><i class="fa-solid fa-truck-fast" style="color: #0284c7;"></i> Delivery Address Details</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Door Number</label>
+              <span>${addr.door_no || '-'}</span>
+            </div>
+            <div class="info-item">
+              <label>Building Name</label>
+              <span>${addr.building || 'N/A'}</span>
+            </div>
+            <div class="info-item">
+              <label>Street / Cross</label>
+              <span>${addr.street || '-'}</span>
+            </div>
+            <div class="info-item">
+              <label>Road</label>
+              <span>${addr.road || '-'}</span>
+            </div>
+            <div class="info-item">
+              <label>Area / Taluk</label>
+              <span>${addr.area || '-'}</span>
+            </div>
+            <div class="info-item">
+              <label>City</label>
+              <span>${addr.city || '-'}</span>
+            </div>
+            <div class="info-item">
+              <label>State</label>
+              <span>${addr.state || '-'}</span>
+            </div>
+            <div class="info-item">
+              <label>Country</label>
+              <span>${addr.country || 'India'}</span>
+            </div>
+            <div class="info-item" style="grid-column: 1 / -1;">
+              <label>Landmark</label>
+              <span>${addr.landmark || 'N/A'}</span>
+            </div>
+          </div>
+
+          <div class="profile-actions">
+            ${adminPanelButtonHtml}
+            <button onclick="handleLogout()" class="btn-logout">
+              <i class="fa-solid fa-right-from-bracket"></i> Logout Account
+            </button>
+          </div>
+        `;
+
+      } catch (err) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 40px;">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 2.5rem; color: #ef4444; margin-bottom: 12px;"></i>
+            <h3>Could not load profile</h3>
+            <p style="color: var(--text-muted); margin: 8px 0 20px 0;">Make sure your FastAPI server is running and you are signed in.</p>
+            <button onclick="handleLogout()" class="btn-logout">Logout & Return</button>
+          </div>
+        `;
+      }
+    }
+
+    // Secure Logout Handler
+    function handleLogout() {
+      if (confirm("Are you sure you want to log out?")) {
+        localStorage.removeItem('currentUser');
+        window.location.href = "login.html";
+      }
+    }
+
+    // Initialize Bubbles Animation
+    function initBubbles() {
+      const container = document.getElementById('aquariumCanvas');
+      const types = ['type-coral', 'type-cyan', 'type-purple'];
+      for (let i = 0; i < 20; i++) {
+        const b = document.createElement('div');
+        b.className = `bubble ${types[Math.floor(Math.random() * types.length)]}`;
+        const s = Math.random() * 26 + 10;
+        b.style.width = `${s}px`; b.style.height = `${s}px`;
+        b.style.left = `${Math.random() * 100}%`;
+        b.style.animationDuration = `${Math.random() * 10 + 8}s`;
+        b.style.animationDelay = `${Math.random() * 8}s`;
+        container.appendChild(b);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initBubbles();
+      loadUserProfile();
+    });
+  </script>
+</body>
+</html>
