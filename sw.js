@@ -1,30 +1,26 @@
-const CACHE_NAME = 'exotic-gb-cache-v1';
+const CACHE_NAME = 'exotic-gb-v1';
 const ASSETS_TO_CACHE = [
-  '/',
-  '/dashboard.html',
-  '/fish.html',
-  '/tank.html',
-  '/access.html',
-  '/decor.html',
-  '/food.html'
+  './',
+  './dashboard.html',
+  './fish.html',
+  './tank.html',
+  './access.html',
+  './decor.html',
+  './food.html'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE))
   );
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
-      );
-    })
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+    )
   );
   self.clients.claim();
 });
