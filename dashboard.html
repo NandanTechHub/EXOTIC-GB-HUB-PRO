@@ -7,14 +7,11 @@
 
   <!-- Google Fonts & Font Awesome Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <style>
-    /* ==========================================================================
-       TROPICAL REEF LIGHT PALETTE
-       ========================================================================== */
     :root {
       --bg-primary: #f2f9fc;
       --grad-rainbow-text: linear-gradient(135deg, #ec4899 0%, #8b5cf6 35%, #06b6d4 70%, #10b981 100%);
@@ -40,7 +37,6 @@
       display: inline-block;
     }
 
-    /* Fixed Canvas Background from a.html */
     #aquariumCanvas {
       position: fixed;
       top: 0;
@@ -52,17 +48,24 @@
       display: block;
     }
 
+    /* Reliable Reveal */
     .reveal-on-scroll {
-      opacity: 0; transform: translateY(30px);
-      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 1;
+      transform: none;
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .reveal-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
+    .js-observer-ready .reveal-on-scroll:not(.is-visible) {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    .reveal-on-scroll.is-visible {
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+    }
 
     .main-wrapper { max-width: 1340px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
 
-    /* ==========================================================================
-       NAVBAR OVERLAY (FLOATING DIRECTLY OVER HERO BANNER - ZERO GAP)
-       ========================================================================== */
+    /* NAVBAR OVERLAY */
     .nav-container {
       position: fixed;
       top: 18px;
@@ -128,30 +131,61 @@
       100% { left: 0%; opacity: 1; }
     }
 
-    .nav-middle { flex: 1; max-width: 480px; margin: 0 15px; }
+    .nav-middle { flex: 1; max-width: 480px; margin: 0 15px; position: relative; }
 
-    /* PERMANENT ACTIVE BORDER & GLOW ON SEARCH BAR */
     .search-box {
       display: flex;
       align-items: center;
       background: #ffffff;
       border-radius: 999px;
-      padding: 9px 20px;
+      padding: 10px 20px;
       border: 2px solid #d946ef;
       box-shadow: 0 0 0 4px rgba(217, 70, 239, 0.18);
       transition: var(--transition);
     }
     .search-box i { color: #ec4899; margin-right: 12px; font-size: 1rem; }
-    .search-box input { border: none; background: transparent; outline: none; width: 100%; font-size: 0.94rem; font-weight: 600; color: var(--text-main); }
+    .search-box input { border: none; background: transparent; outline: none; width: 100%; font-size: 1rem; font-weight: 600; color: var(--text-main); }
+
+    .search-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 12px);
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      border: 1.5px solid #e2e8f0;
+      box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.2);
+      max-height: 380px;
+      overflow-y: auto;
+      display: none;
+      z-index: 1200;
+      padding: 10px;
+    }
+    .search-dropdown-menu.active { display: block; }
+    .search-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+      transition: var(--transition);
+    }
+    .search-dropdown-item:hover { background: #f1f5f9; }
+    .search-dropdown-item img { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; background: #f8fafc; }
+    .search-item-info { flex: 1; }
+    .search-item-title { font-size: 0.92rem; font-weight: 700; color: var(--text-main); }
+    .search-item-meta { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
+    .search-item-price { font-size: 0.95rem; font-weight: 800; color: #059669; }
 
     .nav-right { display: flex; align-items: center; gap: 14px; }
     .profile-action-btn { text-decoration: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .profile-icon-logged-out { width: 44px; height: 44px; border-radius: 50%; background: #fdf2f8; color: #ec4899; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 1.5px solid #fbcfe8; }
     .profile-avatar-logged-in { width: 44px; height: 44px; border-radius: 50%; background: var(--primary-blue); color: #ffffff; font-weight: 800; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; border: 2px solid #ffffff; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45); }
 
-    /* ==========================================================================
-       FULL SCREEN MASTER BANNER (100VH - FLUSH WITH PAGE TOP)
-       ========================================================================== */
+    /* MASTER BANNER */
     .banner-section {
       width: 100vw;
       position: relative;
@@ -163,64 +197,46 @@
       margin-bottom: 60px;
       z-index: 1;
     }
-    
     .carousel-container {
       position: relative;
       width: 100%;
       height: 100vh;
       min-height: 640px;
       overflow: hidden;
-      background: linear-gradient(135deg, #1e1b4b, #311042, #0f172a);
+      background: #0f172a;
     }
-
     .carousel-slide {
       position: absolute; inset: 0; opacity: 0; visibility: hidden;
-      transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-      transform: scale(1.05); background-size: cover; background-position: center; display: flex; align-items: center;
+      transition: opacity 0.8s ease;
+      background-size: cover; background-position: center; display: flex; align-items: center;
     }
-    .carousel-slide.active { opacity: 1; visibility: visible; transform: scale(1); }
+    .carousel-slide.active { opacity: 1; visibility: visible; }
     
     .carousel-overlay {
       position: absolute; inset: 0;
-      background: linear-gradient(90deg, rgba(15, 12, 41, 0.92) 0%, rgba(48, 28, 77, 0.72) 55%, rgba(0, 0, 0, 0.35) 100%);
+      background: linear-gradient(90deg, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.65) 50%, rgba(0, 0, 0, 0.25) 100%);
       display: flex; align-items: center; padding: 110px calc(max(30px, (100vw - 1340px) / 2 + 24px)) 0;
     }
-    
     .carousel-content { max-width: 720px; color: #ffffff; z-index: 2; }
-    .carousel-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(236, 72, 153, 0.3); border: 1px solid rgba(244, 114, 182, 0.7); padding: 8px 20px; border-radius: 999px; font-size: 0.88rem; font-weight: 700; color: #fbcfe8; margin-bottom: 20px; }
+    .carousel-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(236, 72, 153, 0.25); border: 1px solid rgba(244, 114, 182, 0.6); padding: 8px 20px; border-radius: 999px; font-size: 0.88rem; font-weight: 700; color: #fbcfe8; margin-bottom: 20px; }
     .carousel-title { font-family: 'Space Grotesk', sans-serif; font-size: 3.5rem; font-weight: 800; line-height: 1.12; margin-bottom: 18px; }
     .carousel-desc { font-size: 1.15rem; line-height: 1.7; color: #f1f5f9; margin-bottom: 32px; }
-    
+
     /* HERO BUTTONS */
     .hero-btns-row { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
-
-    @keyframes pulseGlow {
-      0% {
-        box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7), 0 0 16px rgba(139, 92, 246, 0.5);
-        transform: scale(1);
-      }
-      50% {
-        box-shadow: 0 0 0 14px rgba(236, 72, 153, 0), 0 0 30px rgba(6, 182, 212, 0.8);
-        transform: scale(1.03);
-      }
-      100% {
-        box-shadow: 0 0 0 0 rgba(236, 72, 153, 0), 0 0 16px rgba(139, 92, 246, 0.5);
-        transform: scale(1);
-      }
-    }
-
+    
     .btn-live-aquatic {
-      display: inline-flex; align-items: center; gap: 10px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
       background: linear-gradient(135deg, #ec4899, #8b5cf6, #06b6d4);
       color: #ffffff; padding: 16px 36px; border-radius: 999px;
       font-weight: 800; font-size: 1.05rem; border: none; cursor: pointer;
-      text-decoration: none; animation: pulseGlow 2.2s infinite ease-in-out;
-      transition: var(--transition); letter-spacing: 0.3px;
+      text-decoration: none; letter-spacing: 0.3px;
+      transition: var(--transition);
     }
-    .btn-live-aquatic:hover { filter: brightness(1.12); }
+    .btn-live-aquatic:hover { filter: brightness(1.1); transform: translateY(-2px); }
 
     .btn-contact-hero {
-      display: inline-flex; align-items: center; gap: 10px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
       background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
       border: 2px solid rgba(255, 255, 255, 0.85); color: #ffffff; padding: 15px 34px;
       border-radius: 999px; font-weight: 800; font-size: 1.05rem; text-decoration: none;
@@ -228,8 +244,37 @@
     }
     .btn-contact-hero:hover {
       background: #ffffff; color: var(--text-main); border-color: #ffffff;
-      transform: translateY(-2px); box-shadow: 0 10px 24px rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
     }
+
+    /* SIDE ARROWS */
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1.5px solid rgba(255, 255, 255, 0.4);
+      color: #ffffff;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 15;
+      transition: var(--transition);
+    }
+    .carousel-arrow:hover {
+      background: rgba(15, 23, 42, 0.85);
+      border-color: #ffffff;
+      transform: translateY(-50%) scale(1.08);
+    }
+    .carousel-arrow.prev { left: 16px; }
+    .carousel-arrow.next { right: 16px; }
 
     .carousel-indicators { position: absolute; bottom: 32px; left: calc(max(30px, (100vw - 1340px) / 2 + 24px)); display: flex; gap: 10px; z-index: 10; }
     .indicator-bar { width: 50px; height: 5px; background: rgba(255, 255, 255, 0.3); border-radius: 999px; overflow: hidden; cursor: pointer; }
@@ -237,20 +282,16 @@
     .indicator-bar.active .indicator-progress { animation: progress10s 10s linear infinite; }
     @keyframes progress10s { 0% { width: 0%; } 100% { width: 100%; } }
 
-    /* ==========================================================================
-       5 CATEGORIES
-       ========================================================================== */
-    .categories-section { margin-bottom: 60px; }
+    /* SECTIONS */
     .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 2.1rem; font-weight: 800; margin-bottom: 20px; }
+    .categories-section { margin-bottom: 60px; }
     .categories-grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; }
-    
     .category-card {
-      background: var(--glass-bg); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 22px; padding: 18px 16px;
+      background: var(--glass-bg); backdrop-filter: blur(14px); border-radius: 22px; padding: 18px 16px;
       text-align: center; text-decoration: none; box-shadow: var(--glass-shadow); transition: var(--transition);
       display: flex; flex-direction: column; align-items: center; border: 2.5px solid transparent; cursor: pointer;
     }
     .category-card:hover { transform: translateY(-8px); box-shadow: 0 18px 36px rgba(0, 0, 0, 0.1); }
-
     .category-card.cat-fishes { border-color: rgba(255, 51, 102, 0.3); }
     .category-card.cat-fishes:hover { border-color: #ff3366; }
     .category-card.cat-access { border-color: rgba(16, 185, 129, 0.3); }
@@ -261,23 +302,57 @@
     .category-card.cat-decor:hover { border-color: #8b5cf6; }
     .category-card.cat-tank { border-color: rgba(6, 182, 212, 0.3); }
     .category-card.cat-tank:hover { border-color: #06b6d4; }
-
     .category-img-wrapper { width: 100%; height: 140px; border-radius: 16px; overflow: hidden; margin-bottom: 14px; background: #f8fafc; position: relative; }
     .category-img { width: 100%; height: 100%; object-fit: cover; }
-    
-    .clean-placeholder {
-      width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, #f1f5f9, #e2e8f0); color: #64748b; font-weight: 700; font-size: 0.85rem; gap: 8px;
-    }
+    .clean-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #f1f5f9, #e2e8f0); color: #64748b; font-weight: 700; font-size: 0.85rem; gap: 8px; }
     .clean-placeholder i { font-size: 2rem; color: #94a3b8; }
-
     .category-name { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 1.15rem; margin-bottom: 4px; color: #0f172a; }
     .category-count { font-size: 0.82rem; color: var(--text-muted); font-weight: 600; }
+
+    /* FEATURED ARRIVALS */
+    .featured-section { margin-bottom: 60px; }
+    .featured-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 22px; }
+    .featured-card {
+      background: var(--glass-bg); backdrop-filter: blur(16px); border-radius: 20px; border: 1.5px solid var(--glass-border);
+      padding: 16px; box-shadow: var(--glass-shadow); display: flex; flex-direction: column; transition: var(--transition);
+    }
+    .featured-card:hover { transform: translateY(-6px); box-shadow: 0 16px 36px rgba(139, 92, 246, 0.14); border-color: #ec4899; }
+    .featured-img-box { width: 100%; aspect-ratio: 4/3; border-radius: 14px; overflow: hidden; position: relative; margin-bottom: 12px; background: #f8fafc; }
+    .featured-img-box img { width: 100%; height: 100%; object-fit: cover; }
+    .featured-tag { position: absolute; top: 10px; left: 10px; background: rgba(15, 23, 42, 0.85); color: white; padding: 4px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 800; }
+    .btn-quick-add {
+      background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 8px 16px; border-radius: 999px;
+      font-weight: 800; font-size: 0.82rem; cursor: pointer; transition: var(--transition);
+    }
+    .btn-quick-add:hover { transform: scale(1.05); }
+
+    /* CALCULATOR & COMPATIBILITY */
+    .tools-section { margin-bottom: 60px; }
+    .tool-card {
+      background: var(--glass-bg); backdrop-filter: blur(20px); border: 2px solid var(--glass-border);
+      border-radius: var(--card-radius); padding: 36px; box-shadow: var(--glass-shadow); margin-bottom: 30px;
+    }
+    .calc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 20px; }
+    .calc-input-box label { display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
+    .calc-input-box input { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1.5px solid #cbd5e1; outline: none; font-size: 0.95rem; font-weight: 600; background: white; }
+    
+    .calc-result-box {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      background: #f8fafc;
+      border-radius: 18px;
+      padding: 20px;
+      border: 1.5px solid #e2e8f0;
+      text-align: center;
+    }
+    .calc-metric-val { font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 800; color: #4f46e5; }
+    .calc-metric-lbl { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
 
     /* TRUST BADGES */
     .trust-section { margin-bottom: 60px; }
     .trust-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-    .trust-card { background: var(--glass-bg); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 22px; padding: 34px 26px; text-align: center; box-shadow: var(--glass-shadow); }
+    .trust-card { background: var(--glass-bg); backdrop-filter: blur(14px); border-radius: 22px; padding: 34px 26px; text-align: center; box-shadow: var(--glass-shadow); }
     .trust-card.coral-theme { border: 2px solid rgba(255, 65, 108, 0.2); }
     .trust-card.coral-theme .trust-icon-box { background: #ffe4e6; color: #e11d48; }
     .trust-card.emerald-theme { border: 2px solid rgba(16, 185, 129, 0.2); }
@@ -287,12 +362,10 @@
     .trust-icon-box { width: 62px; height: 62px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 1.65rem; margin: 0 auto 18px auto; }
     .trust-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 12px; }
 
-    /* ==========================================================================
-       ABOUT SECTION (SINGLE LINE COMPACT STATS BOX)
-       ========================================================================== */
+    /* ABOUT SECTION */
     .about-section { margin-bottom: 60px; }
     .about-card {
-      background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 2px solid rgba(255, 255, 255, 0.9);
+      background: var(--glass-bg); backdrop-filter: blur(20px); border: 2px solid rgba(255, 255, 255, 0.9);
       border-radius: var(--card-radius); padding: 50px; box-shadow: 0 16px 40px -10px rgba(139, 92, 246, 0.12);
       display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 40px; align-items: center;
     }
@@ -302,27 +375,34 @@
     .about-visual { border-radius: 22px; overflow: hidden; height: 320px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; }
 
     .stats-compact-bar {
-      display: inline-flex;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.95);
-      border: 1.5px solid #e2e8f0;
-      border-radius: 18px;
-      padding: 14px 26px;
-      gap: 24px;
-      margin-top: 24px;
-      box-shadow: 0 8px 24px -4px rgba(139, 92, 246, 0.08);
-      max-width: 100%;
+      display: inline-flex; align-items: center; background: rgba(255, 255, 255, 0.95); border: 1.5px solid #e2e8f0;
+      border-radius: 18px; padding: 14px 26px; gap: 24px; margin-top: 24px; box-shadow: 0 8px 24px -4px rgba(139, 92, 246, 0.08); max-width: 100%;
     }
     .stat-compact-item { display: flex; align-items: baseline; gap: 8px; }
     .stat-compact-num { font-family: 'Space Grotesk', sans-serif; font-size: 1.45rem; font-weight: 800; line-height: 1; }
     .stat-compact-label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
     .stat-compact-divider { width: 1.5px; height: 24px; background: #cbd5e1; }
 
+    /* DYNAMIC READY SHOWCASE */
+    .gallery-section { margin-bottom: 60px; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .gallery-card {
+      position: relative; border-radius: 20px; overflow: hidden; aspect-ratio: 16/10;
+      border: 1.5px solid var(--glass-border); box-shadow: var(--glass-shadow); cursor: pointer;
+      background: #f8fafc;
+    }
+    .gallery-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .gallery-card:hover img { transform: scale(1.08); }
+    .gallery-overlay {
+      position: absolute; inset: 0; background: linear-gradient(0deg, rgba(15, 23, 42, 0.88) 0%, transparent 65%);
+      display: flex; flex-direction: column; justify-content: flex-end; padding: 18px; color: white;
+    }
+
     /* CONTACT / NEWSLETTER */
     .contact-section { margin-bottom: 60px; }
     .contact-card {
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 241, 242, 0.8), rgba(245, 243, 255, 0.9));
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 2px solid rgba(255, 255, 255, 0.95); border-radius: var(--card-radius);
+      backdrop-filter: blur(20px); border: 2px solid rgba(255, 255, 255, 0.95); border-radius: var(--card-radius);
       padding: 52px; text-align: center;
     }
     .contact-heading { font-family: 'Space Grotesk', sans-serif; font-size: 2.3rem; font-weight: 800; text-transform: uppercase; margin-bottom: 14px; background: linear-gradient(135deg, #e11d48, #c026d3, #2563eb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -331,74 +411,115 @@
     .subscribe-form button { background: linear-gradient(135deg, #ff416c, #8a2387); color: #ffffff; border: none; padding: 13px 34px; border-radius: 999px; font-weight: 800; cursor: pointer; }
     .subscribe-message { display: none; max-width: 580px; margin: -16px auto 28px auto; padding: 14px 22px; border-radius: 14px; font-weight: 700; }
     .subscribe-message.success { display: flex; align-items: center; justify-content: center; gap: 10px; background: #ecfdf5; color: #047857; border: 1.5px solid #6ee7b7; }
-
     .social-icons-row { display: flex; justify-content: center; gap: 20px; }
     .social-btn { width: 52px; height: 52px; border-radius: 50%; background: #ffffff; border: 1.5px solid #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; text-decoration: none; transition: var(--transition); }
     .social-btn:hover { transform: translateY(-4px); }
 
-    /* ==========================================================================
-       MAP SECTION (FULLY RELIABLE EMBED FALLBACK)
-       ========================================================================== */
+    /* MAP SECTION */
     .map-section { margin-bottom: 60px; }
-    .map-card { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 2px solid rgba(255, 255, 255, 0.95); border-radius: var(--card-radius); padding: 38px; }
+    .map-card { background: var(--glass-bg); backdrop-filter: blur(20px); border: 2px solid rgba(255, 255, 255, 0.95); border-radius: var(--card-radius); padding: 38px; }
     .btn-google-map { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #059669, #0d9488); color: #ffffff; padding: 13px 28px; border-radius: 999px; font-weight: 800; text-decoration: none; }
     .map-frame-container { width: 100%; height: 380px; border-radius: 20px; overflow: hidden; border: 2px solid #e2e8f0; margin-top: 20px; background: #e2e8f0; }
     .map-frame-container iframe { width: 100%; height: 100%; border: 0; display: block; }
 
-    /* FLOATING CART BUTTON */
-    .floating-cart-btn {
-      position: fixed; bottom: 28px; right: 28px; width: 65px; height: 65px; border-radius: 50%;
-      background: linear-gradient(135deg, #ff007f, #7928ca); color: #ffffff; display: flex; align-items: center;
-      justify-content: center; font-size: 1.6rem; text-decoration: none; box-shadow: 0 12px 30px rgba(236, 72, 153, 0.45); z-index: 9999;
+    /* FLOATING PILL CART */
+    .floating-cart-pill {
+      position: fixed; bottom: 28px; right: 28px;
+      background: #0f172a; color: #ffffff;
+      padding: 12px 24px; border-radius: 999px; display: flex; align-items: center; gap: 12px;
+      font-size: 0.95rem; font-weight: 800; text-decoration: none;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.35); z-index: 9999;
+      transition: var(--transition);
     }
-    .cart-badge-count { position: absolute; top: -4px; right: -4px; background: #10b981; color: white; font-size: 0.8rem; font-weight: 800; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; }
+    .floating-cart-pill:hover { transform: translateY(-3px); }
+    .cart-pill-badge { background: #10b981; color: white; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
 
-    /* RESPONSIVE DESIGN */
+    /* RESPONSIVE DESIGN & MOBILE HERO REBALANCING */
     @media (max-width: 1100px) {
       .categories-grid-5 { grid-template-columns: repeat(3, 1fr); }
       .about-card { grid-template-columns: 1fr; }
     }
+
     @media (max-width: 768px) {
       .nav-container { top: 10px; padding: 0 12px; }
-      .navbar { flex-wrap: wrap; padding: 10px 16px; gap: 10px; }
+      .navbar { flex-wrap: wrap; padding: 10px 14px; gap: 8px; }
       .nav-left { padding-right: 0; gap: 8px; }
-      .nav-logo-icon { width: 40px; height: 40px; }
-      .brand-anim-wrapper { width: 155px; height: 36px; }
+      .nav-logo-icon { width: 38px; height: 38px; }
+      .brand-anim-wrapper { width: 150px; height: 36px; }
       .nav-logo-text { font-size: 1.15rem; }
       .swimming-fish-icon { font-size: 1.15rem; }
 
-      .nav-middle { order: 3; flex: 1 1 100%; max-width: 100%; margin: 4px 0 0 0; }
-      .search-box { width: 100%; padding: 8px 16px; }
+      .nav-middle { order: 3; flex: 1 1 100%; max-width: 100%; margin: 2px 0 0 0; }
+      .search-box { width: 100%; padding: 8px 14px; }
 
       .main-wrapper { padding: 0 14px; }
 
-      .banner-section { margin-bottom: 40px; }
-      .carousel-container { height: 100vh; min-height: 540px; }
-      .carousel-overlay { padding: 140px 18px 40px; }
-      .carousel-title { font-size: 2.1rem; line-height: 1.2; margin-bottom: 14px; }
-      .carousel-desc { font-size: 0.95rem; line-height: 1.55; margin-bottom: 24px; }
-      .hero-btns-row { flex-direction: column; align-items: stretch; gap: 12px; }
-      .btn-live-aquatic, .btn-contact-hero { justify-content: center; width: 100%; padding: 14px 24px; font-size: 0.95rem; }
-      .carousel-indicators { left: 20px; bottom: 20px; gap: 6px; }
-      .indicator-bar { width: 36px; height: 4px; }
+      /* Master Banner Mobile Optimization */
+      .banner-section { margin-bottom: 30px; }
+      .carousel-container { height: 62vh; min-height: 440px; }
+      
+      /* Padded sides ensure text never overlaps left/right toggle arrows */
+      .carousel-overlay {
+        padding: 92px 48px 24px 48px;
+        align-items: center;
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.65) 60%, rgba(0, 0, 0, 0.3) 100%);
+      }
+      .carousel-content { max-width: 100%; text-align: left; }
+      .carousel-badge { padding: 4px 12px; font-size: 0.72rem; margin-bottom: 8px; }
+      .carousel-title { font-size: 1.55rem; line-height: 1.2; margin-bottom: 8px; }
+      .carousel-desc { font-size: 0.82rem; line-height: 1.45; margin-bottom: 16px; }
 
-      .categories-section { margin-bottom: 40px; }
-      .section-title { font-size: 1.6rem; }
+      /* Single Line Buttons */
+      .hero-btns-row {
+        display: flex;
+        flex-direction: row !important;
+        flex-wrap: nowrap;
+        gap: 8px;
+        width: 100%;
+      }
+      .btn-live-aquatic, .btn-contact-hero {
+        flex: 1 1 50%;
+        padding: 11px 6px;
+        font-size: 0.78rem;
+        white-space: nowrap;
+        letter-spacing: 0px;
+      }
+
+      /* Compact Side Arrows */
+      .carousel-arrow {
+        width: 34px;
+        height: 34px;
+        font-size: 0.88rem;
+        background: rgba(15, 23, 42, 0.65);
+      }
+      .carousel-arrow.prev { left: 8px; }
+      .carousel-arrow.next { right: 8px; }
+
+      .carousel-indicators { left: 50%; transform: translateX(-50%); bottom: 12px; gap: 6px; }
+      .indicator-bar { width: 28px; height: 3px; }
+
+      .categories-section { margin-bottom: 35px; }
+      .section-title { font-size: 1.5rem; }
       .categories-grid-5 { grid-template-columns: repeat(2, 1fr); gap: 12px; }
       .category-card { padding: 14px 10px; border-radius: 18px; }
       .category-img-wrapper { height: 110px; border-radius: 12px; margin-bottom: 10px; }
-      .category-name { font-size: 1rem; }
-      .category-count { font-size: 0.76rem; }
 
-      .trust-section { margin-bottom: 40px; }
+      /* Calculator 2x2 Grid In Mobile */
+      .calc-result-box {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px;
+        padding: 16px 10px;
+      }
+      .calc-metric-val { font-size: 1.35rem; }
+      .calc-metric-lbl { font-size: 0.7rem; }
+
+      .trust-section { margin-bottom: 35px; }
       .trust-grid { grid-template-columns: 1fr; gap: 14px; }
-      .trust-card { padding: 24px 18px; border-radius: 18px; }
 
-      .about-section { margin-bottom: 40px; }
+      .about-section { margin-bottom: 35px; }
       .about-card { padding: 24px 16px; border-radius: 20px; gap: 24px; }
-      .about-title { font-size: 1.75rem; }
-      .about-text { font-size: 0.94rem; }
-      
+      .about-title { font-size: 1.65rem; }
+
       .stats-compact-bar {
         display: flex; flex-direction: row; justify-content: space-between;
         padding: 10px 14px; gap: 8px; width: 100%;
@@ -406,56 +527,43 @@
       .stat-compact-item { flex-direction: column; align-items: center; gap: 2px; text-align: center; }
       .stat-compact-num { font-size: 1.15rem; }
       .stat-compact-label { font-size: 0.65rem; }
-      .stat-compact-divider { height: 22px; }
-      .about-visual { height: 220px; border-radius: 16px; }
 
-      .contact-section { margin-bottom: 40px; }
+      .contact-section { margin-bottom: 35px; }
       .contact-card { padding: 28px 16px; border-radius: 20px; }
-      .contact-heading { font-size: 1.5rem; line-height: 1.25; }
       .subscribe-form { flex-direction: column; background: transparent; border: none; padding: 0; gap: 10px; }
-      .subscribe-form input { border-radius: 999px; border: 2px solid #fecdd3; background: #ffffff; padding: 12px 20px; width: 100%; }
+      .subscribe-form input { border-radius: 999px; border: 2px solid #fecdd3; background: #ffffff; padding: 12px 20px; }
       .subscribe-form button { width: 100%; padding: 13px 24px; }
 
-      .map-section { margin-bottom: 40px; }
-      .map-card { padding: 22px 16px; border-radius: 20px; }
-      .map-card > div:first-child { flex-direction: column; align-items: stretch; }
-      .btn-google-map { width: 100%; justify-content: center; }
-      .map-frame-container { height: 260px; border-radius: 16px; }
+      .map-section { margin-bottom: 35px; }
+      .map-card { padding: 22px 16px; }
+      .map-frame-container { height: 260px; }
 
-      .floating-cart-btn { bottom: 20px; right: 20px; width: 54px; height: 54px; font-size: 1.3rem; }
-      .cart-badge-count { width: 22px; height: 22px; font-size: 0.72rem; }
+      .floating-cart-pill { bottom: 18px; right: 18px; padding: 10px 18px; font-size: 0.85rem; }
     }
 
     @media (max-width: 380px) {
+      .carousel-overlay { padding: 92px 42px 20px 42px; }
       .brand-anim-wrapper { width: 130px; }
       .nav-logo-text { font-size: 1rem; }
       .categories-grid-5 { grid-template-columns: 1fr; }
+      .btn-live-aquatic, .btn-contact-hero { font-size: 0.7rem; padding: 10px 4px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- CANVAS BACKGROUND (AQUARIUM CREATURES & WATER FROM A.HTML) -->
   <canvas id="aquariumCanvas"></canvas>
 
-  <!-- FLOATING NAVBAR DIRECTLY OVER HERO BANNER -->
   <header class="nav-container">
     <nav class="navbar">
-      
-      <!-- Left: Logo & Animated Text Reveal -->
       <a href="dashboard.html" class="nav-left">
         <div class="nav-logo-icon">
-          <!-- Uploaded Logo Image -->
           <img src="ChatGPT_Image_Jun_23__2026__10_40_41_AM-removebg-preview.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;" 
                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-          
-          <!-- Fallback Icon -->
           <div style="display: none; width:100%; height:100%; background: linear-gradient(135deg, #ff007f, #0070f3); border-radius: 12px; align-items: center; justify-content: center; color: white; font-size: 1.35rem;">
             <i class="fa-solid fa-fish-fins"></i>
           </div>
         </div>
-
-        <!-- 10-Second Fish Swimming & Text Reveal Animation -->
         <div class="brand-anim-wrapper">
           <div class="animated-text-container">
             <div class="nav-logo-text">EXOTIC GB HUB</div>
@@ -464,32 +572,31 @@
         </div>
       </a>
 
-      <!-- Middle: Search Bar (Permanent Active Glow) -->
       <div class="nav-middle">
         <div class="search-box">
           <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" id="globalSearchInput" placeholder="Search exotic fish, crystal tanks, coral decor..." />
+          <input type="text" id="globalSearchInput" placeholder="Search exotic fish, rimless tanks, coral..." autocomplete="off" />
         </div>
+        <div class="search-dropdown-menu" id="searchDropdown"></div>
       </div>
 
-      <!-- Right: User Profile -->
       <div class="nav-right">
         <a href="profile.html">
-        <div id="profileContainer"></div></a>
+          <div id="profileContainer"></div>
+        </a>
       </div>
     </nav>
   </header>
 
-  <!-- FULL SCREEN HERO BANNER (NO TOP GAP) -->
-  <section class="banner-section reveal-on-scroll">
+  <!-- MASTER BANNER -->
+  <section class="banner-section" id="heroBannerSection">
     <div class="carousel-container" id="masterCarousel">
-      <!-- Fallback Default Slide with CSS Gradient Background -->
-      <div class="carousel-slide active" style="background: linear-gradient(135deg, #1e1b4b, #311042, #0f172a);">
+      <div class="carousel-slide active" style="background: #0f172a;">
         <div class="carousel-overlay">
           <div class="carousel-content">
-            <span class="carousel-badge"><i class="fa-solid fa-sparkles"></i> PREMIUM AQUATICS</span>
-            <h1 class="carousel-title">Exotic Live Fishes & Aquatic World</h1>
-            <p class="carousel-desc">Quarantined rare breeds, rimless crystal tanks, and specialized aquascaping essentials delivered safely.</p>
+            <span class="carousel-badge">PREMIUM AQUATIC WORLD</span>
+            <h1 class="carousel-title">Bred for Royalty. Vetted for Life.</h1>
+            <p class="carousel-desc">Hand-selected show strains, rare exotic livestock, and zero-compromise aquascaping hardware conditioned to absolute health.</p>
             <div class="hero-btns-row">
               <a href="fish.html" class="btn-live-aquatic"><span>⚡ VIEW LIVE AQUATIC</span></a>
               <a href="#contactSection" class="btn-contact-hero"><span>CONTACT US</span> <i class="fa-solid fa-arrow-right"></i></a>
@@ -498,6 +605,11 @@
         </div>
       </div>
     </div>
+
+    <!-- Toggle Arrows -->
+    <button class="carousel-arrow prev" onclick="changeSlide(-1)" aria-label="Previous Slide"><i class="fa-solid fa-chevron-left"></i></button>
+    <button class="carousel-arrow next" onclick="changeSlide(1)" aria-label="Next Slide"><i class="fa-solid fa-chevron-right"></i></button>
+
     <div class="carousel-indicators" id="carouselIndicators"></div>
   </section>
 
@@ -507,7 +619,7 @@
       <h2 class="section-title">Explore By <span class="color-text-gradient">Categories</span></h2>
       <div class="categories-grid-5" id="categoriesContainer">
         
-        <a href="fish.html" class="category-card cat-fishes" id="catCard_fish">
+        <a href="fish.html" class="category-card cat-fishes">
           <div class="category-img-wrapper" id="imgWrap_fish">
             <div class="clean-placeholder"><i class="fa-solid fa-fish-fins" style="color: #ff3366; font-size:2rem;"></i><span>Live Fishes</span></div>
           </div>
@@ -515,7 +627,7 @@
           <span class="category-count" id="count_cat_fish">120+ Exotic Breeds</span>
         </a>
 
-        <a href="access.html" class="category-card cat-access" id="catCard_access">
+        <a href="access.html" class="category-card cat-access">
           <div class="category-img-wrapper" id="imgWrap_access">
             <div class="clean-placeholder"><i class="fa-solid fa-screwdriver-wrench" style="color: #10b981; font-size:2rem;"></i><span>Accessories</span></div>
           </div>
@@ -523,7 +635,7 @@
           <span class="category-count" id="count_cat_access">Filters, CO2 & Lights</span>
         </a>
 
-        <a href="food.html" class="category-card cat-food" id="catCard_food">
+        <a href="food.html" class="category-card cat-food">
           <div class="category-img-wrapper" id="imgWrap_food">
             <div class="clean-placeholder"><i class="fa-solid fa-bowl-food" style="color: #f59e0b; font-size:2rem;"></i><span>Food</span></div>
           </div>
@@ -531,7 +643,7 @@
           <span class="category-count" id="count_cat_food">Nutritional Pellets</span>
         </a>
 
-        <a href="decor.html" class="category-card cat-decor" id="catCard_decor">
+        <a href="decor.html" class="category-card cat-decor">
           <div class="category-img-wrapper" id="imgWrap_decor">
             <div class="clean-placeholder"><i class="fa-solid fa-gem" style="color: #8b5cf6; font-size:2rem;"></i><span>Decors</span></div>
           </div>
@@ -539,18 +651,133 @@
           <span class="category-count" id="count_cat_decor">Wood, Rocks & Coral</span>
         </a>
 
-        <a href="tank.html" class="category-card cat-tank" id="catCard_tank">
+        <a href="tank.html" class="category-card cat-tank">
           <div class="category-img-wrapper" id="imgWrap_tank">
             <div class="clean-placeholder"><i class="fa-solid fa-water" style="color: #06b6d4; font-size:2rem;"></i><span>Tanks</span></div>
           </div>
           <h3 class="category-name" id="name_cat_tank">Tanks</h3>
           <span class="category-count" id="count_cat_tank">Ultra-Clear Rimless</span>
         </a>
-
       </div>
     </section>
 
-    <!-- TRUST ASSURANCES -->
+    <!-- FEATURED & RARE ARRIVALS -->
+    <section class="featured-section reveal-on-scroll">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+        <div>
+          <span style="color:#ec4899; font-weight:800; font-size:0.85rem; text-transform:uppercase;">Handpicked Selections</span>
+          <h2 class="section-title" style="margin-bottom:0;">Featured & Rare <span class="color-text-gradient">Arrivals</span></h2>
+        </div>
+        <a href="fish.html" style="font-weight:700; color:var(--primary-blue); text-decoration:none; font-size:0.95rem;">
+          View All Livestock <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+      <div class="featured-grid" id="featuredArrivalsGrid"></div>
+    </section>
+
+    <!-- INTERACTIVE AQUARIUM CALCULATOR -->
+    <section class="tools-section reveal-on-scroll">
+      <div class="tool-card">
+        <div style="margin-bottom: 20px;">
+          <span style="background:#eef2ff; color:#4f46e5; padding:4px 12px; border-radius:999px; font-weight:800; font-size:0.75rem; text-transform:uppercase;">
+            Aquarist Tool
+          </span>
+          <h2 style="font-family:'Space Grotesk'; font-size:1.8rem; font-weight:800; margin-top:8px;">
+            Tank Volume & Stocking <span class="color-text-gradient">Calculator</span>
+          </h2>
+          <p style="color:var(--text-muted); font-size:0.92rem;">Enter your custom glass dimensions to calculate water volume, recommended filtration turnover, and safe stocking guide.</p>
+        </div>
+
+        <div class="calc-grid">
+          <div class="calc-input-box">
+            <label>Length (cm)</label>
+            <input type="number" id="calcL" value="60" min="10" oninput="calculateTankMetrics()">
+          </div>
+          <div class="calc-input-box">
+            <label>Width / Depth (cm)</label>
+            <input type="number" id="calcW" value="30" min="10" oninput="calculateTankMetrics()">
+          </div>
+          <div class="calc-input-box">
+            <label>Height (cm)</label>
+            <input type="number" id="calcH" value="36" min="10" oninput="calculateTankMetrics()">
+          </div>
+          <div class="calc-input-box">
+            <label>Substrate Thickness (cm)</label>
+            <input type="number" id="calcSub" value="4" min="0" oninput="calculateTankMetrics()">
+          </div>
+        </div>
+
+        <!-- 2x2 Grid On Mobile Devices -->
+        <div class="calc-result-box">
+          <div>
+            <div class="calc-metric-val" id="resGrossVol">64.8 L</div>
+            <div class="calc-metric-lbl">Gross Water Volume</div>
+          </div>
+          <div>
+            <div class="calc-metric-val" id="resNetVol" style="color:#059669;">57.6 L</div>
+            <div class="calc-metric-lbl">Estimated Net Water</div>
+          </div>
+          <div>
+            <div class="calc-metric-val" id="resUSG">15.2 Gal</div>
+            <div class="calc-metric-lbl">US Gallons</div>
+          </div>
+          <div>
+            <div class="calc-metric-val" id="resFiltration" style="color:#db2777;">288 L/h</div>
+            <div class="calc-metric-lbl">Min Filter Flow (5x)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SPECIES WATER PROFILES GUIDE -->
+    <section class="tools-section reveal-on-scroll">
+      <h2 class="section-title">Species Care & <span class="color-text-gradient">Water Profiles</span></h2>
+      <div style="background: var(--glass-bg); backdrop-filter: blur(14px); border-radius: 22px; padding: 20px; border: 1.5px solid var(--glass-border); box-shadow: var(--glass-shadow); overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.92rem; min-width: 600px;">
+          <thead>
+            <tr style="border-bottom: 2px solid #e2e8f0; color: var(--text-muted);">
+              <th style="padding: 12px 14px;">Family / Breed</th>
+              <th style="padding: 12px 14px;">Temp Range</th>
+              <th style="padding: 12px 14px;">Optimal pH</th>
+              <th style="padding: 12px 14px;">Temperament</th>
+              <th style="padding: 12px 14px;">Min Tank Size</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 14px; font-weight: 700;">Tetras, Guppies & Rasboras</td>
+              <td style="padding: 14px;">23°C – 27°C</td>
+              <td style="padding: 14px;">6.2 – 7.2</td>
+              <td style="padding: 14px; color: #059669; font-weight: 700;">Peaceful Community</td>
+              <td style="padding: 14px;">40 Litres (10G)</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 14px; font-weight: 700;">Discus & Wild Angelfish</td>
+              <td style="padding: 14px;">28°C – 30°C</td>
+              <td style="padding: 14px;">5.8 – 6.8</td>
+              <td style="padding: 14px; color: #d97706; font-weight: 700;">Semi-Aggressive / Sensitive</td>
+              <td style="padding: 14px;">200 Litres (55G)</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 14px; font-weight: 700;">Neocaridina & Amano Shrimps</td>
+              <td style="padding: 14px;">20°C – 25°C</td>
+              <td style="padding: 14px;">6.5 – 7.5</td>
+              <td style="padding: 14px; color: #059669; font-weight: 700;">Docile Biofilm Grazer</td>
+              <td style="padding: 14px;">20 Litres (5G)</td>
+            </tr>
+            <tr>
+              <td style="padding: 14px; font-weight: 700;">South American Cichlids</td>
+              <td style="padding: 14px;">24°C – 28°C</td>
+              <td style="padding: 14px;">6.5 – 7.4</td>
+              <td style="padding: 14px; color: #e11d48; font-weight: 700;">Territorial / Active</td>
+              <td style="padding: 14px;">150 Litres (40G)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TRUST BADGES -->
     <section class="trust-section reveal-on-scroll">
       <div class="trust-grid">
         <div class="trust-card coral-theme">
@@ -571,7 +798,7 @@
       </div>
     </section>
 
-    <!-- ABOUT SECTION (SINGLE LINE COMPACT STATS BOX) -->
+    <!-- ABOUT SECTION -->
     <section class="about-section reveal-on-scroll">
       <div class="about-card" id="aboutCard">
         <div class="about-info">
@@ -580,7 +807,6 @@
           <p class="about-text" id="d_about_text1">EXOTIC GB HUB is dedicated to elevating the ornamental fishkeeping journey.</p>
           <p class="about-text" id="d_about_text2">Every single fish goes through an extensive conditioning protocol ensuring health and vitality.</p>
           
-          <!-- SINGLE LINE COMPACT BOX STATS -->
           <div class="stats-compact-bar">
             <div class="stat-compact-item">
               <span class="stat-compact-num" id="d_stat_num1" style="color:#e11d48;">150+</span>
@@ -608,6 +834,18 @@
       </div>
     </section>
 
+    <!-- BUILT WITH EXOTIC GB HUB -->
+    <section class="gallery-section reveal-on-scroll">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+        <div>
+          <span style="color:#0284c7; font-weight:800; font-size:0.85rem; text-transform:uppercase;">Aquascaping Gallery</span>
+          <h2 class="section-title" style="margin-bottom:0;">Built With <span class="color-text-gradient">EXOTIC GB HUB</span></h2>
+        </div>
+        <span style="color:var(--text-muted); font-size:0.9rem; font-weight:600;">Hardscape & Rimless Setups</span>
+      </div>
+      <div class="gallery-grid" id="communityGalleryGrid"></div>
+    </section>
+
     <!-- CONTACT / NEWSLETTER -->
     <section class="contact-section reveal-on-scroll" id="contactSection">
       <div class="contact-card">
@@ -633,7 +871,7 @@
       </div>
     </section>
 
-    <!-- MAP SECTION (FULLY WORKING WITH RELIABLE EMBED FALLBACK) -->
+    <!-- MAP SECTION -->
     <section class="map-section reveal-on-scroll">
       <div class="map-card">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
@@ -663,17 +901,22 @@
     </footer>
   </main>
 
-  <a href="cart.html" class="floating-cart-btn" title="View Cart">
+  <!-- FLOATING PILL CART -->
+  <a href="cart.html" class="floating-cart-pill" id="floatingCartPill" title="View Cart">
     <i class="fa-solid fa-cart-shopping"></i>
-    <span class="cart-badge-count" id="cartCountBadge">0</span>
+    <span id="cartPillText">Cart</span>
+    <span class="cart-pill-badge" id="cartCountBadge">0</span>
   </a>
 
-  <!-- AQUARIUM CANVAS ANIMATION SCRIPT (FROM A.HTML) -->
+  <!-- AQUARIUM CANVAS SCRIPT -->
   <script>
     const canvas = document.getElementById("aquariumCanvas");
     const ctx = canvas.getContext("2d");
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
+
+    let isAnimationActive = true;
+    let animationFrameId = null;
 
     window.addEventListener("resize", () => {
       width = canvas.width = window.innerWidth;
@@ -681,16 +924,26 @@
       initAllCanvas();
     });
 
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        cancelAnimationFrame(animationFrameId);
+        isAnimationActive = false;
+      } else if (!isAnimationActive) {
+        isAnimationActive = true;
+        animate();
+      }
+    });
+
     let time = 0;
     let bubbles = [], jellies = [], kelpStalks = [], sunGlints = [];
 
     function initBubbles() {
       bubbles = [];
-      const count = Math.floor(width / 24);
+      const count = Math.floor(width / 28);
       for (let i = 0; i < count; i++) {
         bubbles.push({
           x: Math.random() * width, y: Math.random() * height,
-          radius: Math.random() * 8 + 3, speed: Math.random() * 1.1 + 0.5,
+          radius: Math.random() * 7 + 3, speed: Math.random() * 1.1 + 0.5,
           wobbleSpeed: Math.random() * 0.035 + 0.02, wobbleAmp: Math.random() * 16 + 6,
           wobbleSeed: Math.random() * 100, opacity: Math.random() * 0.35 + 0.3
         });
@@ -699,11 +952,11 @@
 
     function initJellies() {
       jellies = [];
-      const count = Math.max(4, Math.floor(width / 260));
+      const count = Math.max(3, Math.floor(width / 300));
       for (let i = 0; i < count; i++) {
         jellies.push({
           x: Math.random() * (width - 120) + 60, y: Math.random() * height,
-          size: Math.random() * 26 + 22, speed: Math.random() * 0.42 + 0.28,
+          size: Math.random() * 24 + 20, speed: Math.random() * 0.38 + 0.24,
           pulseRate: Math.random() * 0.03 + 0.02, seed: Math.random() * Math.PI * 2, tentacles: 5
         });
       }
@@ -711,24 +964,24 @@
 
     function initKelpAndGlints() {
       kelpStalks = [];
-      const stalkCount = Math.floor(width / 55) + 4;
+      const stalkCount = Math.floor(width / 60) + 3;
       for (let i = 0; i < stalkCount; i++) {
         kelpStalks.push({
           x: i * (width / stalkCount) + (Math.random() * 20 - 10),
-          baseWidth: Math.random() * 8 + 6,
-          height: Math.random() * (height * 0.12) + height * 0.10,
-          segments: 8, speed: Math.random() * 0.025 + 0.015,
+          baseWidth: Math.random() * 8 + 5,
+          height: Math.random() * (height * 0.12) + height * 0.08,
+          segments: 7, speed: Math.random() * 0.025 + 0.015,
           phase: Math.random() * Math.PI * 2,
-          color: i % 2 === 0 ? "rgba(43, 147, 137, 0.35)" : "rgba(30, 126, 120, 0.22)"
+          color: i % 2 === 0 ? "rgba(43, 147, 137, 0.3)" : "rgba(30, 126, 120, 0.2)"
         });
       }
 
       sunGlints = [];
-      for (let i = 0; i < 45; i++) {
+      for (let i = 0; i < 35; i++) {
         sunGlints.push({
           x: Math.random() * width, y: Math.random() * height,
           radius: Math.random() * 2.2 + 1.2, speedY: Math.random() * 0.3 + 0.1,
-          speedX: Math.random() * 0.3 - 0.15, alpha: Math.random() * 0.45 + 0.2
+          speedX: Math.random() * 0.3 - 0.15, alpha: Math.random() * 0.4 + 0.2
         });
       }
     }
@@ -754,8 +1007,6 @@
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
-        ctx.shadowColor = "rgba(255, 255, 255, 0.8)";
-        ctx.shadowBlur = 6;
         ctx.fill();
         ctx.restore();
       });
@@ -812,10 +1063,6 @@
         ctx.stroke();
         ctx.fillStyle = `rgba(255, 255, 255, ${b.opacity * 0.45})`;
         ctx.fill();
-        ctx.beginPath();
-        ctx.arc(currentX - b.radius * 0.35, b.y - b.radius * 0.35, b.radius * 0.28, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-        ctx.fill();
         ctx.restore();
       });
     }
@@ -833,15 +1080,7 @@
           const currentWidth = k.baseWidth * (1 - s / (k.segments * 1.25));
           ctx.lineTo(k.x + sway - currentWidth / 2, currentY);
         }
-        const tipSway = Math.sin(time * k.speed + k.phase + k.segments * 0.35) * (k.segments * 2.2);
-        ctx.lineTo(k.x + tipSway, height - k.height);
-        for (let s = k.segments; s >= 1; s--) {
-          const sway = Math.sin(time * k.speed + k.phase + s * 0.35) * (s * 2.2);
-          const currentY = height - s * segLen;
-          const currentWidth = k.baseWidth * (1 - s / (k.segments * 1.25));
-          ctx.lineTo(k.x + sway + currentWidth / 2, currentY);
-        }
-        ctx.lineTo(k.x + k.baseWidth / 2, height);
+        ctx.lineTo(k.x, height - k.height);
         ctx.closePath();
         ctx.fill();
         ctx.restore();
@@ -849,19 +1088,23 @@
     }
 
     function animate() {
+      if (!isAnimationActive) return;
       time += 1;
       drawBackground();
       drawGlints();
       drawJellies();
       drawBubbles();
       drawReducedKelp();
-      requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
     }
 
     initAllCanvas();
     animate();
 
-    /* AUTH & DYNAMIC STORE DATA LOGIC */
+    /* LIVE STORE SYNC */
+    let _allStoreProducts = [];
+    let _bannerCount = 1;
+
     function renderProfileStatus() {
       const container = document.getElementById('profileContainer');
       const storedUser = localStorage.getItem('currentUser');
@@ -891,9 +1134,7 @@
       let data = null;
       try {
         const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store');
-        if (res.ok) {
-          data = await res.json();
-        }
+        if (res.ok) data = await res.json();
       } catch (err) {
         console.log('Backend offline, trying local storage fallback.');
       }
@@ -905,17 +1146,30 @@
 
       if (!data) return;
 
-      // Sync Banners with Full Screen Buttons
+      _allStoreProducts = [];
+      if (data.stocks) {
+        const catPages = { fish: 'fish.html', access: 'access.html', food: 'food.html', decor: 'decor.html', tank: 'tank.html' };
+        Object.keys(data.stocks).forEach(cat => {
+          (data.stocks[cat] || []).forEach(p => {
+            if (p.isActive !== false) {
+              _allStoreProducts.push({ ...p, category: cat, page: catPages[cat] || 'fish.html' });
+            }
+          });
+        });
+      }
+
+      // Sync Banners
       const activeBanners = (data.dashBanners || []).filter(b => b.isActive !== false);
       const bannerContainer = document.getElementById('masterCarousel');
       const indicators = document.getElementById('carouselIndicators');
 
       if (activeBanners.length > 0) {
+        _bannerCount = activeBanners.length;
         bannerContainer.innerHTML = activeBanners.map((b, i) => `
-          <div class="carousel-slide ${i === 0 ? 'active' : ''}" style="${b.img ? `background-image: url('${b.img}');` : ''}">
+          <div class="carousel-slide ${i === 0 ? 'active' : ''}" style="${b.img ? `background-image: url('${b.img}');` : 'background: #0f172a;'}">
             <div class="carousel-overlay">
               <div class="carousel-content">
-                <span class="carousel-badge"><i class="fa-solid fa-sparkles"></i> ${b.badge || 'PREMIUM SELECTION'}</span>
+                <span class="carousel-badge">${b.badge || 'PREMIUM SELECTION'}</span>
                 <h1 class="carousel-title">${b.title}</h1>
                 <p class="carousel-desc">${b.desc}</p>
                 <div class="hero-btns-row">
@@ -933,7 +1187,7 @@
           </div>
         `).join('');
 
-        startBannerLoop(activeBanners.length);
+        startBannerLoop(_bannerCount);
       }
 
       // Sync Categories
@@ -947,11 +1201,61 @@
 
           if (nameEl) nameEl.innerText = c.name;
           if (countEl) countEl.innerText = c.count;
-
           if (imgWrap && c.img && c.img.trim() !== "") {
             imgWrap.innerHTML = `<img src="${c.img}" class="category-img" alt="${c.name}" />`;
           }
         });
+      }
+
+      // Sync Featured Livestock
+      const featCon = document.getElementById('featuredArrivalsGrid');
+      if (featCon && data.stocks && data.stocks.fish) {
+        const featuredItems = data.stocks.fish.filter(f => f.isActive !== false).slice(0, 4);
+        if (featuredItems.length > 0) {
+          featCon.innerHTML = featuredItems.map(p => `
+            <div class="featured-card">
+              <div class="featured-img-box">
+                ${p.img ? `<img src="${p.img}" alt="${p.name}" />` : `<div class="clean-placeholder"><i class="fa-solid fa-fish"></i></div>`}
+                <span class="featured-tag">${p.tag || 'Special'}</span>
+              </div>
+              <h4 style="font-size:1.05rem; font-weight:800; margin-bottom:6px;">${p.name}</h4>
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:auto; padding-top:10px;">
+                <span style="font-size:1.2rem; font-weight:800; color:#059669;">₹${p.price.toLocaleString('en-IN')}</span>
+                <button class="btn-quick-add" onclick="quickAddToCart('${p.id}', '${p.name}', ${p.price}, '${p.img || ''}')">Add Cart</button>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          featCon.innerHTML = `<p style="color:var(--text-muted); grid-column:1/-1;">New livestock shipments arriving soon.</p>`;
+        }
+      }
+
+      // Built With EXOTIC Dynamic Showcase
+      const galleryCon = document.getElementById('communityGalleryGrid');
+      if (galleryCon && data.stocks) {
+        const showcaseItems = [
+          ...(data.stocks.decor || []).filter(d => d.img && d.isActive !== false),
+          ...(data.stocks.tank || []).filter(t => t.img && t.isActive !== false)
+        ].slice(0, 3);
+
+        if (showcaseItems.length > 0) {
+          galleryCon.innerHTML = showcaseItems.map(item => `
+            <div class="gallery-card" onclick="window.location.href='${item.category === 'tank' ? 'tank.html' : 'decor.html'}'">
+              <img src="${item.img}" alt="${item.name}" />
+              <div class="gallery-overlay">
+                <span style="font-size:0.75rem; font-weight:800; color:#38bdf8;">${(item.tag || 'CURATED').toUpperCase()}</span>
+                <h4 style="font-size:1.05rem; font-weight:800;">${item.name}</h4>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          galleryCon.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; background: var(--glass-bg); border-radius: 20px; border: 2px dashed #cbd5e1; color: var(--text-muted);">
+              <i class="fa-solid fa-gem" style="font-size: 2rem; color: #94a3b8; margin-bottom: 8px;"></i>
+              <p style="font-weight: 700;">Add tanks and decor products with images in Admin to automatically showcase them here.</p>
+            </div>
+          `;
+        }
       }
 
       // Sync About Content
@@ -986,7 +1290,7 @@
         document.getElementById('d_trust_d3').innerText = data.trust.d3;
       }
 
-      // Sync Social Links & Google Maps
+      // Sync Social Links & Maps
       if (data.social) {
         document.getElementById('link_instagram').href = data.social.instagram || "#";
         document.getElementById('link_whatsapp').href = data.social.whatsapp || "#";
@@ -997,10 +1301,89 @@
       if (data.map) {
         if (data.map.heading) document.getElementById('d_map_heading').innerText = data.map.heading;
         if (data.map.desc) document.getElementById('d_map_desc').innerText = data.map.desc;
-        
         const mapQuery = data.map.embedQuery ? encodeURIComponent(data.map.embedQuery) : "Bengaluru%2C%20Karnataka%2C%20India";
         document.getElementById('d_map_iframe').src = `https://maps.google.com/maps?q=${mapQuery}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
         document.getElementById('btn_open_google_map').href = data.map.btnUrl || `https://maps.google.com/?q=${mapQuery}`;
+      }
+    }
+
+    /* TANK CALCULATOR */
+    function calculateTankMetrics() {
+      const L = parseFloat(document.getElementById('calcL').value) || 0;
+      const W = parseFloat(document.getElementById('calcW').value) || 0;
+      const H = parseFloat(document.getElementById('calcH').value) || 0;
+      const Sub = parseFloat(document.getElementById('calcSub').value) || 0;
+
+      const grossLiters = (L * W * H) / 1000;
+      const netHeight = Math.max(0, H - Sub - 2);
+      const netLiters = (L * W * netHeight) / 1000;
+      const usGallons = netLiters * 0.264172;
+      const filterLPH = netLiters * 5;
+
+      document.getElementById('resGrossVol').innerText = `${grossLiters.toFixed(1)} L`;
+      document.getElementById('resNetVol').innerText = `${netLiters.toFixed(1)} L`;
+      document.getElementById('resUSG').innerText = `${usGallons.toFixed(1)} Gal`;
+      document.getElementById('resFiltration').innerText = `${Math.round(filterLPH)} L/h`;
+    }
+
+    /* SEARCH */
+    const searchInput = document.getElementById('globalSearchInput');
+    const searchDropdown = document.getElementById('searchDropdown');
+
+    searchInput.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      if (!q) {
+        searchDropdown.classList.remove('active');
+        searchDropdown.innerHTML = '';
+        return;
+      }
+
+      const matches = _allStoreProducts.filter(p => p.name.toLowerCase().includes(q)).slice(0, 6);
+      if (!matches.length) {
+        searchDropdown.innerHTML = `<div style="padding:14px; text-align:center; color:var(--text-muted); font-size:0.88rem;">No products match "<strong>${q}</strong>"</div>`;
+      } else {
+        searchDropdown.innerHTML = matches.map(m => `
+          <a href="${m.page}" class="search-dropdown-item">
+            <img src="${m.img || ''}" alt="${m.name}" onerror="this.src='https://via.placeholder.com/44'" />
+            <div class="search-item-info">
+              <div class="search-item-title">${m.name}</div>
+              <div class="search-item-meta">${m.category.toUpperCase()} • ${m.tag || 'In Stock'}</div>
+            </div>
+            <div class="search-item-price">₹${m.price}</div>
+          </a>
+        `).join('');
+      }
+      searchDropdown.classList.add('active');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+        searchDropdown.classList.remove('active');
+      }
+    });
+
+    /* CART ACTIONS */
+    function quickAddToCart(id, name, price, img) {
+      const cart = JSON.parse(localStorage.getItem('exotic_cart') || '[]');
+      const exist = cart.find(c => c.id === id);
+      if (exist) exist.quantity += 1;
+      else cart.push({ id, name, category: "Live Fishes", price, quantity: 1, isPair: false, img });
+      localStorage.setItem('exotic_cart', JSON.stringify(cart));
+      updateCartBadge();
+      alert(`Added ${name} to cart!`);
+    }
+
+    function updateCartBadge() {
+      const cart = JSON.parse(localStorage.getItem('exotic_cart') || '[]');
+      const totalQty = cart.reduce((a, b) => a + b.quantity, 0);
+      const totalPrice = cart.reduce((a, b) => a + (b.price * b.quantity), 0);
+
+      document.getElementById('cartCountBadge').innerText = totalQty;
+      const pillText = document.getElementById('cartPillText');
+      if (totalQty > 0) {
+        pillText.innerText = `₹${totalPrice.toLocaleString('en-IN')}`;
+      } else {
+        pillText.innerText = `Cart`;
       }
     }
 
@@ -1013,8 +1396,22 @@
       currentSlide = idx;
     }
 
+    function changeSlide(direction) {
+      const slides = document.querySelectorAll('.carousel-slide');
+      if (slides.length <= 1) return;
+      let nextIdx = currentSlide + direction;
+      if (nextIdx < 0) nextIdx = slides.length - 1;
+      if (nextIdx >= slides.length) nextIdx = 0;
+      goToSlide(nextIdx);
+      if (carouselTimer) {
+        clearInterval(carouselTimer);
+        startBannerLoop(slides.length);
+      }
+    }
+
     function startBannerLoop(total) {
       if (carouselTimer) clearInterval(carouselTimer);
+      if (total <= 1) return;
       carouselTimer = setInterval(() => {
         currentSlide = (currentSlide + 1) % total;
         goToSlide(currentSlide);
@@ -1029,15 +1426,15 @@
       setTimeout(() => msg.classList.remove('success'), 6000);
     }
 
-    function updateCartBadge() {
-      const cart = JSON.parse(localStorage.getItem('exotic_cart') || '[]');
-      document.getElementById('cartCountBadge').innerText = cart.reduce((a, b) => a + b.quantity, 0);
-    }
-
     function initScrollObserver() {
+      document.body.classList.add('js-observer-ready');
       const obs = new IntersectionObserver((entries) => {
-        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); });
-      }, { threshold: 0.1 });
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+          }
+        });
+      }, { threshold: 0.05 });
       document.querySelectorAll('.reveal-on-scroll').forEach(el => obs.observe(el));
     }
 
@@ -1046,6 +1443,7 @@
       loadDashboardData();
       updateCartBadge();
       initScrollObserver();
+      calculateTankMetrics();
     });
   </script>
 </body>

@@ -1,14 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- SECURITY GATEKEEPER: Redirects non-admins instantly -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EXOTIC GB HUB | Admin Control Center</title>
+
+  <style id="antiClickjack">
+    body { display: none !important; }
+  </style>
   <script>
     (function checkAdminAccess() {
       try {
         const sessionData = localStorage.getItem('currentUser');
         if (!sessionData) throw new Error("No session");
         const user = JSON.parse(sessionData);
-        if (user.role !== 'admin') throw new Error("Unauthorized");
+        if (!user || user.role !== 'admin') throw new Error("Unauthorized");
+        document.addEventListener('DOMContentLoaded', function() {
+          const guard = document.getElementById('antiClickjack');
+          if (guard) guard.remove();
+        });
       } catch (e) {
         alert("ACCESS DENIED: Administrator privileges required.");
         window.location.replace("dashboard.html");
@@ -16,11 +26,6 @@
     })();
   </script>
 
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EXOTIC GB HUB | Admin Control Center</title>
-
-  <!-- Google Fonts & Font Awesome Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
@@ -33,140 +38,102 @@
       --grad-rainbow-text: linear-gradient(135deg, #ec4899 0%, #8b5cf6 35%, #06b6d4 70%, #10b981 100%);
       --text-main: #0f172a;
       --text-muted: #64748b;
-      --glass-bg: rgba(255, 255, 255, 0.92);
+      --glass-bg: rgba(255, 255, 255, 0.94);
       --glass-border: rgba(255, 255, 255, 0.95);
       --glass-shadow: 0 12px 35px -8px rgba(139, 92, 246, 0.08);
-      --card-radius: 22px;
+      --card-radius: 20px;
       --transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-    html { scroll-behavior: smooth; }
-    body { background: var(--bg-primary); background-image: var(--bg-gradient); color: var(--text-main); min-height: 100vh; }
+    body { background: var(--bg-primary); background-image: var(--bg-gradient); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
 
-    /* Top Bar & Navbar */
-    .admin-top-bar { background: #0f172a; color: #ffffff; padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; font-size: 0.88rem; font-weight: 600; position: sticky; top: 0; z-index: 2000; }
-    .admin-pill { background: #4f46e5; padding: 4px 12px; border-radius: 999px; font-size: 0.75rem; text-transform: uppercase; }
-    .admin-link-btn { color: #c7d2fe; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; transition: var(--transition); cursor: pointer; background: none; border: none; font-size: 0.9rem; }
-    .admin-link-btn:hover { color: #ffffff; }
+    .admin-top-bar { background: #0f172a; color: #ffffff; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; font-weight: 600; position: sticky; top: 0; z-index: 2000; }
+    .admin-pill { background: #4f46e5; padding: 3px 10px; border-radius: 999px; font-size: 0.72rem; text-transform: uppercase; }
+    .admin-link-btn { color: #c7d2fe; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; background: none; border: none; font-size: 0.85rem; }
 
-    .nav-container { position: sticky; top: 50px; z-index: 1000; margin: 15px auto 25px auto; max-width: 1340px; padding: 0 24px; }
-    .navbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; background: var(--glass-bg); backdrop-filter: blur(24px); border: 1.5px solid var(--glass-border); border-radius: 22px; padding: 12px 28px; box-shadow: var(--glass-shadow); }
-    .nav-left { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-    .nav-logo-icon { width: 44px; height: 44px; background: linear-gradient(135deg, #ff007f, #7928ca, #0070f3); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.3rem; }
-    .nav-logo-text { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 1.3rem; background: var(--grad-rainbow-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .nav-container { position: sticky; top: 44px; z-index: 1000; margin: 10px auto 20px auto; max-width: 1340px; padding: 0 16px; }
+    .navbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--glass-bg); backdrop-filter: blur(24px); border: 1.5px solid var(--glass-border); border-radius: 18px; padding: 10px 18px; box-shadow: var(--glass-shadow); }
+    .nav-left { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon { width: 38px; height: 38px; background: linear-gradient(135deg, #ff007f, #7928ca, #0070f3); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.1rem; }
+    .nav-logo-text { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 1.1rem; background: var(--grad-rainbow-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-    .main-wrapper { max-width: 1340px; margin: 0 auto; padding: 0 24px 80px 24px; }
+    .main-wrapper { max-width: 1340px; margin: 0 auto; padding: 0 16px 60px 16px; }
+    .admin-section { background: var(--glass-bg); backdrop-filter: blur(18px); border-radius: var(--card-radius); border: 2px solid var(--glass-border); padding: 24px 18px; box-shadow: var(--glass-shadow); margin-bottom: 24px; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; border-bottom: 2px solid #f1f5f9; padding-bottom: 14px; }
+    .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
 
-    /* Section Layouts */
-    .admin-section { background: var(--glass-bg); backdrop-filter: blur(18px); border-radius: var(--card-radius); border: 2px solid var(--glass-border); padding: 36px; box-shadow: var(--glass-shadow); margin-bottom: 40px; }
-    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; border-bottom: 2px solid #f1f5f9; padding-bottom: 16px; }
-    .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
-    .btn-create { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; padding: 10px 22px; border-radius: 999px; font-weight: 700; font-size: 0.9rem; border: none; cursor: pointer; transition: var(--transition); }
+    .btn-create { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; padding: 9px 18px; border-radius: 999px; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer; transition: var(--transition); }
     .btn-create:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(16,185,129,0.3); }
 
-    /* Action Buttons Overlay */
-    .actions-bar { display: flex; gap: 6px; position: absolute; top: 12px; right: 12px; z-index: 20; background: rgba(15, 23, 42, 0.85); padding: 5px 8px; border-radius: 999px; }
+    .actions-bar { display: flex; gap: 6px; position: absolute; top: 10px; right: 10px; z-index: 20; background: rgba(15, 23, 42, 0.85); padding: 5px 8px; border-radius: 999px; }
     .act-btn { width: 32px; height: 32px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-size: 0.85rem; transition: var(--transition); }
-    .act-btn.edit { background: #3b82f6; } .act-btn.toggle { background: #f59e0b; } .act-btn.delete { background: #ef4444; }
-    .act-btn:hover { transform: scale(1.1); }
+    .act-btn.edit { background: #3b82f6; } 
+    .act-btn.toggle { background: #f59e0b; } 
+    .act-btn.delete { background: #ef4444; }
 
     .is-deactivated { opacity: 0.55; filter: grayscale(85%); }
-    .deactivated-tag { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-6deg); background: #ef4444; color: white; font-weight: 800; font-size: 0.8rem; padding: 6px 14px; border-radius: 8px; z-index: 25; pointer-events: none; }
-    .clean-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f1f5f9; color: #64748b; font-weight: 700; font-size: 0.85rem; gap: 8px; }
+    .deactivated-tag { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-6deg); background: #ef4444; color: white; font-weight: 800; font-size: 0.75rem; padding: 5px 12px; border-radius: 8px; z-index: 25; pointer-events: none; }
+    .clean-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f1f5f9; color: #64748b; font-weight: 700; font-size: 0.8rem; gap: 6px; }
 
-    /* 1. Dashboard Master Banner */
-    .banner-preview-box { height: 300px; border-radius: 18px; overflow: hidden; background: #1e1b4b; position: relative; display: flex; align-items: center; border: 2px solid #e2e8f0; }
-    .banner-preview-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(15,12,41,0.9) 0%, rgba(48,28,77,0.65) 55%, transparent 100%); display: flex; align-items: center; padding: 0 40px; }
+    .banner-preview-box { min-height: 220px; border-radius: 16px; overflow: hidden; background: #1e1b4b; position: relative; display: flex; align-items: center; border: 2px solid #e2e8f0; }
+    .banner-preview-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(15,12,41,0.92) 0%, rgba(48,28,77,0.7) 60%, transparent 100%); display: flex; align-items: center; padding: 20px; }
 
-    /* 2. Dashboard 5 Categories */
-    .categories-grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
-    .category-card { background: #ffffff; border: 2.5px solid #e2e8f0; border-radius: 18px; padding: 16px; text-align: center; cursor: pointer; transition: var(--transition); position: relative; }
-    .category-card:hover { border-color: #4f46e5; transform: translateY(-4px); }
-    .category-card.selected { border-color: #4f46e5; background: #eef2ff; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2); transform: translateY(-4px); }
-    .category-img-wrapper { width: 100%; height: 110px; border-radius: 12px; overflow: hidden; margin-bottom: 12px; position: relative; }
+    .categories-grid-5 { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; }
+    .category-card { background: #ffffff; border: 2px solid #e2e8f0; border-radius: 16px; padding: 12px; text-align: center; cursor: pointer; transition: var(--transition); position: relative; }
+    .category-card.selected { border-color: #4f46e5; background: #eef2ff; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); }
+    .category-img-wrapper { width: 100%; height: 100px; border-radius: 10px; overflow: hidden; margin-bottom: 8px; position: relative; }
 
-    /* 3. Category Manager */
-    .manager-section { border: 2px solid #4f46e5; background: #f8fafc; border-radius: var(--card-radius); padding: 36px; margin-bottom: 40px; box-shadow: 0 16px 40px -10px rgba(79, 70, 229, 0.15); display: none; animation: fadeIn 0.4s ease; }
-    @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+    .manager-section { border: 2px solid #4f46e5; background: #f8fafc; border-radius: var(--card-radius); padding: 24px 18px; margin-bottom: 24px; box-shadow: 0 12px 30px -10px rgba(79, 70, 229, 0.15); display: none; }
+    .cat-poster-box { min-height: 220px; border-radius: 16px; overflow: hidden; background: #0f172a; position: relative; display: flex; align-items: center; margin-bottom: 24px; border: 2px solid #cbd5e1; }
+    .cat-poster-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(15,23,42,0.9) 0%, rgba(15,23,42,0.4) 100%); padding: 20px; display: flex; flex-direction: column; justify-content: center; }
 
-    /* 3A. Category Hero Poster */
-    .cat-poster-box { height: 280px; border-radius: 18px; overflow: hidden; background: #0f172a; position: relative; display: flex; align-items: center; margin-bottom: 40px; border: 2px solid #cbd5e1; }
-    .cat-poster-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(15,23,42,0.85) 0%, transparent 100%); padding: 30px 40px; display: flex; flex-direction: column; justify-content: center; }
-    
-    /* 3B. Stocks Grid */
-    .products-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-    .stock-card { background: #ffffff; border-radius: 16px; border: 2px solid #e2e8f0; padding: 16px; position: relative; display: flex; flex-direction: column; transition: var(--transition); }
-    .stock-card:hover { border-color: #8b5cf6; box-shadow: 0 10px 20px rgba(139,92,246,0.1); }
-    .stock-img-box { width: 100%; aspect-ratio: 4/3; border-radius: 12px; overflow: hidden; margin-bottom: 12px; position: relative; }
+    .products-grid-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+    .stock-card { background: #ffffff; border-radius: 14px; border: 2px solid #e2e8f0; padding: 14px; position: relative; display: flex; flex-direction: column; }
+    .stock-img-box { width: 100%; aspect-ratio: 4/3; border-radius: 10px; overflow: hidden; margin-bottom: 10px; position: relative; }
 
-    /* 4. Welcome Section */
-    .about-preview { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center; background: #ffffff; padding: 24px; border-radius: 18px; border: 1px solid #e2e8f0; }
+    .about-preview { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: center; background: #ffffff; padding: 18px; border-radius: 16px; border: 1px solid #e2e8f0; }
 
-    /* Modals */
-    .modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(5px); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
+    /* Showcase grid in admin */
+    .showcase-grid-admin { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .showcase-card-admin { background: #fff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 12px; position: relative; display: flex; flex-direction: column; }
+    .showcase-card-img { width: 100%; aspect-ratio: 16/10; border-radius: 10px; object-fit: cover; margin-bottom: 8px; }
+
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(5px); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 14px; }
     .modal-backdrop.active { display: flex; }
-    .modal-card { background: #ffffff; border-radius: 20px; width: 100%; max-width: 540px; padding: 30px; position: relative; max-height: 90vh; overflow-y: auto; }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .modal-title { font-size: 1.3rem; font-weight: 800; }
+    .modal-card { background: #ffffff; border-radius: 18px; width: 100%; max-width: 500px; padding: 20px; position: relative; max-height: 90vh; overflow-y: auto; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .modal-title { font-size: 1.15rem; font-weight: 800; }
     .modal-close { background: none; border: none; font-size: 1.5rem; color: #94a3b8; cursor: pointer; }
-    .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-size: 0.85rem; font-weight: 700; color: #334155; margin-bottom: 6px; }
-    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px 14px; border-radius: 10px; border: 1.5px solid #cbd5e1; font-size: 0.95rem; outline: none; }
-    .form-group input[type="file"] { padding: 7px 10px; background: #f8fafc; cursor: pointer; }
-    .form-group input:focus, .form-group textarea:focus { border-color: #4f46e5; }
-    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
-    .btn-save { background: #4f46e5; color: white; border: none; padding: 10px 24px; border-radius: 999px; font-weight: 700; cursor: pointer; }
-    .btn-cancel { background: #f1f5f9; border: none; padding: 10px 20px; border-radius: 999px; font-weight: 700; cursor: pointer; }
-
-    .img-preview { max-width: 100%; height: auto; border-radius: 8px; margin-top: 10px; border: 1px solid #cbd5e1; display: none; }
-
-    /* RESPONSIVE STYLING */
-    @media (max-width: 1024px) {
-      .categories-grid-5 { grid-template-columns: repeat(3, 1fr); }
-      .products-grid-3 { grid-template-columns: repeat(2, 1fr); }
-      .about-preview { grid-template-columns: 1fr; }
-    }
     
-    @media (max-width: 768px) {
-      .admin-top-bar { padding: 8px 14px; flex-wrap: wrap; gap: 8px; font-size: 0.8rem; }
-      .nav-container { top: 0; margin: 10px auto 18px auto; padding: 0 14px; }
-      .navbar { padding: 10px 16px; border-radius: 16px; }
-      .nav-logo-text { font-size: 1.05rem; }
-      .main-wrapper { padding: 0 14px 60px 14px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1.5px solid #cbd5e1; font-size: 0.9rem; outline: none; }
+    .form-group input:focus, .form-group textarea:focus { border-color: #4f46e5; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+    .btn-save { background: #4f46e5; color: white; border: none; padding: 10px 20px; border-radius: 999px; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+    .btn-cancel { background: #f1f5f9; border: none; padding: 10px 18px; border-radius: 999px; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+    .img-preview { max-width: 100%; max-height: 160px; object-fit: contain; border-radius: 8px; margin-top: 8px; display: none; }
 
-      .admin-section, .manager-section { padding: 20px 14px; border-radius: 18px; margin-bottom: 24px; }
-      .section-header { gap: 12px; margin-bottom: 18px; }
-      .section-title { font-size: 1.25rem; }
-      .btn-create { padding: 8px 16px; font-size: 0.82rem; }
-
-      .banner-preview-box { height: 220px; border-radius: 14px; }
-      .banner-preview-overlay { padding: 0 16px; }
-      .banner-preview-overlay h2 { font-size: 1.3rem !important; }
-      .banner-preview-overlay p { font-size: 0.85rem !important; }
-
-      .cat-poster-box { height: 220px; border-radius: 14px; margin-bottom: 24px; }
-      .cat-poster-overlay { padding: 16px; }
-      .cat-poster-overlay h2 { font-size: 1.4rem !important; }
-      .cat-poster-overlay p { font-size: 0.86rem !important; }
-
-      .categories-grid-5 { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-      .products-grid-3 { grid-template-columns: 1fr; gap: 14px; }
-      
-      .modal-card { padding: 22px 16px; border-radius: 16px; }
-    }
-
-    @media (max-width: 480px) {
-      .categories-grid-5 { grid-template-columns: 1fr; }
+    @media (min-width: 768px) {
+      .admin-top-bar { padding: 10px 24px; font-size: 0.88rem; }
+      .nav-container { padding: 0 24px; margin: 15px auto 25px auto; }
+      .navbar { padding: 12px 28px; border-radius: 22px; }
+      .main-wrapper { padding: 0 24px 80px 24px; }
+      .admin-section { padding: 36px; border-radius: var(--card-radius); margin-bottom: 40px; }
+      .section-title { font-size: 1.6rem; }
+      .categories-grid-5 { grid-template-columns: repeat(5, 1fr); }
+      .products-grid-3 { grid-template-columns: repeat(3, 1fr); }
+      .about-preview { grid-template-columns: 1.2fr 0.8fr; padding: 24px; }
     }
   </style>
 </head>
 <body>
 
   <div class="admin-top-bar">
-    <div><span class="admin-pill">ADMIN CONSOLE</span> <span id="adminNameDisplay">Content & Inventory Editor</span></div>
-    <div style="display:flex; gap:16px;">
-      <a href="dashboard.html" class="admin-link-btn"><i class="fa-solid fa-eye"></i> View Dashboard</a>
+    <div><span class="admin-pill">ADMIN CONSOLE</span> <span id="adminNameDisplay">Editor</span></div>
+    <div style="display:flex; gap:12px;">
+      <a href="dashboard.html" class="admin-link-btn"><i class="fa-solid fa-eye"></i> View Site</a>
     </div>
   </div>
 
@@ -174,52 +141,50 @@
     <nav class="navbar">
       <a href="admin.html" class="nav-left">
         <div class="nav-logo-icon"><i class="fa-solid fa-sliders"></i></div>
-        <div class="nav-logo-text">EXOTIC GB HUB <span style="font-size:0.9rem; color:#4f46e5;">[ADMIN]</span></div>
+        <div class="nav-logo-text">EXOTIC GB HUB <span style="font-size:0.8rem; color:#4f46e5;">[ADMIN]</span></div>
       </a>
       <a href="profile.html">
-      <div style="width:40px; height:40px; border-radius:50%; background:#4f46e5; color:white; font-weight:800; display:flex; align-items:center; justify-content:center;">A</div></a>
+        <div style="width:36px; height:36px; border-radius:50%; background:#4f46e5; color:white; font-weight:800; display:flex; align-items:center; justify-content:center;">A</div>
+      </a>
     </nav>
   </header>
 
   <main class="main-wrapper">
-
-    <!-- 1. DASHBOARD MASTER BANNER -->
+    <!-- 1. DASHBOARD BANNER -->
     <section class="admin-section">
       <div class="section-header">
-        <div class="section-title"><i class="fa-solid fa-images" style="color:#ec4899;"></i> 1. Dashboard Master Banner</div>
+        <div class="section-title"><i class="fa-solid fa-images" style="color:#ec4899;"></i> 1. Master Banners</div>
         <button class="btn-create" onclick="openModal('create_dash_banner')"><i class="fa-solid fa-plus"></i> Add Banner</button>
       </div>
       <div id="dashBannersContainer"></div>
     </section>
 
-    <!-- 2. DASHBOARD 5 CATEGORIES -->
+    <!-- 2. CATEGORIES -->
     <section class="admin-section">
       <div class="section-header">
-        <div class="section-title"><i class="fa-solid fa-layer-group" style="color:#06b6d4;"></i> 2. Dashboard 5 Categories</div>
-        <span style="font-size:0.9rem; color:var(--text-muted);">Click a card below to manage its specific poster and stock.</span>
+        <div class="section-title"><i class="fa-solid fa-layer-group" style="color:#06b6d4;"></i> 2. Categories</div>
+        <span style="font-size:0.8rem; color:var(--text-muted); width: 100%;">Click card to view and manage products under that category.</span>
       </div>
       <div class="categories-grid-5" id="dashCategoriesContainer"></div>
     </section>
 
-    <!-- 3. DYNAMIC CATEGORY MANAGER -->
+    <!-- 3. CATEGORY MANAGER -->
     <section class="manager-section" id="categoryManagerPanel">
-      <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px;">
-        <span style="background:#4f46e5; color:white; padding:6px 14px; border-radius:999px; font-size:0.8rem; font-weight:800; text-transform:uppercase;">NOW MANAGING</span>
-        <h2 style="font-family:'Space Grotesk'; font-size:2rem; font-weight:800; color:#1e1b4b;" id="mgrCatTitle">Category Name</h2>
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:18px; flex-wrap: wrap;">
+        <span style="background:#4f46e5; color:white; padding:4px 10px; border-radius:999px; font-size:0.75rem; font-weight:800;">MANAGING</span>
+        <h2 style="font-family:'Space Grotesk'; font-size:1.5rem; font-weight:800; color:#1e1b4b;" id="mgrCatTitle">Category</h2>
       </div>
 
-      <!-- 3A. Category Master Poster -->
-      <div style="margin-bottom: 12px; font-weight:800; font-size:1.2rem; display:flex; justify-content:space-between; align-items:center;">
+      <div style="margin-bottom: 10px; font-weight:800; font-size:1rem; display:flex; justify-content:space-between; align-items:center;">
         <span><i class="fa-solid fa-panorama" style="color:#f59e0b;"></i> Category Master Poster</span>
-        <button class="btn-create" style="background:#f59e0b; color:white;" onclick="openModal('edit_cat_poster')">
+        <button class="btn-create" style="background:#f59e0b; color:white; padding: 6px 14px;" onclick="openModal('edit_cat_poster')">
           <i class="fa-solid fa-pen"></i> Edit Poster
         </button>
       </div>
       <div class="cat-poster-box" id="mgrCatPoster"></div>
 
-      <!-- 3B. Category Stocks -->
-      <div style="margin-top: 40px; margin-bottom: 16px; font-weight:800; font-size:1.2rem; display:flex; justify-content:space-between; align-items:center;">
-        <span><i class="fa-solid fa-boxes-stacked" style="color:#10b981;"></i> Inventory Stocks</span>
+      <div style="margin-top: 30px; margin-bottom: 12px; font-weight:800; font-size:1rem; display:flex; justify-content:space-between; align-items:center;">
+        <span><i class="fa-solid fa-boxes-stacked" style="color:#10b981;"></i> Category Products & Stocks</span>
         <button class="btn-create" onclick="openModal('create_stock')">
           <i class="fa-solid fa-plus"></i> Add Product
         </button>
@@ -227,20 +192,30 @@
       <div class="products-grid-3" id="mgrCatStocks"></div>
     </section>
 
-    <!-- 4. WELCOME / ABOUT SECTION -->
+    <!-- 4. BUILT WITH EXOTIC GB HUB (SHOWCASE MANAGER) -->
     <section class="admin-section">
       <div class="section-header">
-        <div class="section-title"><i class="fa-solid fa-address-card" style="color:#8b5cf6;"></i> 3. Welcome Text & Image</div>
+        <div class="section-title"><i class="fa-solid fa-camera-retro" style="color:#0284c7;"></i> 3. Built With EXOTIC GB HUB (Showcase Gallery)</div>
+        <button class="btn-create" style="background:linear-gradient(135deg, #0284c7, #0369a1);" onclick="openModal('create_showcase')">
+          <i class="fa-solid fa-plus"></i> Add Aquascape
+        </button>
+      </div>
+      <div class="showcase-grid-admin" id="showcaseContainer"></div>
+    </section>
+
+    <!-- 5. ABOUT SECTION -->
+    <section class="admin-section">
+      <div class="section-header">
+        <div class="section-title"><i class="fa-solid fa-address-card" style="color:#8b5cf6;"></i> 4. Welcome Content</div>
         <button class="btn-create" style="background:linear-gradient(135deg, #8b5cf6, #7c3aed);" onclick="openModal('edit_about')">
-          <i class="fa-solid fa-pen"></i> Edit Content
+          <i class="fa-solid fa-pen"></i> Edit
         </button>
       </div>
       <div class="about-preview" id="aboutPreviewContainer"></div>
     </section>
-
   </main>
 
-  <!-- UNIFIED FILE-UPLOAD MODAL -->
+  <!-- MODAL -->
   <div class="modal-backdrop" id="adminModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -262,10 +237,10 @@
   <script>
     const CANONICAL_CATS = [
       { key: "fish", name: "Live Fishes", file: "fish.html", count: "120+ Exotic Breeds", icon: "fa-fish-fins" },
-      { key: "access", name: "Accessories", file: "access.html", count: "Filters, CO2 & Lights", icon: "fa-screwdriver-wrench" },
+      { key: "access", name: "Accessories", file: "access.html", count: "Filters & Lights", icon: "fa-screwdriver-wrench" },
       { key: "food", name: "Food", file: "food.html", count: "Nutritional Pellets", icon: "fa-bowl-food" },
-      { key: "decor", name: "Decors", file: "decor.html", count: "Wood, Rocks & Coral", icon: "fa-gem" },
-      { key: "tank", name: "Tanks", file: "tank.html", count: "Ultra-Clear Rimless", icon: "fa-water" }
+      { key: "decor", name: "Decors", file: "decor.html", count: "Wood & Rocks", icon: "fa-gem" },
+      { key: "tank", name: "Tanks", file: "tank.html", count: "Rimless Aquariums", icon: "fa-water" }
     ];
 
     const DEFAULT_STORE = {
@@ -273,23 +248,27 @@
       dashBanners: [],
       dashCategories: {
         fish: { name: "Live Fishes", count: "120+ Exotic Breeds", img: "" },
-        access: { name: "Accessories", count: "Filters, CO2 & Lights", img: "" },
+        access: { name: "Accessories", count: "Filters & Lights", img: "" },
         food: { name: "Food", count: "Nutritional Pellets", img: "" },
-        decor: { name: "Decors", count: "Wood, Rocks & Coral", img: "" },
-        tank: { name: "Tanks", count: "Ultra-Clear Rimless", img: "" }
+        decor: { name: "Decors", count: "Wood & Rocks", img: "" },
+        tank: { name: "Tanks", count: "Rimless Aquariums", img: "" }
       },
       catPosters: {
-        fish: { tags: "Limited Edition, Premium Edition", title: "Exotic Live Fishes", desc: "Sustainably vetted and quarantined.", img: "" },
-        access: { tags: "Premium Edition", title: "High-Performance Equipment", desc: "Canister filters, RGB-W lighting systems.", img: "" },
-        food: { tags: "Limited Edition", title: "Nutritional Diets", desc: "Formulated with fresh krill and astaxanthin.", img: "" },
-        decor: { tags: "Golden Edition", title: "Sculpted Hardscape", desc: "Curated natural pieces.", img: "" },
-        tank: { tags: "Premium Edition", title: "Ultra-Clear Aquariums", desc: "99% light transmittance.", img: "" }
+        fish: { tags: "Limited Edition, Rare", title: "Exotic Live Fishes Showroom", desc: "Sustainably vetted, quarantined, and conditioned with live arrival assurance.", img: "" },
+        access: { tags: "Premium Edition", title: "High-Performance Equipment", desc: "Canister filters, RGB-W lighting systems, and CO2 hardware.", img: "" },
+        food: { tags: "Limited Edition", title: "Nutritional Diets & Feed", desc: "Fresh aquatic feed formulated for health and vibrancy.", img: "" },
+        decor: { tags: "Natural Edition", title: "Sculpted Hardscape & Natural Rocks", desc: "Curated rocks & driftwood for Iwagumi and biotope layouts.", img: "" },
+        tank: { tags: "Premium Edition", title: "Ultra-Clear Low-Iron Aquariums", desc: "High-clarity low-iron glass rimless tanks.", img: "" }
       },
       stocks: { fish: [], access: [], food: [], decor: [], tank: [] },
+      showcase: [
+        { id: "sc_1", title: "Mountain Seiryu Stone Iwagumi", tag: "60P Low-Iron Tank", page: "tank.html", img: "" },
+        { id: "sc_2", title: "Amazon Blackwater Biotope", tag: "Natural Driftwood", page: "decor.html", img: "" }
+      ],
       about: {
-        badge: "Passion For Aquatic Nature", title: "Welcome to EXOTIC GB HUB",
-        text1: "EXOTIC GB HUB is dedicated to elevating the ornamental fishkeeping journey.",
-        text2: "Every single fish goes through an extensive conditioning protocol ensuring health and vitality.", img: ""
+        badge: "Aquatic Hub", title: "Welcome to EXOTIC GB HUB",
+        text1: "High quality live fish and aquatic gear.",
+        text2: "Conditioned fish and premium aquatics.", img: ""
       }
     };
 
@@ -302,28 +281,28 @@
           const data = await res.json();
           if (Object.keys(data).length > 0) {
             _storeCache = data;
-            return data;
+            if(!_storeCache.showcase) _storeCache.showcase = DEFAULT_STORE.showcase;
+            return _storeCache;
           }
         }
-      } catch (e) { console.log('Backend offline, using local cache.'); }
+      } catch (e) {}
 
       const local = localStorage.getItem('exotic_gb_data_v4');
       _storeCache = local ? JSON.parse(local) : JSON.parse(JSON.stringify(DEFAULT_STORE));
+      if(!_storeCache.showcase) _storeCache.showcase = DEFAULT_STORE.showcase;
       return _storeCache;
     }
 
     async function saveStore(data) {
       _storeCache = data;
       localStorage.setItem('exotic_gb_data_v4', JSON.stringify(data));
-      
       try {
         await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         });
-      } catch(e) { console.log("Saved locally. Backend offline."); }
-      
+      } catch(e) {}
       renderAll(data);
     }
 
@@ -340,18 +319,14 @@
         img.src = event.target.result;
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 800;
+          const MAX_WIDTH = 750;
           let scaleSize = 1;
           if (img.width > MAX_WIDTH) scaleSize = MAX_WIDTH / img.width;
-          
           canvas.width = img.width * scaleSize;
           canvas.height = img.height * scaleSize;
-          
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          
-          const b64 = canvas.toDataURL('image/jpeg', 0.7);
-          callback(b64);
+          callback(canvas.toDataURL('image/jpeg', 0.65));
         };
       };
     }
@@ -359,9 +334,8 @@
     function handleFileUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
-
       const btn = document.getElementById('btnSaveSubmit');
-      btn.innerText = "Compressing Image...";
+      btn.innerText = "Compressing...";
       btn.disabled = true;
 
       compressImageToBase64(file, (base64Str) => {
@@ -369,20 +343,18 @@
         const preview = document.getElementById('i_img_preview');
         preview.src = base64Str;
         preview.style.display = 'block';
-        
         btn.innerText = "Save Changes";
         btn.disabled = false;
       });
     }
 
     function buildImageUploader(existingBase64) {
-      const displayVal = existingBase64 ? 'block' : 'none';
       return `
         <div class="form-group">
-          <label><i class="fa-solid fa-cloud-arrow-up"></i> Upload Image (Auto-Compresses)</label>
+          <label><i class="fa-solid fa-cloud-arrow-up"></i> Image Upload</label>
           <input type="file" id="file_uploader" accept="image/*" onchange="handleFileUpload(event)">
           <input type="hidden" id="i_img_b64" value="${existingBase64 || ''}">
-          <img id="i_img_preview" src="${existingBase64 || ''}" class="img-preview" style="display:${displayVal};">
+          <img id="i_img_preview" src="${existingBase64 || ''}" class="img-preview" style="display:${existingBase64 ? 'block' : 'none'};">
         </div>
       `;
     }
@@ -390,9 +362,8 @@
     async function initAdmin() {
       try {
         const u = JSON.parse(localStorage.getItem('currentUser'));
-        if(u && u.name) document.getElementById('adminNameDisplay').innerText = `Welcome, ${u.name}`;
+        if(u && u.name) document.getElementById('adminNameDisplay').innerText = u.name;
       } catch(e){}
-
       const data = await loadStore();
       renderAll(data);
     }
@@ -402,28 +373,28 @@
       renderDashBanners(data);
       renderDashCategories(data);
       renderCategoryManager(data);
+      renderShowcaseAdmin(data);
       renderAbout(data);
     }
 
     function renderDashBanners(data) {
       const con = document.getElementById('dashBannersContainer');
       if (!data.dashBanners || !data.dashBanners.length) { 
-        con.innerHTML = `<div style="text-align:center; padding:30px; background:#f1f5f9; border-radius:14px;">No banners. Click '+ Add Banner'</div>`; 
+        con.innerHTML = `<div style="text-align:center; padding:24px; background:#f1f5f9; border-radius:12px; font-size:0.9rem;">No banners configured.</div>`; 
         return; 
       }
-      
       con.innerHTML = data.dashBanners.map(b => `
-        <div style="margin-bottom:16px;">
+        <div style="margin-bottom:14px;">
           <div class="banner-preview-box" style="${b.img ? `background:url('${b.img}') center/cover;` : ''}">
             <div class="actions-bar">
               <button class="act-btn edit" onclick="openModal('edit_dash_banner', '${b.id}')"><i class="fa-solid fa-pen"></i></button>
               <button class="act-btn delete" onclick="deleteDashBanner('${b.id}')"><i class="fa-solid fa-trash"></i></button>
             </div>
             <div class="banner-preview-overlay">
-              <div style="color:white;">
-                <span style="background:rgba(236,72,153,0.3); padding:4px 10px; border-radius:999px; font-size:0.75rem; font-weight:800; color:#fbcfe8;">${b.badge}</span>
-                <h2 style="font-size:2rem; font-weight:800; margin:8px 0;">${b.title}</h2>
-                <p style="font-size:0.95rem; color:#e2e8f0; max-width:500px;">${b.desc}</p>
+              <div style="color:white; max-width:90%;">
+                <span style="background:rgba(236,72,153,0.3); padding:3px 8px; border-radius:999px; font-size:0.7rem; font-weight:800; color:#fbcfe8;">${b.badge}</span>
+                <h3 style="font-size:1.3rem; font-weight:800; margin:6px 0;">${b.title}</h3>
+                <p style="font-size:0.85rem; color:#e2e8f0;">${b.desc}</p>
               </div>
             </div>
           </div>
@@ -442,10 +413,10 @@
               <button class="act-btn edit" onclick="openModal('edit_dash_cat', '${c.key}')"><i class="fa-solid fa-pen"></i></button>
             </div>
             <div class="category-img-wrapper">
-              ${catData.img ? `<img src="${catData.img}" style="width:100%;height:100%;object-fit:cover;"/>` : `<div class="clean-placeholder"><i class="fa-solid ${c.icon}" style="font-size:1.8rem;"></i><span>Upload Image</span></div>`}
+              ${catData.img ? `<img src="${catData.img}" style="width:100%;height:100%;object-fit:cover;"/>` : `<div class="clean-placeholder"><i class="fa-solid ${c.icon}"></i></div>`}
             </div>
-            <h3 style="font-size:1.05rem; font-weight:800;">${catData.name}</h3>
-            <p style="font-size:0.8rem; color:var(--text-muted);">${catData.count}</p>
+            <h4 style="font-size:0.95rem; font-weight:800;">${catData.name}</h4>
+            <p style="font-size:0.75rem; color:var(--text-muted);">${catData.count}</p>
           </div>
         `;
       }).join('');
@@ -464,59 +435,80 @@
       const catInfo = CANONICAL_CATS.find(c => c.key === key);
       document.getElementById('mgrCatTitle').innerText = catInfo.name;
 
-      const poster = data.catPosters[key];
-      const tagsHtml = poster.tags.split(',').map(t => `<span style="background:rgba(15,23,42,0.8); color:white; padding:4px 10px; border-radius:999px; font-size:0.7rem; font-weight:800; margin-right:6px;">${t.trim()}</span>`).join('');
+      const poster = data.catPosters[key] || { tags: "Special", title: catInfo.name, desc: "", img: "" };
+      const tagsHtml = (poster.tags || '').split(',').map(t => `<span style="background:rgba(15,23,42,0.8); color:white; padding:3px 8px; border-radius:999px; font-size:0.65rem; font-weight:800; margin-right:4px;">${t.trim()}</span>`).join('');
       
       document.getElementById('mgrCatPoster').innerHTML = `
         <div style="position:absolute; inset:0; ${poster.img ? `background:url('${poster.img}') center/cover;` : 'background:#1e293b;'}"></div>
         <div class="cat-poster-overlay">
-          <div style="margin-bottom:12px;">${tagsHtml}</div>
-          <h2 style="color:white; font-size:2.2rem; font-weight:800; font-family:'Space Grotesk'; margin-bottom:8px;">${poster.title}</h2>
-          <p style="color:#cbd5e1; font-size:1rem; max-width:600px;">${poster.desc}</p>
+          <div style="margin-bottom:8px;">${tagsHtml}</div>
+          <h3 style="color:white; font-size:1.4rem; font-weight:800; margin-bottom:6px;">${poster.title}</h3>
+          <p style="color:#cbd5e1; font-size:0.85rem; max-width:500px;">${poster.desc}</p>
         </div>
       `;
 
       const stocks = data.stocks[key] || [];
       const sCon = document.getElementById('mgrCatStocks');
       if (!stocks.length) {
-        sCon.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:30px; background:white; border-radius:14px; border:2px dashed #cbd5e1;">No products found.</div>`;
+        sCon.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:24px; background:white; border-radius:12px; border:1px dashed #cbd5e1; font-size:0.85rem;">No products found in this category.</div>`;
       } else {
         sCon.innerHTML = stocks.map(s => `
           <div class="stock-card ${!s.isActive ? 'is-deactivated' : ''}">
-            ${!s.isActive ? '<div class="deactivated-tag">DEACTIVATED</div>' : ''}
-            <span style="position:absolute; top:22px; left:22px; background:rgba(15,23,42,0.8); color:white; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:800; z-index:10;">${s.tag}</span>
+            ${!s.isActive ? '<div class="deactivated-tag">HIDDEN</div>' : ''}
+            <span style="position:absolute; top:12px; left:12px; background:rgba(15,23,42,0.85); color:white; padding:2px 8px; border-radius:999px; font-size:0.65rem; font-weight:800; z-index:10;">${s.tag || 'Standard'}</span>
             <div class="actions-bar">
               <button class="act-btn edit" onclick="openModal('edit_stock', '${s.id}')"><i class="fa-solid fa-pen"></i></button>
               <button class="act-btn toggle" onclick="toggleStock('${s.id}')"><i class="fa-solid ${s.isActive ? 'fa-eye-slash' : 'fa-eye'}"></i></button>
               <button class="act-btn delete" onclick="deleteStock('${s.id}')"><i class="fa-solid fa-trash"></i></button>
             </div>
             <div class="stock-img-box">
-              ${s.img ? `<img src="${s.img}" />` : `<div class="clean-placeholder"><i class="fa-solid fa-camera" style="font-size:2rem;"></i></div>`}
+              ${s.img ? `<img src="${s.img}" style="width:100%;height:100%;object-fit:cover;"/>` : `<div class="clean-placeholder"><i class="fa-solid fa-camera"></i></div>`}
             </div>
-            <h4 style="font-size:1.1rem; font-weight:800; margin-bottom:4px;">${s.name}</h4>
-            <div style="font-size:0.8rem; margin-bottom:10px;">
-              ${s.isActive ? '<span style="color:#059669; font-weight:700;">● Active on site</span>' : '<span style="color:#ef4444; font-weight:700;">● Deactivated (Hidden)</span>'}
+            <h4 style="font-size:1rem; font-weight:800; margin-bottom:4px;">${s.name}</h4>
+            <div style="font-size:0.75rem; margin-bottom:8px;">
+              ${s.isActive ? '<span style="color:#059669; font-weight:700;">● Active</span>' : '<span style="color:#ef4444; font-weight:700;">● Inactive</span>'}
             </div>
             <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:auto;">
-              <span style="font-size:1.3rem; font-weight:800; color:#059669;">₹${s.price}</span>
-              ${s.pairPrice ? `<span style="font-size:1rem; font-weight:800; color:#db2777;">Pair: ₹${s.pairPrice}</span>` : ''}
+              <span style="font-size:1.15rem; font-weight:800; color:#059669;">₹${s.price}</span>
+              ${s.pairPrice ? `<span style="font-size:0.85rem; font-weight:800; color:#db2777;">Pair: ₹${s.pairPrice}</span>` : ''}
             </div>
           </div>
         `).join('');
       }
     }
 
+    function renderShowcaseAdmin(data) {
+      const con = document.getElementById('showcaseContainer');
+      const items = data.showcase || [];
+      if(!items.length) {
+        con.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:20px; background:#f1f5f9; border-radius:12px; font-size:0.85rem;">No community setups added. Click '+ Add Aquascape' above.</div>`;
+        return;
+      }
+      con.innerHTML = items.map(s => `
+        <div class="showcase-card-admin">
+          <div class="actions-bar">
+            <button class="act-btn edit" onclick="openModal('edit_showcase', '${s.id}')"><i class="fa-solid fa-pen"></i></button>
+            <button class="act-btn delete" onclick="deleteShowcase('${s.id}')"><i class="fa-solid fa-trash"></i></button>
+          </div>
+          ${s.img ? `<img src="${s.img}" class="showcase-card-img"/>` : `<div class="clean-placeholder" style="aspect-ratio:16/10; border-radius:10px; margin-bottom:8px;"><i class="fa-solid fa-image"></i></div>`}
+          <span style="font-size:0.72rem; font-weight:800; color:#0284c7; text-transform:uppercase;">${s.tag}</span>
+          <h4 style="font-size:0.95rem; font-weight:800;">${s.title}</h4>
+          <span style="font-size:0.75rem; color:var(--text-muted);">Links to: ${s.page}</span>
+        </div>
+      `).join('');
+    }
+
     function renderAbout(data) {
-      const a = data.about;
+      const a = data.about || DEFAULT_STORE.about;
       document.getElementById('aboutPreviewContainer').innerHTML = `
         <div>
-          <span style="background:#fdf2f8; color:#db2777; padding:4px 12px; border-radius:999px; font-weight:800; font-size:0.8rem;">${a.badge}</span>
-          <h2 style="font-size:2rem; font-weight:800; margin:12px 0;">${a.title}</h2>
-          <p style="color:var(--text-muted); margin-bottom:10px;">${a.text1}</p>
-          <p style="color:var(--text-muted);">${a.text2}</p>
+          <span style="background:#fdf2f8; color:#db2777; padding:3px 10px; border-radius:999px; font-weight:800; font-size:0.75rem;">${a.badge}</span>
+          <h3 style="font-size:1.4rem; font-weight:800; margin:10px 0;">${a.title}</h3>
+          <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:8px;">${a.text1}</p>
+          <p style="color:var(--text-muted); font-size:0.85rem;">${a.text2}</p>
         </div>
-        <div style="height:220px; border-radius:16px; overflow:hidden; background:#f1f5f9; display:flex; align-items:center; justify-content:center;">
-          ${a.img ? `<img src="${a.img}" style="width:100%;height:100%;object-fit:cover;"/>` : `<div class="clean-placeholder"><i class="fa-solid fa-image" style="font-size:3rem;"></i><span>Upload Image</span></div>`}
+        <div style="height:160px; border-radius:12px; overflow:hidden; background:#f1f5f9; display:flex; align-items:center; justify-content:center;">
+          ${a.img ? `<img src="${a.img}" style="width:100%;height:100%;object-fit:cover;"/>` : `<div class="clean-placeholder"><i class="fa-solid fa-image" style="font-size:2rem;"></i></div>`}
         </div>
       `;
     }
@@ -534,6 +526,10 @@
       if(!confirm("Delete product?")) return;
       const d = getStore(); d.stocks[d.selectedCat] = d.stocks[d.selectedCat].filter(x => x.id !== id); saveStore(d);
     }
+    function deleteShowcase(id) {
+      if(!confirm("Delete showcase item?")) return;
+      const d = getStore(); d.showcase = (d.showcase || []).filter(x => x.id !== id); saveStore(d);
+    }
 
     function closeModal() { document.getElementById('adminModal').classList.remove('active'); }
 
@@ -544,49 +540,70 @@
       const fields = document.getElementById('m_fields');
 
       if (type === 'create_dash_banner' || type === 'edit_dash_banner') {
-        document.getElementById('modalTitle').innerText = type === 'create_dash_banner' ? 'Add Dashboard Banner' : 'Edit Dashboard Banner';
+        document.getElementById('modalTitle').innerText = type === 'create_dash_banner' ? 'Add Banner' : 'Edit Banner';
         const b = id ? d.dashBanners.find(x => x.id === id) : {badge:'', title:'', desc:'', img:''};
         fields.innerHTML = `
-          <div class="form-group"><label>Tagline Badge</label><input type="text" id="i_badge" value="${b.badge}" required></div>
-          <div class="form-group"><label>Main Title</label><input type="text" id="i_title" value="${b.title}" required></div>
+          <div class="form-group"><label>Tagline</label><input type="text" id="i_badge" value="${b.badge}" required></div>
+          <div class="form-group"><label>Title</label><input type="text" id="i_title" value="${b.title}" required></div>
           <div class="form-group"><label>Description</label><textarea id="i_desc" rows="3" required>${b.desc}</textarea></div>
           ${buildImageUploader(b.img)}
         `;
       } 
       else if (type === 'edit_dash_cat') {
         const cat = d.dashCategories[id];
-        document.getElementById('modalTitle').innerText = `Edit Dashboard Card: ${cat.name}`;
+        document.getElementById('modalTitle').innerText = `Edit: ${cat.name}`;
         fields.innerHTML = `
-          <div class="form-group"><label>Card Name</label><input type="text" id="i_name" value="${cat.name}" required></div>
-          <div class="form-group"><label>Subtitle Count</label><input type="text" id="i_count" value="${cat.count}" required></div>
+          <div class="form-group"><label>Name</label><input type="text" id="i_name" value="${cat.name}" required></div>
+          <div class="form-group"><label>Subtext</label><input type="text" id="i_count" value="${cat.count}" required></div>
           ${buildImageUploader(cat.img)}
         `;
       }
       else if (type === 'edit_cat_poster') {
-        const p = d.catPosters[d.selectedCat];
-        document.getElementById('modalTitle').innerText = `Edit Master Poster for ${d.selectedCat.toUpperCase()}`;
+        const p = d.catPosters[d.selectedCat] || { tags: '', title: '', desc: '', img: '' };
+        document.getElementById('modalTitle').innerText = `Edit ${d.selectedCat.toUpperCase()} Poster`;
         fields.innerHTML = `
-          <div class="form-group"><label>Top Tags (Comma separated)</label><input type="text" id="i_tags" value="${p.tags}" required></div>
-          <div class="form-group"><label>Main Title</label><input type="text" id="i_title" value="${p.title}" required></div>
+          <div class="form-group"><label>Tags (Comma separated)</label><input type="text" id="i_tags" value="${p.tags}" required></div>
+          <div class="form-group"><label>Title</label><input type="text" id="i_title" value="${p.title}" required></div>
           <div class="form-group"><label>Description</label><textarea id="i_desc" rows="3" required>${p.desc}</textarea></div>
           ${buildImageUploader(p.img)}
         `;
       }
       else if (type === 'create_stock' || type === 'edit_stock') {
-        document.getElementById('modalTitle').innerText = type === 'create_stock' ? 'Add New Product' : 'Edit Product';
+        document.getElementById('modalTitle').innerText = type === 'create_stock' ? 'Add Product' : 'Edit Product';
         const s = id ? d.stocks[d.selectedCat].find(x => x.id === id) : {name:'', tag:'Limited Edition', price:'', pairPrice:'', img:''};
         const isFish = d.selectedCat === 'fish';
         fields.innerHTML = `
           <div class="form-group"><label>Product Name</label><input type="text" id="i_name" value="${s.name}" required></div>
-          <div class="form-group"><label>Edition Tag</label><input type="text" id="i_tag" value="${s.tag}" required></div>
+          <div class="form-group">
+            <label>Filter Tag (Used for filter pills on site)</label>
+            <input type="text" id="i_tag" value="${s.tag}" placeholder="e.g. Limited Edition, Rare, Guppy, Low Iron..." required>
+          </div>
           <div class="form-group"><label>Price (₹)</label><input type="number" id="i_price" value="${s.price}" required></div>
           ${isFish ? `<div class="form-group"><label>Pair Price (₹)</label><input type="number" id="i_pair" value="${s.pairPrice || ''}"></div>` : ''}
           ${buildImageUploader(s.img)}
         `;
       }
+      else if (type === 'create_showcase' || type === 'edit_showcase') {
+        document.getElementById('modalTitle').innerText = type === 'create_showcase' ? 'Add Showcase Aquascape' : 'Edit Showcase';
+        const s = id ? (d.showcase || []).find(x => x.id === id) : {title:'', tag:'60P Low-Iron Tank', page:'tank.html', img:''};
+        fields.innerHTML = `
+          <div class="form-group"><label>Layout Title</label><input type="text" id="i_sc_title" value="${s.title}" required></div>
+          <div class="form-group"><label>Subtag / Equipment Tag</label><input type="text" id="i_sc_tag" value="${s.tag}" required></div>
+          <div class="form-group">
+            <label>Links To Category Page</label>
+            <select id="i_sc_page">
+              <option value="tank.html" ${s.page === 'tank.html' ? 'selected' : ''}>Tanks (tank.html)</option>
+              <option value="decor.html" ${s.page === 'decor.html' ? 'selected' : ''}>Decors (decor.html)</option>
+              <option value="fish.html" ${s.page === 'fish.html' ? 'selected' : ''}>Live Fishes (fish.html)</option>
+              <option value="access.html" ${s.page === 'access.html' ? 'selected' : ''}>Accessories (access.html)</option>
+            </select>
+          </div>
+          ${buildImageUploader(s.img)}
+        `;
+      }
       else if (type === 'edit_about') {
-        document.getElementById('modalTitle').innerText = "Edit Welcome Content";
-        const a = d.about;
+        document.getElementById('modalTitle').innerText = "Edit Info";
+        const a = d.about || DEFAULT_STORE.about;
         fields.innerHTML = `
           <div class="form-group"><label>Badge</label><input type="text" id="i_badge" value="${a.badge}" required></div>
           <div class="form-group"><label>Title</label><input type="text" id="i_title" value="${a.title}" required></div>
@@ -604,7 +621,6 @@
       const type = document.getElementById('m_type').value;
       const id = document.getElementById('m_id').value;
       const d = getStore();
-
       const b64Img = document.getElementById('i_img_b64').value;
 
       if (type === 'create_dash_banner') {
@@ -617,15 +633,27 @@
       } else if (type === 'edit_cat_poster') {
         d.catPosters[d.selectedCat] = { tags: document.getElementById('i_tags').value, title: document.getElementById('i_title').value, desc: document.getElementById('i_desc').value, img: b64Img };
       } else if (type === 'create_stock') {
-        const s = { id:"s_"+Date.now(), name:document.getElementById('i_name').value, tag:document.getElementById('i_tag').value, price:parseFloat(document.getElementById('i_price').value), img:b64Img, isActive:true };
+        const s = { id:"s_"+Date.now(), name:document.getElementById('i_name').value, tag:document.getElementById('i_tag').value.trim(), price:parseFloat(document.getElementById('i_price').value), img:b64Img, isActive:true };
         if (document.getElementById('i_pair')) s.pairPrice = parseFloat(document.getElementById('i_pair').value);
         if(!d.stocks[d.selectedCat]) d.stocks[d.selectedCat] = [];
         d.stocks[d.selectedCat].push(s);
       } else if (type === 'edit_stock') {
         const s = d.stocks[d.selectedCat].find(x => x.id === id);
-        s.name = document.getElementById('i_name').value; s.tag = document.getElementById('i_tag').value; s.price = parseFloat(document.getElementById('i_price').value); s.img = b64Img;
+        s.name = document.getElementById('i_name').value; s.tag = document.getElementById('i_tag').value.trim(); s.price = parseFloat(document.getElementById('i_price').value); s.img = b64Img;
         if (document.getElementById('i_pair')) s.pairPrice = document.getElementById('i_pair').value ? parseFloat(document.getElementById('i_pair').value) : undefined;
+      } else if (type === 'create_showcase') {
+        if(!d.showcase) d.showcase = [];
+        d.showcase.push({ id:"sc_"+Date.now(), title:document.getElementById('i_sc_title').value, tag:document.getElementById('i_sc_tag').value, page:document.getElementById('i_sc_page').value, img:b64Img });
+      } else if (type === 'edit_showcase') {
+        const s = (d.showcase || []).find(x => x.id === id);
+        if(s) {
+          s.title = document.getElementById('i_sc_title').value;
+          s.tag = document.getElementById('i_sc_tag').value;
+          s.page = document.getElementById('i_sc_page').value;
+          s.img = b64Img;
+        }
       } else if (type === 'edit_about') {
+        if(!d.about) d.about = {};
         d.about.badge = document.getElementById('i_badge').value; d.about.title = document.getElementById('i_title').value; d.about.text1 = document.getElementById('i_text1').value; d.about.text2 = document.getElementById('i_text2').value; d.about.img = b64Img;
       }
 

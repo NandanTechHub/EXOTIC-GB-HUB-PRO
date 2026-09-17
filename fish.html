@@ -17,211 +17,137 @@
       --text-main: #0f172a;
       --text-muted: #64748b;
       --primary-blue: #0284c7;
-      --glass-bg: rgba(255, 255, 255, 0.85);
+      --glass-bg: rgba(255, 255, 255, 0.88);
       --glass-border: rgba(255, 255, 255, 0.95);
-      --glass-shadow: 0 12px 35px -8px rgba(139, 92, 246, 0.08), 0 4px 16px -2px rgba(255, 65, 108, 0.05);
-      --card-radius: 24px;
-      --transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      --glass-shadow: 0 12px 35px -8px rgba(139, 92, 246, 0.08);
+      --card-radius: 20px;
+      --transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
     body { background: var(--bg-primary); color: var(--text-main); min-height: 100vh; overflow-x: hidden; position: relative; }
+    #aquariumCanvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
 
-    #aquariumCanvas {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* TOP RIGHT FLOATING BACK BUTTON */
-    .floating-back-btn {
-      position: fixed;
-      top: 22px;
-      right: 24px;
-      z-index: 2000;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1.5px solid rgba(255, 255, 255, 0.95);
-      box-shadow: 0 10px 25px -4px rgba(236, 72, 153, 0.25), 0 4px 12px -2px rgba(139, 92, 246, 0.15);
-      padding: 10px 20px;
-      border-radius: 999px;
-      color: var(--text-main);
-      text-decoration: none;
-      font-weight: 800;
-      font-size: 0.88rem;
-      transition: var(--transition);
-    }
-    .floating-back-btn i { color: #ec4899; font-size: 0.95rem; }
-    .floating-back-btn:hover {
-      transform: translateY(-2px);
-      border-color: #ec4899;
-      color: #ec4899;
-      box-shadow: 0 14px 30px rgba(236, 72, 153, 0.35);
-    }
-
-    /* NAVBAR */
-    .nav-container {
-      position: sticky;
-      top: 20px;
-      z-index: 1000;
-      margin: 20px auto 30px auto;
-      max-width: 1340px;
-      padding: 0 24px;
-    }
+    .nav-container { position: sticky; top: 12px; z-index: 1000; margin: 12px auto 16px auto; max-width: 1340px; padding: 0 16px; }
     .navbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      background: var(--glass-bg);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1.5px solid var(--glass-border);
-      border-radius: 22px;
-      padding: 12px 28px;
-      box-shadow: var(--glass-shadow);
-      transition: var(--transition);
+      display: flex; align-items: center; justify-content: space-between; gap: 14px;
+      background: var(--glass-bg); backdrop-filter: blur(20px); border: 1.5px solid var(--glass-border);
+      border-radius: 20px; padding: 10px 20px; box-shadow: var(--glass-shadow);
     }
-    .navbar:hover { box-shadow: 0 16px 38px -4px rgba(244, 63, 94, 0.18); }
+    .nav-left { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .nav-logo-text { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 1.2rem; background: var(--grad-rainbow-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-    .nav-left { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-    .nav-logo-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .nav-logo-text { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 1.35rem; background: var(--grad-rainbow-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-    .nav-middle { flex: 1; max-width: 480px; margin: 0 15px; }
-
-    /* PERMANENTLY ACTIVE SEARCH BAR */
+    .nav-middle { flex: 1; max-width: 500px; margin: 0 10px; }
     .search-box {
-      display: flex;
-      align-items: center;
-      background: #ffffff;
-      border-radius: 999px;
-      padding: 9px 20px;
-      border: 2px solid #d946ef;
-      box-shadow: 0 0 0 4px rgba(217, 70, 239, 0.18);
-      transition: var(--transition);
+      display: flex; align-items: center; background: #ffffff; border-radius: 999px;
+      padding: 8px 16px; border: 2px solid #d946ef; box-shadow: 0 0 0 3px rgba(217, 70, 239, 0.15);
     }
-    .search-box i { color: #ec4899; margin-right: 12px; font-size: 1rem; }
-    .search-box input { border: none; background: transparent; outline: none; width: 100%; font-size: 0.94rem; font-weight: 600; color: var(--text-main); }
+    .search-box i { color: #ec4899; margin-right: 10px; font-size: 0.9rem; }
+    .search-box input { border: none; background: transparent; outline: none; width: 100%; font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
 
-    .nav-right { display: flex; align-items: center; }
-    .profile-avatar-logged-in { width: 44px; height: 44px; border-radius: 50%; background: var(--primary-blue); color: white; font-weight: 800; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45); }
-    .profile-icon-logged-out { width: 44px; height: 44px; border-radius: 50%; background: #fdf2f8; color: #ec4899; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; text-decoration: none; border: 1.5px solid #fbcfe8; }
+    .profile-avatar-logged-in { width: 38px; height: 38px; border-radius: 50%; background: var(--primary-blue); color: white; font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.4); }
+    .profile-icon-logged-out { width: 38px; height: 38px; border-radius: 50%; background: #fdf2f8; color: #ec4899; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; text-decoration: none; border: 1.5px solid #fbcfe8; }
 
-    .main-wrapper { max-width: 1340px; margin: 0 auto; padding: 0 24px 80px 24px; position: relative; z-index: 2; }
+    /* FILTERS BAR */
+    .filter-pills-bar {
+      display: flex; align-items: center; gap: 8px; overflow-x: auto; padding: 6px 16px 16px 16px;
+      max-width: 1340px; margin: 0 auto; scrollbar-width: none;
+    }
+    .filter-pills-bar::-webkit-scrollbar { display: none; }
+    .filter-pill {
+      background: rgba(255, 255, 255, 0.9); border: 1.5px solid #cbd5e1; padding: 6px 16px;
+      border-radius: 999px; font-size: 0.8rem; font-weight: 700; color: var(--text-main);
+      cursor: pointer; white-space: nowrap; transition: var(--transition);
+    }
+    .filter-pill:hover, .filter-pill.active {
+      background: #4f46e5; border-color: #4f46e5; color: white; transform: translateY(-1px);
+    }
 
-    /* BANNER */
+    .main-wrapper { max-width: 1340px; margin: 0 auto; padding: 0 16px 80px 16px; position: relative; z-index: 2; }
+
     .master-banner {
-      position: relative;
-      height: 380px;
-      border-radius: var(--card-radius);
-      overflow: hidden;
-      margin-bottom: 40px;
-      background: linear-gradient(135deg, #1e1b4b, #311042, #0f172a);
-      box-shadow: 0 16px 40px -10px rgba(236, 72, 153, 0.2);
-      border: 2px solid rgba(255, 255, 255, 0.9);
-      display: flex;
-      align-items: center;
+      position: relative; min-height: 240px; border-radius: var(--card-radius); overflow: hidden;
+      margin-bottom: 24px; background: #0f172a; display: flex; align-items: center; border: 2px solid #e2e8f0;
     }
-    .banner-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.4) 100%); display: flex; align-items: center; padding: 0 50px; }
-    .banner-tags { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
-    .tag-badge { padding: 6px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 800; text-transform: uppercase; }
-    .tag-limited { background: linear-gradient(135deg, #ef4444, #f97316); color: white; }
-    .tag-golden { background: linear-gradient(135deg, #eab308, #ca8a04); color: white; }
-    .tag-premium { background: linear-gradient(135deg, #8b5cf6, #d946ef); color: white; }
-    .tag-offer { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+    .banner-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.45) 100%); display: flex; align-items: center; padding: 24px 28px; }
+    .banner-tags { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+    .tag-badge { padding: 4px 10px; border-radius: 999px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; background: rgba(255,255,255,0.2); color: white; }
 
-    .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 800; margin-bottom: 24px; }
-    .products-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+    /* SECTION HEADER WITH ALIGNED DASHBOARD BUTTON */
+    .catalog-header-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 800; margin: 0; }
+    
+    .btn-dashboard-back {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #ffffff; border: 1.5px solid #cbd5e1; padding: 8px 18px; border-radius: 999px;
+      color: var(--text-main); text-decoration: none; font-weight: 800; font-size: 0.84rem;
+      transition: var(--transition); box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+    .btn-dashboard-back i { color: #ec4899; }
+    .btn-dashboard-back:hover { border-color: #ec4899; color: #ec4899; transform: translateY(-2px); }
+
+    /* DESKTOP GRID */
+    .products-grid-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
 
     .product-card {
-      background: var(--glass-bg); backdrop-filter: blur(16px);
-      border: 2px solid var(--glass-border); border-radius: var(--card-radius);
-      padding: 18px; box-shadow: var(--glass-shadow); transition: var(--transition);
-      display: flex; flex-direction: column;
+      background: var(--glass-bg); backdrop-filter: blur(14px); border: 2px solid var(--glass-border);
+      border-radius: var(--card-radius); padding: 16px; box-shadow: var(--glass-shadow);
+      display: flex; flex-direction: column; transition: var(--transition);
     }
-    .product-card:hover { transform: translateY(-8px); border-color: #ec4899; box-shadow: 0 20px 40px rgba(236, 72, 153, 0.18); }
+    .product-card:hover { transform: translateY(-4px); border-color: #ec4899; }
+    .product-img-wrapper { width: 100%; aspect-ratio: 4 / 3; border-radius: 14px; overflow: hidden; margin-bottom: 12px; position: relative; background: #f1f5f9; }
+    .product-img { width: 100%; height: 100%; object-fit: cover; }
+    .product-badge-float { position: absolute; top: 8px; left: 8px; padding: 3px 8px; border-radius: 999px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; background: rgba(15, 23, 42, 0.8); color: white; }
 
-    .product-img-wrapper {
-      width: 100%; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; margin-bottom: 16px; position: relative;
-    }
-    .product-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
-    .product-card:hover .product-img { transform: scale(1.08); }
-
-    .product-badge-float {
-      position: absolute; top: 12px; left: 12px; padding: 4px 10px; border-radius: 999px;
-      font-size: 0.72rem; font-weight: 800; text-transform: uppercase; background: rgba(15, 23, 42, 0.75); color: white; backdrop-filter: blur(8px);
-    }
-
-    .product-name { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 1.25rem; margin-bottom: 6px; }
-    .product-price-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
-    .product-price { font-size: 1.4rem; font-weight: 800; color: #059669; }
+    .product-name { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 1.1rem; margin-bottom: 4px; }
+    .product-price-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+    .product-price { font-size: 1.25rem; font-weight: 800; color: #059669; }
 
     .controls-row {
-      display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 16px;
-      background: #f8fafc; padding: 8px 12px; border-radius: 14px; border: 1px solid #e2e8f0;
+      display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px;
+      background: #f8fafc; padding: 6px 10px; border-radius: 12px; border: 1px solid #e2e8f0;
     }
-    .btn-pair {
-      background: #ffffff; border: 1.5px solid #e2e8f0; color: #64748b; padding: 6px 14px;
-      border-radius: 999px; font-size: 0.84rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: var(--transition);
-    }
-    .btn-pair.active { background: linear-gradient(135deg, #f43f5e, #e11d48); color: white; border-color: #f43f5e; box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3); }
+    .btn-pair { background: #ffffff; border: 1.5px solid #e2e8f0; color: #64748b; padding: 5px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    .btn-pair.active { background: #f43f5e; color: white; border-color: #f43f5e; }
+    .qty-selector { display: flex; align-items: center; gap: 6px; }
+    .qty-btn { width: 26px; height: 26px; border-radius: 50%; border: none; background: #ffffff; font-weight: 800; cursor: pointer; }
+    .qty-val { font-weight: 800; min-width: 18px; text-align: center; font-size: 0.85rem; }
 
-    .qty-selector { display: flex; align-items: center; gap: 8px; }
-    .qty-btn { width: 30px; height: 30px; border-radius: 50%; border: none; background: #ffffff; font-weight: 800; cursor: pointer; }
-    .qty-val { font-weight: 800; min-width: 22px; text-align: center; }
-
-    .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: auto; }
-    .btn-card { padding: 11px; border-radius: 999px; font-weight: 800; font-size: 0.9rem; cursor: pointer; border: none; text-align: center; transition: var(--transition); }
+    .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: auto; }
+    .btn-card { padding: 9px 6px; border-radius: 999px; font-weight: 800; font-size: 0.8rem; cursor: pointer; border: none; text-align: center; }
     .btn-add-cart { background: #f1f5f9; border: 1.5px solid #cbd5e1; color: var(--text-main); }
     .btn-buy-now { background: linear-gradient(135deg, #ec4899, #8b5cf6); color: white; }
 
-    .floating-cart-btn {
-      position: fixed; bottom: 28px; right: 28px; width: 65px; height: 65px; border-radius: 50%;
-      background: linear-gradient(135deg, #ff007f, #7928ca); color: #ffffff; display: flex; align-items: center;
-      justify-content: center; font-size: 1.6rem; text-decoration: none; box-shadow: 0 12px 30px rgba(236, 72, 153, 0.45); z-index: 9999; transition: var(--transition);
-    }
-    .floating-cart-btn:hover { transform: scale(1.1) rotate(-6deg); }
-    .cart-badge-count {
-      position: absolute; top: -4px; right: -4px; background: #10b981; color: white; font-size: 0.8rem; font-weight: 800; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white;
-    }
+    .floating-cart-btn { position: fixed; bottom: 20px; right: 20px; width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(135deg, #ff007f, #7928ca); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; text-decoration: none; box-shadow: 0 10px 25px rgba(236, 72, 153, 0.4); z-index: 9999; }
+    .cart-badge-count { position: absolute; top: -3px; right: -3px; background: #10b981; color: white; font-size: 0.75rem; font-weight: 800; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; }
 
-    @media (max-width: 1024px) { .products-grid-3 { grid-template-columns: repeat(2, 1fr); gap: 20px; } }
+    /* MOBILE 2x1 ALIGNMENT & COMPACT SIZING */
     @media (max-width: 768px) {
-      .floating-back-btn { top: 12px; right: 12px; padding: 7px 14px; font-size: 0.78rem; }
-      .nav-container { top: 10px; margin: 48px auto 20px auto; padding: 0 14px; }
-      .navbar { flex-wrap: wrap; padding: 12px 16px; gap: 12px; border-radius: 18px; }
-      .nav-logo-icon { width: 38px; height: 38px; }
-      .nav-logo-text { font-size: 1.15rem; }
-      .nav-middle { order: 3; flex: 1 1 100%; max-width: 100%; margin: 4px 0 0 0; }
-      .search-box { width: 100%; padding: 8px 16px; }
+      .nav-container { top: 8px; margin: 8px auto 12px auto; padding: 0 10px; }
+      .navbar { flex-wrap: wrap; padding: 10px 14px; gap: 8px; }
+      .nav-middle { order: 3; flex: 1 1 100%; margin: 4px 0 0 0; }
+      .filter-pills-bar { padding: 0 10px 14px 10px; }
 
-      .main-wrapper { padding: 0 14px 60px 14px; }
+      .section-title { font-size: 1.35rem; }
+      .btn-dashboard-back { padding: 6px 14px; font-size: 0.75rem; }
 
-      .master-banner { height: auto; min-height: 280px; border-radius: 18px; margin-bottom: 28px; }
-      .banner-overlay { padding: 24px 18px; }
-      .banner-tags { gap: 6px; margin-bottom: 10px; }
-      .tag-badge { padding: 5px 10px; font-size: 0.72rem; margin-right: 0; }
-      .banner-overlay h1 { font-size: 1.65rem !important; margin-bottom: 8px !important; line-height: 1.25; }
-      .banner-overlay p { font-size: 0.9rem !important; line-height: 1.5; }
+      .master-banner { min-height: 190px; }
+      .banner-overlay { padding: 18px 14px; }
+      .banner-overlay h1 { font-size: 1.35rem !important; }
+      .banner-overlay p { font-size: 0.82rem !important; }
 
-      .section-title { font-size: 1.6rem !important; margin-bottom: 18px !important; }
-
-      .products-grid-3 { grid-template-columns: 1fr; gap: 16px; }
-      .product-card { padding: 14px; border-radius: 18px; }
-      .product-name { font-size: 1.15rem; }
-      .product-price { font-size: 1.25rem; }
-      .controls-row { flex-wrap: wrap; gap: 8px; }
-
-      .floating-cart-btn { bottom: 20px; right: 20px; width: 54px; height: 54px; font-size: 1.3rem; }
-      .cart-badge-count { width: 22px; height: 22px; font-size: 0.72rem; }
+      /* 2 COLUMNS PER ROW IN MOBILE */
+      .products-grid-3 { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+      .product-card { padding: 10px; border-radius: 16px; }
+      .product-name { font-size: 0.92rem; line-height: 1.25; margin-bottom: 2px; }
+      .product-price { font-size: 1.05rem; }
+      .controls-row { padding: 4px 6px; flex-direction: column; gap: 6px; align-items: stretch; }
+      .btn-pair { justify-content: center; font-size: 0.68rem; padding: 3px 6px; }
+      .qty-selector { justify-content: center; }
+      .card-actions { grid-template-columns: 1fr; gap: 6px; }
+      .btn-card { padding: 7px 4px; font-size: 0.72rem; }
     }
   </style>
 </head>
@@ -229,18 +155,13 @@
 
   <canvas id="aquariumCanvas"></canvas>
 
-  <a href="dashboard.html" class="floating-back-btn" title="Back to Dashboard">
-    <i class="fa-solid fa-arrow-left"></i> <span>Dashboard</span>
-  </a>
-
-  <!-- NAVBAR -->
   <header class="nav-container">
     <nav class="navbar">
       <a href="dashboard.html" class="nav-left">
         <div class="nav-logo-icon">
           <img src="ChatGPT_Image_Jun_23__2026__10_40_41_AM-removebg-preview.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;" 
                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-          <div style="display: none; width:100%; height:100%; background: linear-gradient(135deg, #ff007f, #0070f3); border-radius: 12px; align-items: center; justify-content: center; color: white; font-size: 1.35rem;">
+          <div style="display: none; width:100%; height:100%; background: linear-gradient(135deg, #ff007f, #0070f3); border-radius: 10px; align-items: center; justify-content: center; color: white; font-size: 1.1rem;">
             <i class="fa-solid fa-fish-fins"></i>
           </div>
         </div>
@@ -249,34 +170,39 @@
       <div class="nav-middle">
         <div class="search-box">
           <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" placeholder="Search live exotic fishes..." onkeyup="searchFishes(this.value)" />
+          <input type="text" id="searchInput" placeholder="Search live exotic fishes..." oninput="handleSearch(this.value)" />
         </div>
       </div>
       <div class="nav-right" id="profileContainer"></div>
     </nav>
   </header>
 
+  <!-- FILTER PILLS -->
+  <div class="filter-pills-bar" id="filterPillsBar">
+    <button class="filter-pill active" onclick="setFilter('all')">All Fishes</button>
+  </div>
+
   <main class="main-wrapper">
-    <div class="master-banner">
+    <div class="master-banner" id="catPosterWrap">
       <div class="banner-overlay">
         <div>
-          <div class="banner-tags">
-            <span class="tag-badge tag-limited">Limited Edition</span>
-            <span class="tag-badge tag-golden">Golden Edition</span>
-            <span class="tag-badge tag-premium">Premium Edition</span>
-            <span class="tag-badge tag-offer">Today Offer</span>
-          </div>
-          <h1 style="color: white; font-family: 'Space Grotesk', sans-serif; font-size: 2.6rem; font-weight: 800; margin-bottom: 12px;">
+          <div class="banner-tags" id="catTagsWrap"></div>
+          <h1 style="color: white; font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 800; margin-bottom: 8px;" id="catTitleText">
             Exotic Live Fishes Showroom
           </h1>
-          <p style="color: #e2e8f0; font-size: 1.05rem; max-width: 580px;">
-            Sustainably vetted, quarantined, and conditioned for disease resistance with a 100% live arrival assurance.
+          <p style="color: #e2e8f0; font-size: 0.95rem; max-width: 580px;" id="catDescText">
+            Sustainably vetted, quarantined, and conditioned for disease resistance with 100% live arrival assurance.
           </p>
         </div>
       </div>
     </div>
 
-    <h2 class="section-title">Available <span style="background: var(--grad-rainbow-text); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Live Fishes</span></h2>
+    <!-- CATALOG HEADER WITH INLINE BACK BUTTON -->
+    <div class="catalog-header-row">
+      <h2 class="section-title">Available <span style="background: var(--grad-rainbow-text); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Live Fishes</span></h2>
+      <a href="dashboard.html" class="btn-dashboard-back"><i class="fa-solid fa-arrow-left"></i> <span>Dashboard</span></a>
+    </div>
+
     <div class="products-grid-3" id="fishesContainer"></div>
   </main>
 
@@ -285,7 +211,6 @@
     <span class="cart-badge-count" id="cartCountBadge">0</span>
   </a>
 
-  <!-- AQUARIUM CANVAS ANIMATION SCRIPT -->
   <script>
     const canvas = document.getElementById("aquariumCanvas");
     const ctx = canvas.getContext("2d");
@@ -295,207 +220,101 @@
     window.addEventListener("resize", () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-      initAllCanvas();
+      initBubbles();
     });
 
-    let time = 0;
-    let bubbles = [], jellies = [], kelpStalks = [], sunGlints = [];
-
+    let bubbles = [];
     function initBubbles() {
       bubbles = [];
-      const count = Math.floor(width / 24);
-      for (let i = 0; i < count; i++) {
-        bubbles.push({
-          x: Math.random() * width, y: Math.random() * height,
-          radius: Math.random() * 8 + 3, speed: Math.random() * 1.1 + 0.5,
-          wobbleSpeed: Math.random() * 0.035 + 0.02, wobbleAmp: Math.random() * 16 + 6,
-          wobbleSeed: Math.random() * 100, opacity: Math.random() * 0.35 + 0.3
-        });
+      for (let i = 0; i < Math.floor(width / 32); i++) {
+        bubbles.push({ x: Math.random() * width, y: Math.random() * height, r: Math.random() * 6 + 2, s: Math.random() * 0.8 + 0.4 });
       }
     }
-
-    function initJellies() {
-      jellies = [];
-      const count = Math.max(4, Math.floor(width / 260));
-      for (let i = 0; i < count; i++) {
-        jellies.push({
-          x: Math.random() * (width - 120) + 60, y: Math.random() * height,
-          size: Math.random() * 26 + 22, speed: Math.random() * 0.42 + 0.28,
-          pulseRate: Math.random() * 0.03 + 0.02, seed: Math.random() * Math.PI * 2, tentacles: 5
-        });
-      }
-    }
-
-    function initKelpAndGlints() {
-      kelpStalks = [];
-      const stalkCount = Math.floor(width / 55) + 4;
-      for (let i = 0; i < stalkCount; i++) {
-        kelpStalks.push({
-          x: i * (width / stalkCount) + (Math.random() * 20 - 10),
-          baseWidth: Math.random() * 8 + 6,
-          height: Math.random() * (height * 0.12) + height * 0.10,
-          segments: 8, speed: Math.random() * 0.025 + 0.015,
-          phase: Math.random() * Math.PI * 2,
-          color: i % 2 === 0 ? "rgba(43, 147, 137, 0.35)" : "rgba(30, 126, 120, 0.22)"
-        });
-      }
-
-      sunGlints = [];
-      for (let i = 0; i < 45; i++) {
-        sunGlints.push({
-          x: Math.random() * width, y: Math.random() * height,
-          radius: Math.random() * 2.2 + 1.2, speedY: Math.random() * 0.3 + 0.1,
-          speedX: Math.random() * 0.3 - 0.15, alpha: Math.random() * 0.45 + 0.2
-        });
-      }
-    }
-
-    function initAllCanvas() { initBubbles(); initJellies(); initKelpAndGlints(); }
-
-    function drawBackground() {
-      const grad = ctx.createLinearGradient(0, 0, 0, height);
-      grad.addColorStop(0, "#f4fafc");
-      grad.addColorStop(0.5, "#e1f3f7");
-      grad.addColorStop(0.85, "#cdecf1");
-      grad.addColorStop(1, "#c2e6de");
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, width, height);
-    }
-
-    function drawGlints() {
-      sunGlints.forEach(p => {
-        p.x += p.speedX; p.y -= p.speedY;
-        if (p.x < 0) p.x = width; if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height; if (p.y > height) p.y = 0;
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
-        ctx.shadowColor = "rgba(255, 255, 255, 0.8)";
-        ctx.shadowBlur = 6;
-        ctx.fill();
-        ctx.restore();
-      });
-    }
-
-    function drawJellies() {
-      jellies.forEach(j => {
-        const pulse = Math.sin(time * j.pulseRate + j.seed);
-        const contraction = 1 + pulse * 0.22;
-        j.y -= j.speed * (1 + pulse * 0.4);
-        if (j.y + j.size * 3 < 0) { j.y = height + j.size * 2; j.x = Math.random() * (width - 120) + 60; }
-        ctx.save();
-        ctx.translate(j.x, j.y);
-        ctx.beginPath();
-        ctx.arc(0, 0, j.size * contraction, Math.PI, 0, false);
-        ctx.bezierCurveTo(j.size * 0.5, j.size * 0.25, -j.size * 0.5, j.size * 0.25, -j.size * contraction, 0);
-        ctx.fillStyle = "rgba(14, 165, 233, 0.12)";
-        ctx.strokeStyle = "rgba(2, 132, 199, 0.4)";
-        ctx.lineWidth = 1.4;
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(0, -2, j.size * 0.58 * contraction, Math.PI, 0, false);
-        ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-        ctx.fill();
-
-        ctx.lineWidth = 1.1;
-        ctx.strokeStyle = "rgba(2, 132, 199, 0.25)";
-        for (let t = -j.tentacles / 2; t <= j.tentacles / 2; t++) {
-          const startX = (t / (j.tentacles / 2)) * (j.size * 0.65);
-          ctx.beginPath();
-          ctx.moveTo(startX, 0);
-          const tLen = j.size * 2.1;
-          const wave1 = Math.sin(time * 0.05 + t) * 9;
-          const wave2 = Math.cos(time * 0.04 + t) * 12;
-          ctx.bezierCurveTo(startX + wave1, tLen * 0.4, startX - wave2, tLen * 0.7, startX + wave1, tLen);
-          ctx.stroke();
-        }
-        ctx.restore();
-      });
-    }
-
     function drawBubbles() {
+      ctx.clearRect(0, 0, width, height);
       bubbles.forEach(b => {
-        b.y -= b.speed;
-        const currentX = b.x + Math.sin(time * b.wobbleSpeed + b.wobbleSeed) * b.wobbleAmp;
-        if (b.y + b.radius < 0) { b.y = height + b.radius + 10; b.x = Math.random() * width; }
-        ctx.save();
+        b.y -= b.s;
+        if (b.y < -10) { b.y = height + 10; b.x = Math.random() * width; }
         ctx.beginPath();
-        ctx.arc(currentX, b.y, b.radius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(14, 165, 233, ${b.opacity * 0.6})`;
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
-        ctx.fillStyle = `rgba(255, 255, 255, ${b.opacity * 0.45})`;
+        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(14, 165, 233, 0.12)";
         ctx.fill();
-        ctx.beginPath();
-        ctx.arc(currentX - b.radius * 0.35, b.y - b.radius * 0.35, b.radius * 0.28, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-        ctx.fill();
-        ctx.restore();
       });
+      requestAnimationFrame(drawBubbles);
+    }
+    initBubbles(); drawBubbles();
+
+    let _currentFilter = 'all';
+    let _currentSearch = '';
+    const cardStates = {};
+
+    function getStore() {
+      return JSON.parse(localStorage.getItem('exotic_gb_data_v4') || localStorage.getItem('exotic_gb_data_v3') || '{}');
     }
 
-    function drawReducedKelp() {
-      kelpStalks.forEach(k => {
-        ctx.save();
-        ctx.fillStyle = k.color;
-        ctx.beginPath();
-        const segLen = k.height / k.segments;
-        ctx.moveTo(k.x - k.baseWidth / 2, height);
-        for (let s = 1; s <= k.segments; s++) {
-          const sway = Math.sin(time * k.speed + k.phase + s * 0.35) * (s * 2.2);
-          const currentY = height - s * segLen;
-          const currentWidth = k.baseWidth * (1 - s / (k.segments * 1.25));
-          ctx.lineTo(k.x + sway - currentWidth / 2, currentY);
-        }
-        const tipSway = Math.sin(time * k.speed + k.phase + k.segments * 0.35) * (k.segments * 2.2);
-        ctx.lineTo(k.x + tipSway, height - k.height);
-        for (let s = k.segments; s >= 1; s--) {
-          const sway = Math.sin(time * k.speed + k.phase + s * 0.35) * (s * 2.2);
-          const currentY = height - s * segLen;
-          const currentWidth = k.baseWidth * (1 - s / (k.segments * 1.25));
-          ctx.lineTo(k.x + sway - currentWidth / 2, currentY);
-        }
-        ctx.lineTo(k.x + k.baseWidth / 2, height);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
-      });
-    }
-
-    function animate() {
-      time += 1;
-      drawBackground();
-      drawGlints();
-      drawJellies();
-      drawBubbles();
-      drawReducedKelp();
-      requestAnimationFrame(animate);
-    }
-
-    initAllCanvas();
-    animate();
-
-    /* INVENTORY DYNAMIC LOGIC - ZERO HARDCODED DEFAULT ITEMS */
     function getFishProducts() {
-      const raw = localStorage.getItem('exotic_gb_data_v4') || localStorage.getItem('exotic_gb_data') || localStorage.getItem('exotic_gb_data_v3') || '{}';
-      const data = JSON.parse(raw);
+      const data = getStore();
       if (data.stocks && data.stocks.fish) {
         return data.stocks.fish.filter(f => f.isActive !== false);
       }
       return [];
     }
 
-    const cardStates = {};
+    function renderPoster() {
+      const data = getStore();
+      if (data.catPosters && data.catPosters.fish) {
+        const p = data.catPosters.fish;
+        if(p.title) document.getElementById('catTitleText').innerText = p.title;
+        if(p.desc) document.getElementById('catDescText').innerText = p.desc;
+        if(p.img) document.getElementById('catPosterWrap').style.background = `url('${p.img}') center/cover`;
+        if(p.tags) {
+          document.getElementById('catTagsWrap').innerHTML = p.tags.split(',').map(t => `<span class="tag-badge">${t.trim()}</span>`).join('');
+        }
+      }
+    }
+
+    function buildFilterPills(fishes) {
+      const tags = new Set();
+      fishes.forEach(f => {
+        if(f.tag && f.tag.trim()) tags.add(f.tag.trim());
+      });
+
+      const container = document.getElementById('filterPillsBar');
+      let html = `<button class="filter-pill ${_currentFilter === 'all' ? 'active' : ''}" onclick="setFilter('all')">All Fishes</button>`;
+      tags.forEach(t => {
+        html += `<button class="filter-pill ${_currentFilter === t ? 'active' : ''}" onclick="setFilter('${t}')">${t}</button>`;
+      });
+      container.innerHTML = html;
+    }
+
+    function setFilter(tag) {
+      _currentFilter = tag;
+      const buttons = document.querySelectorAll('.filter-pill');
+      buttons.forEach(b => b.classList.toggle('active', b.innerText.toLowerCase() === (tag === 'all' ? 'all fishes' : tag.toLowerCase())));
+      applyFilters();
+    }
+
+    function handleSearch(val) {
+      _currentSearch = val.toLowerCase().trim();
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const all = getFishProducts();
+      const filtered = all.filter(f => {
+        const matchesTag = _currentFilter === 'all' || (f.tag && f.tag.toLowerCase() === _currentFilter.toLowerCase());
+        const matchesSearch = !_currentSearch || f.name.toLowerCase().includes(_currentSearch);
+        return matchesTag && matchesSearch;
+      });
+      renderFishes(filtered);
+    }
 
     function renderFishes(items) {
       const fishItems = items || getFishProducts();
       const container = document.getElementById('fishesContainer');
 
       if (!fishItems || fishItems.length === 0) {
-        container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-muted); font-weight: 700; font-size: 1.05rem; background: var(--glass-bg); border-radius: var(--card-radius); border: 2px dashed #cbd5e1;">No live fishes currently available. Check back soon!</div>`;
+        container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; color: var(--text-muted); font-weight: 700; font-size: 0.95rem; background: var(--glass-bg); border-radius: var(--card-radius); border: 2px dashed #cbd5e1;">No live fishes found matching your selection.</div>`;
         return;
       }
 
@@ -515,11 +334,11 @@
             <h3 class="product-name">${f.name}</h3>
             <div class="product-price-row">
               <span class="product-price" id="price_${f.id}">₹${effectivePrice.toLocaleString('en-IN')}</span>
-              <span style="font-size:0.8rem; color:var(--text-muted);">${state.isPair ? 'Per Pair' : 'Per Piece'}</span>
+              <span style="font-size:0.75rem; color:var(--text-muted);">${state.isPair ? 'Pair' : 'Piece'}</span>
             </div>
             <div class="controls-row">
               <button class="btn-pair ${state.isPair ? 'active' : ''}" onclick="togglePair('${f.id}')">
-                <i class="fa-solid fa-venus-mars"></i> ${state.isPair ? 'Pair (M+F)' : 'Single (1pc)'}
+                <i class="fa-solid fa-venus-mars"></i> ${state.isPair ? 'Pair (M+F)' : 'Single'}
               </button>
               <div class="qty-selector">
                 <button class="qty-btn" onclick="changeQty('${f.id}', -1)">-</button>
@@ -528,9 +347,7 @@
               </div>
             </div>
             <div class="card-actions">
-              <button class="btn-card btn-add-cart" onclick="addToCart('${f.id}')">
-                <i class="fa-solid fa-cart-plus"></i> Add Cart
-              </button>
+              <button class="btn-card btn-add-cart" onclick="addToCart('${f.id}')">Add Cart</button>
               <button class="btn-card btn-buy-now" onclick="buyNow('${f.id}')">Buy Now</button>
             </div>
           </div>
@@ -551,7 +368,7 @@
       
       priceEl.innerText = `₹${effective.toLocaleString('en-IN')}`;
       btnEl.classList.toggle('active', cardStates[id].isPair);
-      btnEl.innerHTML = `<i class="fa-solid fa-venus-mars"></i> ${cardStates[id].isPair ? 'Pair (M+F)' : 'Single (1pc)'}`;
+      btnEl.innerHTML = `<i class="fa-solid fa-venus-mars"></i> ${cardStates[id].isPair ? 'Pair (M+F)' : 'Single'}`;
     }
 
     function changeQty(id, delta) {
@@ -567,22 +384,18 @@
       if (!fish) return;
       const state = cardStates[id];
       const cart = JSON.parse(localStorage.getItem('exotic_cart') || '[]');
-
       const itemPrice = state.isPair ? (fish.pairPrice || fish.price * 2) : fish.price;
       const existingIdx = cart.findIndex(c => c.id === id && c.isPair === state.isPair);
 
       if (existingIdx > -1) {
         cart[existingIdx].quantity += state.qty;
       } else {
-        cart.push({
-          id: fish.id, name: fish.name, category: "Live Fishes",
-          price: itemPrice, quantity: state.qty, isPair: state.isPair, img: fish.img
-        });
+        cart.push({ id: fish.id, name: fish.name, category: "Live Fishes", price: itemPrice, quantity: state.qty, isPair: state.isPair, img: fish.img });
       }
 
       localStorage.setItem('exotic_cart', JSON.stringify(cart));
       updateCartBadge();
-      alert(`Added ${state.qty}x ${fish.name} ${state.isPair ? '(Pair)' : ''} to cart!`);
+      alert(`Added ${state.qty}x ${fish.name} to cart!`);
     }
 
     function buyNow(id) { addToCart(id); window.location.href = "cart.html"; }
@@ -599,15 +412,12 @@
         : `<a href="login.html" class="profile-icon-logged-out"><i class="fa-regular fa-user"></i></a>`;
     }
 
-    function searchFishes(keyword) {
-      const fishes = getFishProducts();
-      const filtered = fishes.filter(f => f.name.toLowerCase().includes(keyword.toLowerCase()));
-      renderFishes(filtered);
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
       renderNavProfile();
-      renderFishes();
+      renderPoster();
+      const fishes = getFishProducts();
+      buildFilterPills(fishes);
+      renderFishes(fishes);
       updateCartBadge();
     });
   </script>
