@@ -1,1 +1,9 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.aquatic.exoticgbhub",
+        "sha256_cert_fingerprints": ["E4:17:A9:17:3C:C7:B9:FD:62:20:27:FE:50:4C:1E:E7:ED:3A:CA:95:2B:8F:CB:DC:C4:EA:D2:2F:34:19:A5:48"]
+      }
+    }]
 
