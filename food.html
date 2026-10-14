@@ -165,34 +165,89 @@
   </a>
 
   <script>
+    /* ==========================================================================
+       DEVICE CACHE ENGINE (INDEXEDDB)
+       ========================================================================== */
+    const IDB_NAME = 'ExoticGBHubDB';
+    const IDB_STORE = 'store_cache';
+    const IDB_KEY = 'store_data_v4';
+
+    function openCacheDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(IDB_NAME, 1);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(IDB_STORE)) {
+            db.createObjectStore(IDB_STORE);
+          }
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function getCachedStore() {
+      try {
+        const db = await openCacheDB();
+        return new Promise((resolve) => {
+          const tx = db.transaction(IDB_STORE, 'readonly');
+          const store = tx.objectStore(IDB_STORE);
+          const req = store.get(IDB_KEY);
+          req.onsuccess = () => resolve(req.result || null);
+          req.onerror = () => resolve(null);
+        });
+      } catch (e) {
+        try {
+          const local = localStorage.getItem('exotic_gb_data_v4') || localStorage.getItem('exotic_gb_data_v3');
+          return local ? JSON.parse(local) : null;
+        } catch {
+          return null;
+        }
+      }
+    }
+
+    async function setCachedStore(payload) {
+      try {
+        const db = await openCacheDB();
+        const tx = db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).put(payload, IDB_KEY);
+      } catch (e) {
+        try {
+          localStorage.setItem('exotic_gb_data_v4', JSON.stringify(payload));
+        } catch (err) {}
+      }
+    }
+
+    /* ==========================================================================
+       FOOD CATALOG CONTROLLER
+       ========================================================================== */
+    let _storeData = {};
     let _currentFilter = 'all';
     let _currentSearch = '';
     const qtys = {};
 
-    function getStore() {
-      return JSON.parse(localStorage.getItem('exotic_gb_data_v4') || localStorage.getItem('exotic_gb_data_v3') || '{}');
-    }
-
-    function getFood() {
-      const data = getStore();
-      if (data.stocks && data.stocks.food) return data.stocks.food.filter(f => f.isActive !== false);
+    function getFoods() {
+      if (_storeData.stocks && _storeData.stocks.food) {
+        return _storeData.stocks.food.filter(f => f.isActive !== false);
+      }
       return [];
     }
 
     function renderPoster() {
-      const data = getStore();
-      if (data.catPosters && data.catPosters.food) {
-        const p = data.catPosters.food;
+      if (_storeData.catPosters && _storeData.catPosters.food) {
+        const p = _storeData.catPosters.food;
         if(p.title) document.getElementById('catTitleText').innerText = p.title;
         if(p.desc) document.getElementById('catDescText').innerText = p.desc;
         if(p.img) document.getElementById('catPosterWrap').style.background = `url('${p.img}') center/cover`;
-        if(p.tags) document.getElementById('catTagsWrap').innerHTML = p.tags.split(',').map(t => `<span class="tag-badge">${t.trim()}</span>`).join('');
+        if(p.tags) {
+          document.getElementById('catTagsWrap').innerHTML = p.tags.split(',').map(t => `<span class="tag-badge">${t.trim()}</span>`).join('');
+        }
       }
     }
 
     function buildFilterPills(items) {
       const tags = new Set();
-      items.forEach(f => { if(f.tag && f.tag.trim()) tags.add(f.tag.trim()); });
+      items.forEach(d => { if(d.tag && d.tag.trim()) tags.add(d.tag.trim()); });
       const container = document.getElementById('filterPillsBar');
       let html = `<button class="filter-pill ${_currentFilter === 'all' ? 'active' : ''}" onclick="setFilter('all')">All Nutrition</button>`;
       tags.forEach(t => { html += `<button class="filter-pill ${_currentFilter === t ? 'active' : ''}" onclick="setFilter('${t}')">${t}</button>`; });
@@ -208,17 +263,17 @@
     function handleSearch(val) { _currentSearch = val.toLowerCase().trim(); applyFilters(); }
 
     function applyFilters() {
-      const all = getFood();
-      const filtered = all.filter(f => {
-        const matchesTag = _currentFilter === 'all' || (f.tag && f.tag.toLowerCase() === _currentFilter.toLowerCase());
-        const matchesSearch = !_currentSearch || f.name.toLowerCase().includes(_currentSearch);
+      const all = getFoods();
+      const filtered = all.filter(d => {
+        const matchesTag = _currentFilter === 'all' || (d.tag && d.tag.toLowerCase() === _currentFilter.toLowerCase());
+        const matchesSearch = !_currentSearch || d.name.toLowerCase().includes(_currentSearch);
         return matchesTag && matchesSearch;
       });
-      renderFood(filtered);
+      renderFoods(filtered);
     }
 
-    function renderFood(items) {
-      const foodItems = items || getFood();
+    function renderFoods(items) {
+      const foodItems = items || getFoods();
       const container = document.getElementById('foodContainer');
 
       if (!foodItems || foodItems.length === 0) {
@@ -226,27 +281,27 @@
         return;
       }
 
-      foodItems.forEach(f => { if (!qtys[f.id]) qtys[f.id] = 1; });
+      foodItems.forEach(d => { if (!qtys[d.id]) qtys[d.id] = 1; });
 
-      container.innerHTML = foodItems.map(f => `
+      container.innerHTML = foodItems.map(d => `
         <div class="product-card">
           <div class="product-img-wrapper">
-            <span class="product-badge-float">${f.tag || 'Formulated'}</span>
-            <img src="${f.img || ''}" class="product-img" alt="${f.name}" />
+            <span class="product-badge-float">${d.tag || 'Nutrition'}</span>
+            <img src="${d.img || ''}" class="product-img" alt="${d.name}" onerror="this.src='https://via.placeholder.com/280x210'" />
           </div>
-          <h3 class="product-name">${f.name}</h3>
-          <div class="product-price">₹${f.price.toLocaleString('en-IN')}</div>
+          <h3 class="product-name">${d.name}</h3>
+          <div class="product-price">₹${d.price.toLocaleString('en-IN')}</div>
           <div class="controls-row">
-            <span style="font-weight:700; color:var(--text-muted); font-size:0.75rem;">Pack Qty</span>
+            <span style="font-weight:700; color:var(--text-muted); font-size:0.75rem;">Units</span>
             <div class="qty-selector">
-              <button class="qty-btn" onclick="updateQty('${f.id}', -1)">-</button>
-              <span id="qty_${f.id}" class="qty-val">${qtys[f.id]}</span>
-              <button class="qty-btn" onclick="updateQty('${f.id}', 1)">+</button>
+              <button class="qty-btn" onclick="updateQty('${d.id}', -1)">-</button>
+              <span id="qty_${d.id}" class="qty-val">${qtys[d.id]}</span>
+              <button class="qty-btn" onclick="updateQty('${d.id}', 1)">+</button>
             </div>
           </div>
           <div class="card-actions">
-            <button class="btn-card btn-add-cart" onclick="addToCart('${f.id}')">Add Cart</button>
-            <button class="btn-card btn-buy-now" onclick="buyNow('${f.id}')">Buy Now</button>
+            <button class="btn-card btn-add-cart" onclick="addToCart('${d.id}')">Add Cart</button>
+            <button class="btn-card btn-buy-now" onclick="buyNow('${d.id}')">Buy Now</button>
           </div>
         </div>
       `).join('');
@@ -257,13 +312,13 @@
     }
 
     function addToCart(id) {
-      const items = getFood();
-      const item = items.find(f => f.id === id);
+      const items = getFoods();
+      const item = items.find(d => d.id === id);
       if (!item) return;
       const cart = JSON.parse(localStorage.getItem('exotic_cart') || '[]');
       const exist = cart.find(c => c.id === id);
       if (exist) exist.quantity += qtys[id];
-      else cart.push({ id: item.id, name: item.name, category: "Fish Food", price: item.price, quantity: qtys[id], isPair: false, img: item.img });
+      else cart.push({ id: item.id, name: item.name, category: "Food", price: item.price, quantity: qtys[id], isPair: false, img: item.img });
       localStorage.setItem('exotic_cart', JSON.stringify(cart));
       updateCartBadge();
       alert(`Added ${item.name} to cart!`);
@@ -283,14 +338,40 @@
         : `<a href="login.html" class="profile-icon-logged-out"><i class="fa-regular fa-user"></i></a>`;
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    async function initPage() {
       renderNavProfile();
-      renderPoster();
-      const f = getFood();
-      buildFilterPills(f);
-      renderFood(f);
       updateCartBadge();
-    });
+
+      // Step 1: 0ms load directly from device cache
+      const cached = await getCachedStore();
+      if (cached) {
+        _storeData = cached;
+        renderPoster();
+        const items = getFoods();
+        buildFilterPills(items);
+        renderFoods(items);
+      }
+
+      // Step 2: Background revalidation
+      try {
+        const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store');
+        if (res.status === 200) {
+          const fresh = await res.json();
+          if (fresh && Object.keys(fresh).length > 0) {
+            _storeData = fresh;
+            await setCachedStore(fresh);
+            renderPoster();
+            const freshItems = getFoods();
+            buildFilterPills(freshItems);
+            renderFoods(freshItems);
+          }
+        }
+      } catch (e) {
+        console.log('Running from offline device storage.');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initPage);
   </script>
 </body>
 </html>

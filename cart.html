@@ -29,7 +29,6 @@
 
     .main-wrapper { max-width: 1100px; margin: 0 auto; padding: 30px 20px 80px 20px; }
 
-    /* Header Nav */
     .cart-nav {
       display: flex;
       justify-content: space-between;
@@ -68,7 +67,6 @@
     }
     .continue-btn:hover { transform: translateX(-4px); }
 
-    /* Cart Card */
     .cart-card {
       background: var(--glass-bg);
       backdrop-filter: blur(20px);
@@ -94,7 +92,6 @@
       color: var(--text-main);
     }
 
-    /* Items Table Container for Mobile Horizontal Scroll */
     .cart-table-container {
       width: 100%;
       overflow-x: auto;
@@ -136,6 +133,7 @@
       border-radius: 10px;
       object-fit: cover;
       flex-shrink: 0;
+      background: #f1f5f9;
     }
 
     .item-name {
@@ -198,7 +196,6 @@
     }
     .remove-btn:hover { transform: scale(1.15); color: #b91c1c; }
 
-    /* Summary Section */
     .cart-summary {
       margin-top: 30px;
       padding-top: 20px;
@@ -243,7 +240,6 @@
     }
     .empty-cart-icon { font-size: 4rem; color: #cbd5e1; margin-bottom: 16px; }
 
-    /* RESPONSIVE STYLING */
     @media (max-width: 768px) {
       .main-wrapper { padding: 16px 12px 60px 12px; }
       .cart-nav { padding: 10px 16px; margin-bottom: 20px; }
@@ -262,9 +258,9 @@
   <div class="main-wrapper">
     <nav class="cart-nav">
       <a href="dashboard.html" class="brand-logo">
-  <img src="ChatGPT_Image_Jun_23__2026__10_40_41_AM-removebg-preview.png" alt="Logo" style="width: 36px; height: 36px; object-fit: contain; border-radius: 6px;" />
-  EXOTIC GB HUB
-</a>
+        <img src="ChatGPT_Image_Jun_23__2026__10_40_41_AM-removebg-preview.png" alt="Logo" style="width: 36px; height: 36px; object-fit: contain; border-radius: 6px;" />
+        EXOTIC GB HUB
+      </a>
       <a href="javascript:history.back()" class="continue-btn">
         <i class="fa-solid fa-arrow-left"></i> Continue Shopping
       </a>
@@ -342,7 +338,7 @@
             <td style="font-weight: 700; color: var(--text-muted);">${index + 1}</td>
             <td>
               <div class="item-preview">
-                <img src="${item.img}" class="item-thumb" alt="${item.name}" />
+                <img src="${item.img || ''}" class="item-thumb" alt="${item.name}" onerror="this.src='https://via.placeholder.com/65x48'" />
                 <div>
                   <div class="item-name">
                     ${item.name}
@@ -427,7 +423,13 @@
                       `Please confirm stock availability and payment details. Looking forward to your prompt response! 📦🌊`;
 
       const whatsappUrl = `https://wa.me/918884730939?text=${encodeURIComponent(message)}`;
+      
+      // Open WhatsApp order screen
       window.open(whatsappUrl, '_blank');
+
+      // Clear the cart on this device so previous items are not kept
+      localStorage.removeItem('exotic_cart');
+      renderCart();
     }
 
     document.addEventListener('DOMContentLoaded', renderCart);

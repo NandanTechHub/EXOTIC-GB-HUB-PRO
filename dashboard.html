@@ -868,7 +868,7 @@
           <a href="https://www.instagram.com/exotic_gb_hub" id="link_instagram" target="_blank" class="social-btn instagram"><i class="fa-brands fa-instagram"></i></a>
           <a href="https://wa.me//+918884730939" id="link_whatsapp" target="_blank" class="social-btn whatsapp"><i class="fa-brands fa-whatsapp"></i></a>
           <a href="https://youtube.com/@nandanking-j3i?si=RA8IKiSBpm6OJ4n2" id="link_youtube" target="_blank" class="social-btn youtube"><i class="fa-brands fa-youtube"></i></a>
-          <a href="+918884730939" id="link_phone" class="social-btn phone"><i class="fa-solid fa-phone"></i></a>
+          <a href="tel:+918884730939" id="link_phone" class="social-btn phone"><i class="fa-solid fa-phone"></i></a>
         </div>
       </div>
     </section>
@@ -910,242 +910,72 @@
     <span class="cart-pill-badge" id="cartCountBadge">0</span>
   </a>
 
-  <!-- AQUARIUM CANVAS SCRIPT -->
+  <!-- Replace the loadDashboardData and scripts inside dashboard.html with this block -->
   <script>
-    const canvas = document.getElementById("aquariumCanvas");
-    const ctx = canvas.getContext("2d");
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
+    /* ==========================================================================
+       DEVICE STORAGE & CACHE ENGINE (INDEXEDDB FOR UNLIMITED BASE64 IMAGES)
+       ========================================================================== */
+    const IDB_NAME = 'ExoticGBHubDB';
+    const IDB_STORE = 'store_cache';
+    const IDB_KEY = 'store_data_v4';
 
-    let isAnimationActive = true;
-    let animationFrameId = null;
-
-    window.addEventListener("resize", () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-      initAllCanvas();
-    });
-
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) {
-        cancelAnimationFrame(animationFrameId);
-        isAnimationActive = false;
-      } else if (!isAnimationActive) {
-        isAnimationActive = true;
-        animate();
-      }
-    });
-
-    let time = 0;
-    let bubbles = [], jellies = [], kelpStalks = [], sunGlints = [];
-
-    function initBubbles() {
-      bubbles = [];
-      const count = Math.floor(width / 28);
-      for (let i = 0; i < count; i++) {
-        bubbles.push({
-          x: Math.random() * width, y: Math.random() * height,
-          radius: Math.random() * 7 + 3, speed: Math.random() * 1.1 + 0.5,
-          wobbleSpeed: Math.random() * 0.035 + 0.02, wobbleAmp: Math.random() * 16 + 6,
-          wobbleSeed: Math.random() * 100, opacity: Math.random() * 0.35 + 0.3
-        });
-      }
-    }
-
-    function initJellies() {
-      jellies = [];
-      const count = Math.max(3, Math.floor(width / 300));
-      for (let i = 0; i < count; i++) {
-        jellies.push({
-          x: Math.random() * (width - 120) + 60, y: Math.random() * height,
-          size: Math.random() * 24 + 20, speed: Math.random() * 0.38 + 0.24,
-          pulseRate: Math.random() * 0.03 + 0.02, seed: Math.random() * Math.PI * 2, tentacles: 5
-        });
-      }
-    }
-
-    function initKelpAndGlints() {
-      kelpStalks = [];
-      const stalkCount = Math.floor(width / 60) + 3;
-      for (let i = 0; i < stalkCount; i++) {
-        kelpStalks.push({
-          x: i * (width / stalkCount) + (Math.random() * 20 - 10),
-          baseWidth: Math.random() * 8 + 5,
-          height: Math.random() * (height * 0.12) + height * 0.08,
-          segments: 7, speed: Math.random() * 0.025 + 0.015,
-          phase: Math.random() * Math.PI * 2,
-          color: i % 2 === 0 ? "rgba(43, 147, 137, 0.3)" : "rgba(30, 126, 120, 0.2)"
-        });
-      }
-
-      sunGlints = [];
-      for (let i = 0; i < 35; i++) {
-        sunGlints.push({
-          x: Math.random() * width, y: Math.random() * height,
-          radius: Math.random() * 2.2 + 1.2, speedY: Math.random() * 0.3 + 0.1,
-          speedX: Math.random() * 0.3 - 0.15, alpha: Math.random() * 0.4 + 0.2
-        });
-      }
-    }
-
-    function initAllCanvas() { initBubbles(); initJellies(); initKelpAndGlints(); }
-
-    function drawBackground() {
-      const grad = ctx.createLinearGradient(0, 0, 0, height);
-      grad.addColorStop(0, "#f4fafc");
-      grad.addColorStop(0.5, "#e1f3f7");
-      grad.addColorStop(0.85, "#cdecf1");
-      grad.addColorStop(1, "#c2e6de");
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, width, height);
-    }
-
-    function drawGlints() {
-      sunGlints.forEach(p => {
-        p.x += p.speedX; p.y -= p.speedY;
-        if (p.x < 0) p.x = width; if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height; if (p.y > height) p.y = 0;
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
-        ctx.fill();
-        ctx.restore();
+    function openCacheDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(IDB_NAME, 1);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(IDB_STORE)) {
+            db.createObjectStore(IDB_STORE);
+          }
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
       });
     }
 
-    function drawJellies() {
-      jellies.forEach(j => {
-        const pulse = Math.sin(time * j.pulseRate + j.seed);
-        const contraction = 1 + pulse * 0.22;
-        j.y -= j.speed * (1 + pulse * 0.4);
-        if (j.y + j.size * 3 < 0) { j.y = height + j.size * 2; j.x = Math.random() * (width - 120) + 60; }
-        ctx.save();
-        ctx.translate(j.x, j.y);
-        ctx.beginPath();
-        ctx.arc(0, 0, j.size * contraction, Math.PI, 0, false);
-        ctx.bezierCurveTo(j.size * 0.5, j.size * 0.25, -j.size * 0.5, j.size * 0.25, -j.size * contraction, 0);
-        ctx.fillStyle = "rgba(14, 165, 233, 0.12)";
-        ctx.strokeStyle = "rgba(2, 132, 199, 0.4)";
-        ctx.lineWidth = 1.4;
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(0, -2, j.size * 0.58 * contraction, Math.PI, 0, false);
-        ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-        ctx.fill();
-
-        ctx.lineWidth = 1.1;
-        ctx.strokeStyle = "rgba(2, 132, 199, 0.25)";
-        for (let t = -j.tentacles / 2; t <= j.tentacles / 2; t++) {
-          const startX = (t / (j.tentacles / 2)) * (j.size * 0.65);
-          ctx.beginPath();
-          ctx.moveTo(startX, 0);
-          const tLen = j.size * 2.1;
-          const wave1 = Math.sin(time * 0.05 + t) * 9;
-          const wave2 = Math.cos(time * 0.04 + t) * 12;
-          ctx.bezierCurveTo(startX + wave1, tLen * 0.4, startX - wave2, tLen * 0.7, startX + wave1, tLen);
-          ctx.stroke();
+    async function getCachedStore() {
+      try {
+        const db = await openCacheDB();
+        return new Promise((resolve) => {
+          const tx = db.transaction(IDB_STORE, 'readonly');
+          const store = tx.objectStore(IDB_STORE);
+          const req = store.get(IDB_KEY);
+          req.onsuccess = () => resolve(req.result || null);
+          req.onerror = () => resolve(null);
+        });
+      } catch (e) {
+        try {
+          const local = localStorage.getItem('exotic_gb_data_v4') || localStorage.getItem('exotic_gb_data_v3');
+          return local ? JSON.parse(local) : null;
+        } catch {
+          return null;
         }
-        ctx.restore();
-      });
+      }
     }
 
-    function drawBubbles() {
-      bubbles.forEach(b => {
-        b.y -= b.speed;
-        const currentX = b.x + Math.sin(time * b.wobbleSpeed + b.wobbleSeed) * b.wobbleAmp;
-        if (b.y + b.radius < 0) { b.y = height + b.radius + 10; b.x = Math.random() * width; }
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(currentX, b.y, b.radius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(14, 165, 233, ${b.opacity * 0.6})`;
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
-        ctx.fillStyle = `rgba(255, 255, 255, ${b.opacity * 0.45})`;
-        ctx.fill();
-        ctx.restore();
-      });
-    }
-
-    function drawReducedKelp() {
-      kelpStalks.forEach(k => {
-        ctx.save();
-        ctx.fillStyle = k.color;
-        ctx.beginPath();
-        const segLen = k.height / k.segments;
-        ctx.moveTo(k.x - k.baseWidth / 2, height);
-        for (let s = 1; s <= k.segments; s++) {
-          const sway = Math.sin(time * k.speed + k.phase + s * 0.35) * (s * 2.2);
-          const currentY = height - s * segLen;
-          const currentWidth = k.baseWidth * (1 - s / (k.segments * 1.25));
-          ctx.lineTo(k.x + sway - currentWidth / 2, currentY);
+    async function setCachedStore(payload) {
+      try {
+        const db = await openCacheDB();
+        const tx = db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).put(payload, IDB_KEY);
+      } catch (e) {
+        try {
+          localStorage.setItem('exotic_gb_data_v4', JSON.stringify(payload));
+        } catch (err) {
+          console.warn('Storage quota reached on localStorage, IndexedDB preferred:', err);
         }
-        ctx.lineTo(k.x, height - k.height);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
-      });
+      }
     }
 
-    function animate() {
-      if (!isAnimationActive) return;
-      time += 1;
-      drawBackground();
-      drawGlints();
-      drawJellies();
-      drawBubbles();
-      drawReducedKelp();
-      animationFrameId = requestAnimationFrame(animate);
-    }
-
-    initAllCanvas();
-    animate();
-
-    /* LIVE STORE SYNC */
+    /* ==========================================================================
+       STORE DATA RENDERING PIPELINE
+       ========================================================================== */
     let _allStoreProducts = [];
     let _bannerCount = 1;
-
-    function renderProfileStatus() {
-      const container = document.getElementById('profileContainer');
-      const storedUser = localStorage.getItem('currentUser');
-      if (storedUser) {
-        try {
-          const userObj = JSON.parse(storedUser);
-          const initial = userObj.name ? userObj.name.trim().charAt(0).toUpperCase() : 'U';
-          container.innerHTML = `
-            <div class="profile-action-btn" title="Logged in as ${userObj.name}">
-              <div class="profile-avatar-logged-in">${initial}</div>
-            </div>
-          `;
-          return;
-        } catch (e) {}
-      }
-      container.innerHTML = `
-        <a href="login.html" class="profile-icon-logged-out" title="Sign In">
-          <i class="fa-regular fa-user"></i>
-        </a>
-      `;
-    }
-
     let currentSlide = 0;
     let carouselTimer = null;
 
-    async function loadDashboardData() {
-      let data = null;
-      try {
-        const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store');
-        if (res.ok) data = await res.json();
-      } catch (err) {
-        console.log('Backend offline, trying local storage fallback.');
-      }
-
-      if (!data || Object.keys(data).length === 0) {
-        const local = localStorage.getItem('exotic_gb_data_v4') || localStorage.getItem('exotic_gb_data_v3');
-        if (local) data = JSON.parse(local);
-      }
-
+    function renderAllStoreData(data) {
       if (!data) return;
 
       _allStoreProducts = [];
@@ -1160,7 +990,7 @@
         });
       }
 
-      // Sync Banners
+      // 1. Render Banners
       const activeBanners = (data.dashBanners || []).filter(b => b.isActive !== false);
       const bannerContainer = document.getElementById('masterCarousel');
       const indicators = document.getElementById('carouselIndicators');
@@ -1168,7 +998,7 @@
       if (activeBanners.length > 0) {
         _bannerCount = activeBanners.length;
         bannerContainer.innerHTML = activeBanners.map((b, i) => `
-          <div class="carousel-slide ${i === 0 ? 'active' : ''}" style="${b.img ? `background-image: url('${b.img}');` : 'background: #0f172a;'}">
+          <div class="carousel-slide ${i === 0 ? 'active' : ''}" style="${b.img ? `background-image: url('\${b.img}');` : 'background: #0f172a;'}">
             <div class="carousel-overlay">
               <div class="carousel-content">
                 <span class="carousel-badge">${b.badge || 'PREMIUM SELECTION'}</span>
@@ -1192,7 +1022,7 @@
         startBannerLoop(_bannerCount);
       }
 
-      // Sync Categories
+      // 2. Render Categories
       if (data.dashCategories) {
         ['fish', 'access', 'food', 'decor', 'tank'].forEach(key => {
           const c = data.dashCategories[key];
@@ -1209,7 +1039,7 @@
         });
       }
 
-      // Sync Featured Livestock
+      // 3. Render Featured Arrivals
       const featCon = document.getElementById('featuredArrivalsGrid');
       if (featCon && data.stocks && data.stocks.fish) {
         const featuredItems = data.stocks.fish.filter(f => f.isActive !== false).slice(0, 4);
@@ -1227,12 +1057,10 @@
               </div>
             </div>
           `).join('');
-        } else {
-          featCon.innerHTML = `<p style="color:var(--text-muted); grid-column:1/-1;">New livestock shipments arriving soon.</p>`;
         }
       }
 
-      // Built With EXOTIC Dynamic Showcase
+      // 4. Render Dynamic Aquascaping Showcase
       const galleryCon = document.getElementById('communityGalleryGrid');
       if (galleryCon && data.stocks) {
         const showcaseItems = [
@@ -1250,17 +1078,10 @@
               </div>
             </div>
           `).join('');
-        } else {
-          galleryCon.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; background: var(--glass-bg); border-radius: 20px; border: 2px dashed #cbd5e1; color: var(--text-muted);">
-              <i class="fa-solid fa-gem" style="font-size: 2rem; color: #94a3b8; margin-bottom: 8px;"></i>
-              <p style="font-weight: 700;">Add tanks and decor products with images in Admin to automatically showcase them here.</p>
-            </div>
-          `;
         }
       }
 
-      // Sync About Content
+      // 5. Render About Section
       if (data.about) {
         if (data.about.badge) document.getElementById('d_about_badge').innerHTML = `<i class="fa-solid fa-heart"></i> ${data.about.badge}`;
         if (data.about.title) document.getElementById('d_about_title').innerText = data.about.title;
@@ -1282,7 +1103,7 @@
         }
       }
 
-      // Sync Trust Section
+      // 6. Render Trust Section
       if (data.trust) {
         document.getElementById('d_trust_t1').innerText = data.trust.t1;
         document.getElementById('d_trust_d1').innerText = data.trust.d1;
@@ -1292,7 +1113,7 @@
         document.getElementById('d_trust_d3').innerText = data.trust.d3;
       }
 
-      // Sync Social Links & Maps
+      // 7. Render Social & Maps
       if (data.social) {
         document.getElementById('link_instagram').href = data.social.instagram || "#";
         document.getElementById('link_whatsapp').href = data.social.whatsapp || "#";
@@ -1309,84 +1130,51 @@
       }
     }
 
-    /* TANK CALCULATOR */
-    function calculateTankMetrics() {
-      const L = parseFloat(document.getElementById('calcL').value) || 0;
-      const W = parseFloat(document.getElementById('calcW').value) || 0;
-      const H = parseFloat(document.getElementById('calcH').value) || 0;
-      const Sub = parseFloat(document.getElementById('calcSub').value) || 0;
-
-      const grossLiters = (L * W * H) / 1000;
-      const netHeight = Math.max(0, H - Sub - 2);
-      const netLiters = (L * W * netHeight) / 1000;
-      const usGallons = netLiters * 0.264172;
-      const filterLPH = netLiters * 5;
-
-      document.getElementById('resGrossVol').innerText = `${grossLiters.toFixed(1)} L`;
-      document.getElementById('resNetVol').innerText = `${netLiters.toFixed(1)} L`;
-      document.getElementById('resUSG').innerText = `${usGallons.toFixed(1)} Gal`;
-      document.getElementById('resFiltration').innerText = `${Math.round(filterLPH)} L/h`;
-    }
-
-    /* SEARCH */
-    const searchInput = document.getElementById('globalSearchInput');
-    const searchDropdown = document.getElementById('searchDropdown');
-
-    searchInput.addEventListener('input', (e) => {
-      const q = e.target.value.trim().toLowerCase();
-      if (!q) {
-        searchDropdown.classList.remove('active');
-        searchDropdown.innerHTML = '';
-        return;
+    /* ==========================================================================
+       STALE-WHILE-REVALIDATE LOADER (0ms INSTANT LOAD + SILENT SYNC)
+       ========================================================================== */
+    async function loadDashboardData() {
+      // Step 1: Render immediately from device storage (0 ms wait)
+      const cached = await getCachedStore();
+      if (cached && Object.keys(cached).length > 0) {
+        renderAllStoreData(cached);
       }
 
-      const matches = _allStoreProducts.filter(p => p.name.toLowerCase().includes(q)).slice(0, 6);
-      if (!matches.length) {
-        searchDropdown.innerHTML = `<div style="padding:14px; text-align:center; color:var(--text-muted); font-size:0.88rem;">No products match "<strong>${q}</strong>"</div>`;
-      } else {
-        searchDropdown.innerHTML = matches.map(m => `
-          <a href="${m.page}" class="search-dropdown-item">
-            <img src="${m.img || ''}" alt="${m.name}" onerror="this.src='https://via.placeholder.com/44'" />
-            <div class="search-item-info">
-              <div class="search-item-title">${m.name}</div>
-              <div class="search-item-meta">${m.category.toUpperCase()} • ${m.tag || 'In Stock'}</div>
+      // Step 2: Fetch in the background from Render without blocking the user interface
+      try {
+        const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store');
+        if (res.status === 200) {
+          const freshData = await res.json();
+          if (freshData && Object.keys(freshData).length > 0) {
+            await setCachedStore(freshData);
+            renderAllStoreData(freshData);
+          }
+        }
+      } catch (err) {
+        console.log('Background sync running offline or waiting for Render instance.');
+      }
+    }
+
+    function renderProfileStatus() {
+      const container = document.getElementById('profileContainer');
+      const storedUser = localStorage.getItem('currentUser');
+      if (storedUser) {
+        try {
+          const userObj = JSON.parse(storedUser);
+          const initial = userObj.name ? userObj.name.trim().charAt(0).toUpperCase() : 'U';
+          container.innerHTML = `
+            <div class="profile-action-btn" title="Logged in as ${userObj.name}">
+              <div class="profile-avatar-logged-in">${initial}</div>
             </div>
-            <div class="search-item-price">₹${m.price}</div>
-          </a>
-        `).join('');
+          `;
+          return;
+        } catch (e) {}
       }
-      searchDropdown.classList.add('active');
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
-        searchDropdown.classList.remove('active');
-      }
-    });
-
-    /* CART ACTIONS */
-    function quickAddToCart(id, name, price, img) {
-      const cart = JSON.parse(localStorage.getItem('exotic_cart') || '[]');
-      const exist = cart.find(c => c.id === id);
-      if (exist) exist.quantity += 1;
-      else cart.push({ id, name, category: "Live Fishes", price, quantity: 1, isPair: false, img });
-      localStorage.setItem('exotic_cart', JSON.stringify(cart));
-      updateCartBadge();
-      alert(`Added ${name} to cart!`);
-    }
-
-    function updateCartBadge() {
-      const cart = JSON.parse(localStorage.getItem('exotic_cart') || '[]');
-      const totalQty = cart.reduce((a, b) => a + b.quantity, 0);
-      const totalPrice = cart.reduce((a, b) => a + (b.price * b.quantity), 0);
-
-      document.getElementById('cartCountBadge').innerText = totalQty;
-      const pillText = document.getElementById('cartPillText');
-      if (totalQty > 0) {
-        pillText.innerText = `₹${totalPrice.toLocaleString('en-IN')}`;
-      } else {
-        pillText.innerText = `Cart`;
-      }
+      container.innerHTML = `
+        <a href="login.html" class="profile-icon-logged-out" title="Sign In">
+          <i class="fa-regular fa-user"></i>
+        </a>
+      `;
     }
 
     function goToSlide(idx) {
@@ -1420,6 +1208,30 @@
       }, 10000);
     }
 
+    function quickAddToCart(id, name, price, img) {
+      const cart = JSON.parse(localStorage.getItem('exotic_cart') || '[]');
+      const exist = cart.find(c => c.id === id);
+      if (exist) exist.quantity += 1;
+      else cart.push({ id, name, category: "Live Fishes", price, quantity: 1, isPair: false, img });
+      localStorage.setItem('exotic_cart', JSON.stringify(cart));
+      updateCartBadge();
+      alert(`Added ${name} to cart!`);
+    }
+
+    function updateCartBadge() {
+      const cart = JSON.parse(localStorage.getItem('exotic_cart') || '[]');
+      const totalQty = cart.reduce((a, b) => a + b.quantity, 0);
+      const totalPrice = cart.reduce((a, b) => a + (b.price * b.quantity), 0);
+
+      document.getElementById('cartCountBadge').innerText = totalQty;
+      const pillText = document.getElementById('cartPillText');
+      if (totalQty > 0) {
+        pillText.innerText = `₹${totalPrice.toLocaleString('en-IN')}`;
+      } else {
+        pillText.innerText = `Cart`;
+      }
+    }
+
     function handleSubscription(e) {
       e.preventDefault();
       const msg = document.getElementById('subscribeSuccessMsg');
@@ -1440,6 +1252,7 @@
       document.querySelectorAll('.reveal-on-scroll').forEach(el => obs.observe(el));
     }
 
+    /* INITIALIZATION */
     document.addEventListener('DOMContentLoaded', () => {
       renderProfileStatus();
       loadDashboardData();
@@ -1447,22 +1260,6 @@
       initScrollObserver();
       calculateTankMetrics();
     });
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(() => console.log('PWA Service Worker registered.'))
-        .catch((err) => console.log('Service Worker failed: ', err));
-    });
-  }
   </script>
-  <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(() => console.log('SW active'))
-        .catch((err) => console.log('SW error:', err));
-    });
-  }
-</script>
 </body>
 </html>

@@ -165,24 +165,77 @@
   </a>
 
   <script>
+    /* ==========================================================================
+       DEVICE CACHE ENGINE (INDEXEDDB)
+       ========================================================================== */
+    const IDB_NAME = 'ExoticGBHubDB';
+    const IDB_STORE = 'store_cache';
+    const IDB_KEY = 'store_data_v4';
+
+    function openCacheDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(IDB_NAME, 1);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(IDB_STORE)) {
+            db.createObjectStore(IDB_STORE);
+          }
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function getCachedStore() {
+      try {
+        const db = await openCacheDB();
+        return new Promise((resolve) => {
+          const tx = db.transaction(IDB_STORE, 'readonly');
+          const store = tx.objectStore(IDB_STORE);
+          const req = store.get(IDB_KEY);
+          req.onsuccess = () => resolve(req.result || null);
+          req.onerror = () => resolve(null);
+        });
+      } catch (e) {
+        try {
+          const local = localStorage.getItem('exotic_gb_data_v4') || localStorage.getItem('exotic_gb_data_v3');
+          return local ? JSON.parse(local) : null;
+        } catch {
+          return null;
+        }
+      }
+    }
+
+    async function setCachedStore(payload) {
+      try {
+        const db = await openCacheDB();
+        const tx = db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).put(payload, IDB_KEY);
+      } catch (e) {
+        try {
+          localStorage.setItem('exotic_gb_data_v4', JSON.stringify(payload));
+        } catch (err) {}
+      }
+    }
+
+    /* ==========================================================================
+       DECOR CATALOG CONTROLLER
+       ========================================================================== */
+    let _storeData = {};
     let _currentFilter = 'all';
     let _currentSearch = '';
     const qtys = {};
 
-    function getStore() {
-      return JSON.parse(localStorage.getItem('exotic_gb_data_v4') || localStorage.getItem('exotic_gb_data_v3') || '{}');
-    }
-
     function getDecors() {
-      const data = getStore();
-      if (data.stocks && data.stocks.decor) return data.stocks.decor.filter(d => d.isActive !== false);
+      if (_storeData.stocks && _storeData.stocks.decor) {
+        return _storeData.stocks.decor.filter(d => d.isActive !== false);
+      }
       return [];
     }
 
     function renderPoster() {
-      const data = getStore();
-      if (data.catPosters && data.catPosters.decor) {
-        const p = data.catPosters.decor;
+      if (_storeData.catPosters && _storeData.catPosters.decor) {
+        const p = _storeData.catPosters.decor;
         if(p.title) document.getElementById('catTitleText').innerText = p.title;
         if(p.desc) document.getElementById('catDescText').innerText = p.desc;
         if(p.img) document.getElementById('catPosterWrap').style.background = `url('${p.img}') center/cover`;
@@ -232,7 +285,7 @@
         <div class="product-card">
           <div class="product-img-wrapper">
             <span class="product-badge-float">${d.tag || 'Natural'}</span>
-            <img src="${d.img || ''}" class="product-img" alt="${d.name}" />
+            <img src="${d.img || ''}" class="product-img" alt="${d.name}" onerror="this.src='https://via.placeholder.com/280x210'" />
           </div>
           <h3 class="product-name">${d.name}</h3>
           <div class="product-price">₹${d.price.toLocaleString('en-IN')}</div>
@@ -283,14 +336,40 @@
         : `<a href="login.html" class="profile-icon-logged-out"><i class="fa-regular fa-user"></i></a>`;
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    async function initPage() {
       renderNavProfile();
-      renderPoster();
-      const dec = getDecors();
-      buildFilterPills(dec);
-      renderDecors(dec);
       updateCartBadge();
-    });
+
+      // Step 1: 0ms load directly from device cache
+      const cached = await getCachedStore();
+      if (cached) {
+        _storeData = cached;
+        renderPoster();
+        const dec = getDecors();
+        buildFilterPills(dec);
+        renderDecors(dec);
+      }
+
+      // Step 2: Background revalidation
+      try {
+        const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store');
+        if (res.status === 200) {
+          const fresh = await res.json();
+          if (fresh && Object.keys(fresh).length > 0) {
+            _storeData = fresh;
+            await setCachedStore(fresh);
+            renderPoster();
+            const freshDec = getDecors();
+            buildFilterPills(freshDec);
+            renderDecors(freshDec);
+          }
+        }
+      } catch (e) {
+        console.log('Running from offline device storage.');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initPage);
   </script>
 </body>
 </html>

@@ -183,28 +183,83 @@
   </a>
 
   <script>
+    /* ==========================================================================
+       DEVICE CACHE ENGINE (INDEXEDDB)
+       ========================================================================== */
+    const IDB_NAME = 'ExoticGBHubDB';
+    const IDB_STORE = 'store_cache';
+    const IDB_KEY = 'store_data_v4';
+
+    function openCacheDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(IDB_NAME, 1);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(IDB_STORE)) {
+            db.createObjectStore(IDB_STORE);
+          }
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function getCachedStore() {
+      try {
+        const db = await openCacheDB();
+        return new Promise((resolve) => {
+          const tx = db.transaction(IDB_STORE, 'readonly');
+          const store = tx.objectStore(IDB_STORE);
+          const req = store.get(IDB_KEY);
+          req.onsuccess = () => resolve(req.result || null);
+          req.onerror = () => resolve(null);
+        });
+      } catch (e) {
+        try {
+          const local = localStorage.getItem('exotic_gb_data_v4') || localStorage.getItem('exotic_gb_data_v3');
+          return local ? JSON.parse(local) : null;
+        } catch {
+          return null;
+        }
+      }
+    }
+
+    async function setCachedStore(payload) {
+      try {
+        const db = await openCacheDB();
+        const tx = db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).put(payload, IDB_KEY);
+      } catch (e) {
+        try {
+          localStorage.setItem('exotic_gb_data_v4', JSON.stringify(payload));
+        } catch (err) {}
+      }
+    }
+
+    /* ==========================================================================
+       TANK CATALOG CONTROLLER
+       ========================================================================== */
+    let _storeData = {};
     let _currentFilter = 'all';
     let _currentSearch = '';
     const qtys = {};
 
-    function getStore() {
-      return JSON.parse(localStorage.getItem('exotic_gb_data_v4') || localStorage.getItem('exotic_gb_data_v3') || '{}');
-    }
-
     function getTanks() {
-      const data = getStore();
-      if (data.stocks && data.stocks.tank) return data.stocks.tank.filter(t => t.isActive !== false);
+      if (_storeData.stocks && _storeData.stocks.tank) {
+        return _storeData.stocks.tank.filter(t => t.isActive !== false);
+      }
       return [];
     }
 
     function renderPoster() {
-      const data = getStore();
-      if (data.catPosters && data.catPosters.tank) {
-        const p = data.catPosters.tank;
+      if (_storeData.catPosters && _storeData.catPosters.tank) {
+        const p = _storeData.catPosters.tank;
         if(p.title) document.getElementById('catTitleText').innerText = p.title;
         if(p.desc) document.getElementById('catDescText').innerText = p.desc;
         if(p.img) document.getElementById('catPosterWrap').style.background = `url('${p.img}') center/cover`;
-        if(p.tags) document.getElementById('catTagsWrap').innerHTML = p.tags.split(',').map(t => `<span class="tag-badge">${t.trim()}</span>`).join('');
+        if(p.tags) {
+          document.getElementById('catTagsWrap').innerHTML = p.tags.split(',').map(t => `<span class="tag-badge">${t.trim()}</span>`).join('');
+        }
       }
     }
 
@@ -250,7 +305,7 @@
         <div class="product-card">
           <div class="product-img-wrapper">
             <span class="product-badge-float">${t.tag || 'Ultra-Clear'}</span>
-            <img src="${t.img || ''}" class="product-img" alt="${t.name}" />
+            <img src="${t.img || ''}" class="product-img" alt="${t.name}" onerror="this.src='https://via.placeholder.com/280x210'" />
           </div>
           <h3 class="product-name">${t.name}</h3>
           <div class="product-price">₹${t.price.toLocaleString('en-IN')}</div>
@@ -301,14 +356,40 @@
         : `<a href="login.html" class="profile-icon-logged-out"><i class="fa-regular fa-user"></i></a>`;
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    async function initPage() {
       renderNavProfile();
-      renderPoster();
-      const tanks = getTanks();
-      buildFilterPills(tanks);
-      renderTanks(tanks);
       updateCartBadge();
-    });
+
+      // Step 1: 0ms load directly from device cache
+      const cached = await getCachedStore();
+      if (cached) {
+        _storeData = cached;
+        renderPoster();
+        const tanks = getTanks();
+        buildFilterPills(tanks);
+        renderTanks(tanks);
+      }
+
+      // Step 2: Background revalidation
+      try {
+        const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store');
+        if (res.status === 200) {
+          const fresh = await res.json();
+          if (fresh && Object.keys(fresh).length > 0) {
+            _storeData = fresh;
+            await setCachedStore(fresh);
+            renderPoster();
+            const freshTanks = getTanks();
+            buildFilterPills(freshTanks);
+            renderTanks(freshTanks);
+          }
+        }
+      } catch (e) {
+        console.log('Running from offline device storage.');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initPage);
   </script>
 </body>
 </html>

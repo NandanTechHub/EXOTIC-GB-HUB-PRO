@@ -94,7 +94,6 @@
 
     .about-preview { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: center; background: #ffffff; padding: 18px; border-radius: 16px; border: 1px solid #e2e8f0; }
 
-    /* Showcase grid in admin */
     .showcase-grid-admin { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
     .showcase-card-admin { background: #fff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 12px; position: relative; display: flex; flex-direction: column; }
     .showcase-card-img { width: 100%; aspect-ratio: 16/10; border-radius: 10px; object-fit: cover; margin-bottom: 8px; }
@@ -150,7 +149,6 @@
   </header>
 
   <main class="main-wrapper">
-    <!-- 1. DASHBOARD BANNER -->
     <section class="admin-section">
       <div class="section-header">
         <div class="section-title"><i class="fa-solid fa-images" style="color:#ec4899;"></i> 1. Master Banners</div>
@@ -159,7 +157,6 @@
       <div id="dashBannersContainer"></div>
     </section>
 
-    <!-- 2. CATEGORIES -->
     <section class="admin-section">
       <div class="section-header">
         <div class="section-title"><i class="fa-solid fa-layer-group" style="color:#06b6d4;"></i> 2. Categories</div>
@@ -168,7 +165,6 @@
       <div class="categories-grid-5" id="dashCategoriesContainer"></div>
     </section>
 
-    <!-- 3. CATEGORY MANAGER -->
     <section class="manager-section" id="categoryManagerPanel">
       <div style="display:flex; align-items:center; gap:8px; margin-bottom:18px; flex-wrap: wrap;">
         <span style="background:#4f46e5; color:white; padding:4px 10px; border-radius:999px; font-size:0.75rem; font-weight:800;">MANAGING</span>
@@ -192,7 +188,6 @@
       <div class="products-grid-3" id="mgrCatStocks"></div>
     </section>
 
-    <!-- 4. BUILT WITH EXOTIC GB HUB (SHOWCASE MANAGER) -->
     <section class="admin-section">
       <div class="section-header">
         <div class="section-title"><i class="fa-solid fa-camera-retro" style="color:#0284c7;"></i> 3. Built With EXOTIC GB HUB (Showcase Gallery)</div>
@@ -203,7 +198,6 @@
       <div class="showcase-grid-admin" id="showcaseContainer"></div>
     </section>
 
-    <!-- 5. ABOUT SECTION -->
     <section class="admin-section">
       <div class="section-header">
         <div class="section-title"><i class="fa-solid fa-address-card" style="color:#8b5cf6;"></i> 4. Welcome Content</div>
@@ -235,6 +229,55 @@
   </div>
 
   <script>
+    /* ==========================================================================
+       INDEXEDDB HIGH-QUOTA STORAGE ENGINE (PREVENTS 5MB BROWSER CRASH)
+       ========================================================================== */
+    const IDB_NAME = 'ExoticGBHubDB';
+    const IDB_STORE = 'store_cache';
+    const IDB_KEY = 'store_data_v4';
+
+    function openCacheDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(IDB_NAME, 1);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(IDB_STORE)) {
+            db.createObjectStore(IDB_STORE);
+          }
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function getCachedStore() {
+      try {
+        const db = await openCacheDB();
+        return new Promise((resolve) => {
+          const tx = db.transaction(IDB_STORE, 'readonly');
+          const store = tx.objectStore(IDB_STORE);
+          const req = store.get(IDB_KEY);
+          req.onsuccess = () => resolve(req.result || null);
+          req.onerror = () => resolve(null);
+        });
+      } catch (e) {
+        return null;
+      }
+    }
+
+    async function setCachedStore(payload) {
+      try {
+        const db = await openCacheDB();
+        const tx = db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).put(payload, IDB_KEY);
+      } catch (e) {
+        console.warn('IndexedDB write issue:', e);
+      }
+    }
+
+    /* ==========================================================================
+       ADMIN STORE STATE
+       ========================================================================== */
     const CANONICAL_CATS = [
       { key: "fish", name: "Live Fishes", file: "fish.html", count: "120+ Exotic Breeds", icon: "fa-fish-fins" },
       { key: "access", name: "Accessories", file: "access.html", count: "Filters & Lights", icon: "fa-screwdriver-wrench" },
@@ -275,6 +318,14 @@
     let _storeCache = null;
 
     async function loadStore() {
+      // 1. Instant load from device storage
+      const cached = await getCachedStore();
+      if (cached && Object.keys(cached).length > 0) {
+        _storeCache = cached;
+        if (!_storeCache.showcase) _storeCache.showcase = DEFAULT_STORE.showcase;
+      }
+
+      // 2. Fetch fresh copy from Render
       try {
         const res = await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store');
         if (res.ok) {
@@ -282,20 +333,30 @@
           if (Object.keys(data).length > 0) {
             _storeCache = data;
             if(!_storeCache.showcase) _storeCache.showcase = DEFAULT_STORE.showcase;
+            await setCachedStore(_storeCache);
             return _storeCache;
           }
         }
       } catch (e) {}
 
-      const local = localStorage.getItem('exotic_gb_data_v4');
-      _storeCache = local ? JSON.parse(local) : JSON.parse(JSON.stringify(DEFAULT_STORE));
-      if(!_storeCache.showcase) _storeCache.showcase = DEFAULT_STORE.showcase;
+      if (!_storeCache) {
+        const local = localStorage.getItem('exotic_gb_data_v4');
+        _storeCache = local ? JSON.parse(local) : JSON.parse(JSON.stringify(DEFAULT_STORE));
+        if(!_storeCache.showcase) _storeCache.showcase = DEFAULT_STORE.showcase;
+      }
       return _storeCache;
     }
 
     async function saveStore(data) {
       _storeCache = data;
-      localStorage.setItem('exotic_gb_data_v4', JSON.stringify(data));
+      // Save to IndexedDB so all device web pages have immediate offline access to Base64 images
+      await setCachedStore(data);
+      try {
+        localStorage.setItem('exotic_gb_data_v4', JSON.stringify(data));
+      } catch (e) {
+        // Quota exceeded in localStorage is safely bypassed because IndexedDB stores it
+      }
+
       try {
         await fetch('https://exotic-gb-hub-backend-1.onrender.com/api/store', {
           method: 'POST',
@@ -385,7 +446,7 @@
       }
       con.innerHTML = data.dashBanners.map(b => `
         <div style="margin-bottom:14px;">
-          <div class="banner-preview-box" style="${b.img ? `background:url('${b.img}') center/cover;` : ''}">
+          <div class="banner-preview-box" style="${b.img ? `background:url('\${b.img}') center/cover;` : ''}">
             <div class="actions-bar">
               <button class="act-btn edit" onclick="openModal('edit_dash_banner', '${b.id}')"><i class="fa-solid fa-pen"></i></button>
               <button class="act-btn delete" onclick="deleteDashBanner('${b.id}')"><i class="fa-solid fa-trash"></i></button>
@@ -413,7 +474,7 @@
               <button class="act-btn edit" onclick="openModal('edit_dash_cat', '${c.key}')"><i class="fa-solid fa-pen"></i></button>
             </div>
             <div class="category-img-wrapper">
-              ${catData.img ? `<img src="${catData.img}" style="width:100%;height:100%;object-fit:cover;"/>` : `<div class="clean-placeholder"><i class="fa-solid ${c.icon}"></i></div>`}
+              ${catData.img ? `<img src="\${catData.img}" style="width:100%;height:100%;object-fit:cover;"/>` : `<div class="clean-placeholder"><i class="fa-solid \${c.icon}"></i></div>`}
             </div>
             <h4 style="font-size:0.95rem; font-weight:800;">${catData.name}</h4>
             <p style="font-size:0.75rem; color:var(--text-muted);">${catData.count}</p>
@@ -439,7 +500,7 @@
       const tagsHtml = (poster.tags || '').split(',').map(t => `<span style="background:rgba(15,23,42,0.8); color:white; padding:3px 8px; border-radius:999px; font-size:0.65rem; font-weight:800; margin-right:4px;">${t.trim()}</span>`).join('');
       
       document.getElementById('mgrCatPoster').innerHTML = `
-        <div style="position:absolute; inset:0; ${poster.img ? `background:url('${poster.img}') center/cover;` : 'background:#1e293b;'}"></div>
+        <div style="position:absolute; inset:0; ${poster.img ? `background:url('\${poster.img}') center/cover;` : 'background:#1e293b;'}"></div>
         <div class="cat-poster-overlay">
           <div style="margin-bottom:8px;">${tagsHtml}</div>
           <h3 style="color:white; font-size:1.4rem; font-weight:800; margin-bottom:6px;">${poster.title}</h3>
@@ -462,7 +523,7 @@
               <button class="act-btn delete" onclick="deleteStock('${s.id}')"><i class="fa-solid fa-trash"></i></button>
             </div>
             <div class="stock-img-box">
-              ${s.img ? `<img src="${s.img}" style="width:100%;height:100%;object-fit:cover;"/>` : `<div class="clean-placeholder"><i class="fa-solid fa-camera"></i></div>`}
+              ${s.img ? `<img src="\${s.img}" style="width:100%;height:100%;object-fit:cover;"/>` : `<div class="clean-placeholder"><i class="fa-solid fa-camera"></i></div>`}
             </div>
             <h4 style="font-size:1rem; font-weight:800; margin-bottom:4px;">${s.name}</h4>
             <div style="font-size:0.75rem; margin-bottom:8px;">
@@ -470,7 +531,7 @@
             </div>
             <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:auto;">
               <span style="font-size:1.15rem; font-weight:800; color:#059669;">₹${s.price}</span>
-              ${s.pairPrice ? `<span style="font-size:0.85rem; font-weight:800; color:#db2777;">Pair: ₹${s.pairPrice}</span>` : ''}
+              ${s.pairPrice ? `<span style="font-size:0.85rem; font-weight:800; color:#db2777;">Pair: ₹\${s.pairPrice}</span>` : ''}
             </div>
           </div>
         `).join('');
@@ -490,7 +551,7 @@
             <button class="act-btn edit" onclick="openModal('edit_showcase', '${s.id}')"><i class="fa-solid fa-pen"></i></button>
             <button class="act-btn delete" onclick="deleteShowcase('${s.id}')"><i class="fa-solid fa-trash"></i></button>
           </div>
-          ${s.img ? `<img src="${s.img}" class="showcase-card-img"/>` : `<div class="clean-placeholder" style="aspect-ratio:16/10; border-radius:10px; margin-bottom:8px;"><i class="fa-solid fa-image"></i></div>`}
+          ${s.img ? `<img src="\${s.img}" class="showcase-card-img"/>` : `<div class="clean-placeholder" style="aspect-ratio:16/10; border-radius:10px; margin-bottom:8px;"><i class="fa-solid fa-image"></i></div>`}
           <span style="font-size:0.72rem; font-weight:800; color:#0284c7; text-transform:uppercase;">${s.tag}</span>
           <h4 style="font-size:0.95rem; font-weight:800;">${s.title}</h4>
           <span style="font-size:0.75rem; color:var(--text-muted);">Links to: ${s.page}</span>
@@ -508,7 +569,7 @@
           <p style="color:var(--text-muted); font-size:0.85rem;">${a.text2}</p>
         </div>
         <div style="height:160px; border-radius:12px; overflow:hidden; background:#f1f5f9; display:flex; align-items:center; justify-content:center;">
-          ${a.img ? `<img src="${a.img}" style="width:100%;height:100%;object-fit:cover;"/>` : `<div class="clean-placeholder"><i class="fa-solid fa-image" style="font-size:2rem;"></i></div>`}
+          ${a.img ? `<img src="\${a.img}" style="width:100%;height:100%;object-fit:cover;"/>` : `<div class="clean-placeholder"><i class="fa-solid fa-image" style="font-size:2rem;"></i></div>`}
         </div>
       `;
     }
@@ -579,7 +640,7 @@
             <input type="text" id="i_tag" value="${s.tag}" placeholder="e.g. Limited Edition, Rare, Guppy, Low Iron..." required>
           </div>
           <div class="form-group"><label>Price (₹)</label><input type="number" id="i_price" value="${s.price}" required></div>
-          ${isFish ? `<div class="form-group"><label>Pair Price (₹)</label><input type="number" id="i_pair" value="${s.pairPrice || ''}"></div>` : ''}
+          ${isFish ? `<div class="form-group"><label>Pair Price (₹)</label><input type="number" id="i_pair" value="\${s.pairPrice || ''}"></div>` : ''}
           ${buildImageUploader(s.img)}
         `;
       }

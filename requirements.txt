@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+motor
+pymongo
+python-dotenv
+pydantic
+certifi
+mongodb+srv://nandanking79_db_user:exotic123@exoticgbhub.0trtgqw.mongodb.net/?appName=exoticgbhub
