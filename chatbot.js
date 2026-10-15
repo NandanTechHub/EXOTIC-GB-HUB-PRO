@@ -1,17 +1,148 @@
 /* ==========================================================================
-   EXOTIC GB HUB - AI AQUARIUM CHATBOT (AUTO-SWITCHES LOCALHOST & RENDER)
+   EXOTIC GB HUB - CLIENT-SIDE FAQ CHATBOT
    ========================================================================== */
-
-// If running in browser locally (5500), talk to local backend (8000). Otherwise, talk to Render.
-const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-const BACKEND_CHAT_URL = isLocal 
-  ? "http://127.0.0.1:8000/api/chat" 
-  : "https://exotic-gb-hub-backend-1.onrender.com/api/chat";
 
 const WHATSAPP_URL = "https://wa.me/918884730939";
 
-let chatHistory = [];
+/* ==========================================================================
+   FAQ DATABASE
+   ========================================================================== */
+const exoticFAQs = {
+  fish: {
+    question: "Available Fish",
+    answer: `🐟 We have different varieties of aquarium fish available depending on our current stock.
+    <br><br><strong>Available Fish Varieties:</strong>
+    <ul>
+      <li>🐠 Guppy</li>
+      <li>🐟 Betta (Full Moon, Giant Plakat, Crowntail)</li>
+      <li>🐠 Tetra</li>
+      <li>🐟 Koi Carp</li>
+    </ul>
+    Please check our latest stock update or contact EXOTIC GB HUB for today's availability.`
+  },
+  shipping: {
+    question: "Shipping",
+    answer: "🚚 Yes! EXOTIC GB HUB provides shipping across India. Shipping availability and charges may depend on your location and the type of fish ordered."
+  },
+  order: {
+    question: "How to Order",
+    answer: "📦 To place an order, browse the available fish in our dashboard, select the product you want, and follow the ordering process. You can also contact us directly if you need assistance."
+  },
+  payment: {
+    question: "Payment",
+    answer: "💳 Payment options depend on the current ordering process. Please contact EXOTIC GB HUB before making a payment so we can provide the correct payment details."
+  },
+  contact: {
+    question: "Contact",
+    answer: "📞 You can contact EXOTIC GB HUB through our official contact channels. Send us your requirements and we will help you with fish availability and ordering."
+  }
+};
 
+/* ==========================================================================
+   KEYWORD / QUERY MATCHING ENGINE
+   ========================================================================== */
+function findExoticAnswer(question) {
+  const text = question.toLowerCase().trim();
+
+  /* Fish */
+  if (
+    text.includes('fish') ||
+    text.includes('stock') ||
+    text.includes('available') ||
+    text.includes('species') ||
+    text.includes('variety') ||
+    text.includes('betta') ||
+    text.includes('guppy')
+  ) {
+    return { text: exoticFAQs.fish.answer, showWA: false };
+  }
+
+  /* Shipping */
+  if (
+    text.includes('shipping') ||
+    text.includes('ship') ||
+    text.includes('delivery') ||
+    text.includes('deliver')
+  ) {
+    return { text: exoticFAQs.shipping.answer, showWA: false };
+  }
+
+  /* Order */
+  if (
+    text.includes('order') ||
+    text.includes('buy') ||
+    text.includes('purchase') ||
+    text.includes('place order') ||
+    text.includes('how can i buy') ||
+    text.includes('how to buy')
+  ) {
+    return { text: exoticFAQs.order.answer, showWA: false };
+  }
+
+  /* Payment */
+  if (
+    text.includes('payment') ||
+    text.includes('pay') ||
+    text.includes('upi') ||
+    text.includes('money')
+  ) {
+    return { text: exoticFAQs.payment.answer, showWA: false };
+  }
+
+  /* Contact / WhatsApp / Admin */
+  if (
+    text.includes('contact') ||
+    text.includes('phone') ||
+    text.includes('whatsapp') ||
+    text.includes('instagram') ||
+    text.includes('dm') ||
+    text.includes('admin') ||
+    text.includes('owner') ||
+    text.includes('call')
+  ) {
+    return { text: exoticFAQs.contact.answer, showWA: true };
+  }
+
+  /* Greetings */
+  if (
+    text === 'hi' ||
+    text === 'hello' ||
+    text === 'hey' ||
+    text.includes('good morning') ||
+    text.includes('good afternoon') ||
+    text.includes('good evening')
+  ) {
+    return {
+      text: "👋 Hello! Welcome to EXOTIC GB HUB. How can I help you today? You can ask about fish availability, shipping, orders, payment, or contact details.",
+      showWA: false
+    };
+  }
+
+  /* Thank you */
+  if (text.includes('thank') || text.includes('thanks')) {
+    return {
+      text: "😊 You're welcome! EXOTIC GB HUB is always happy to help.",
+      showWA: false
+    };
+  }
+
+  /* Fallback */
+  return {
+    text: `🤖 I'm currently a simple FAQ assistant.<br><br>
+    I can help you with:<br>
+    🐟 Fish availability<br>
+    🚚 Shipping<br>
+    📦 Ordering<br>
+    💳 Payment<br>
+    📞 Contact<br><br>
+    Please select one of the FAQ buttons or contact our admin directly:`,
+    showWA: true
+  };
+}
+
+/* ==========================================================================
+   UI INJECTION & RESPONSIVE POSITIONING
+   ========================================================================== */
 function initChatbotUI() {
   if (document.getElementById('exoticChatbotBtn')) return;
 
@@ -20,63 +151,38 @@ function initChatbotUI() {
   style.innerHTML = `
     .floating-chatbot-btn {
       position: fixed;
-      width: 54px;
-      height: 54px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #0284c7, #8b5cf6);
-      color: #ffffff;
+      background: #000000;
+      color: #00e5ff;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.35rem;
-      border: 2px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.45);
+      font-size: 1.4rem;
+      border: 2px solid #04C4D9;
+      box-shadow: 0 5px 25px rgba(0, 229, 255, 0.35);
       cursor: pointer;
-      z-index: 9998;
-      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease;
+      z-index: 10000;
+      transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
       outline: none;
     }
     .floating-chatbot-btn:hover {
-      transform: scale(1.08) translateY(-2px);
-      box-shadow: 0 14px 30px rgba(139, 92, 246, 0.55);
-    }
-    .chatbot-btn-pulse {
-      position: absolute;
-      inset: -3px;
-      border-radius: 50%;
-      border: 2px solid #38bdf8;
-      animation: chatPulse 2.5s infinite;
-      pointer-events: none;
-    }
-    @keyframes chatPulse {
-      0% { transform: scale(1); opacity: 0.8; }
-      70% { transform: scale(1.28); opacity: 0; }
-      100% { transform: scale(1.28); opacity: 0; }
-    }
-
-    @media (min-width: 769px) {
-      .floating-chatbot-btn { bottom: 20px; right: 86px; }
-      body:has(.floating-cart-pill) .floating-chatbot-btn { bottom: 28px; right: 190px; }
-    }
-    @media (max-width: 768px) {
-      .floating-chatbot-btn { bottom: 86px; right: 20px; }
-      body:has(.floating-cart-pill) .floating-chatbot-btn { bottom: 78px; right: 18px; }
+      transform: scale(1.08);
+      background: #04C4D9;
+      color: #000000;
     }
 
     .chatbot-window {
       position: fixed;
-      bottom: 86px;
-      right: 20px;
       width: 360px;
       max-width: calc(100vw - 32px);
       height: 520px;
-      max-height: calc(100vh - 110px);
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 22px;
-      border: 1.5px solid rgba(255, 255, 255, 0.95);
-      box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.28);
+      max-height: calc(100vh - 120px);
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid #04C4D9;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.35);
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -92,68 +198,98 @@ function initChatbotUI() {
       transform: translateY(0) scale(1);
     }
 
+    /* --- DESKTOP / LAPTOP (LEFT SIDE) --- */
+    @media (min-width: 769px) {
+      .floating-chatbot-btn {
+        bottom: 25px;
+        left: 25px;
+        right: auto;
+      }
+      .chatbot-window {
+        bottom: 95px;
+        left: 25px;
+        right: auto;
+      }
+    }
+
+    /* --- MOBILE (LIFTED HIGHER TO CLEAR CART ICON) --- */
+    @media (max-width: 768px) {
+      .floating-chatbot-btn {
+        bottom: 96px;
+        right: 18px;
+        left: auto;
+      }
+      .chatbot-window {
+        bottom: 162px;
+        right: 16px;
+        left: auto;
+        height: 480px;
+      }
+    }
+
     .chat-header {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      background: #000000;
       color: white;
-      padding: 14px 16px;
+      padding: 14px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1.5px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 2px solid #04C4D9;
     }
-    .chat-header-info { display: flex; align-items: center; gap: 10px; }
-    .chat-avatar-badge {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #0284c7, #8b5cf6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      border: 2px solid white;
+    .chat-header-info strong {
+      display: block;
+      font-size: 15px;
+      color: #00e5ff;
+      font-weight: 800;
     }
-    .chat-title-text h4 { font-size: 0.92rem; font-weight: 800; margin: 0; font-family: 'Space Grotesk', sans-serif; }
-    .chat-title-text span { font-size: 0.72rem; color: #34d399; font-weight: 700; display: flex; align-items: center; gap: 4px; }
-    .chat-title-text span::before {
-      content: ''; width: 7px; height: 7px; border-radius: 50%; background: #34d399; display: inline-block;
+    .chat-header-info small {
+      display: block;
+      color: #cccccc;
+      font-size: 11px;
     }
     .chat-close-btn {
-      background: transparent; border: none; color: #94a3b8; font-size: 1.2rem; cursor: pointer; padding: 4px;
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-size: 1.4rem;
+      cursor: pointer;
+      line-height: 1;
     }
-    .chat-close-btn:hover { color: #ffffff; }
+    .chat-close-btn:hover { color: #00e5ff; }
 
     .chat-messages {
       flex: 1;
       overflow-y: auto;
-      padding: 14px;
+      padding: 15px;
+      background: #f4f7f8;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      scroll-behavior: smooth;
+      gap: 10px;
     }
     .chat-msg {
       max-width: 85%;
       padding: 10px 14px;
-      border-radius: 16px;
-      font-size: 0.88rem;
-      line-height: 1.45;
+      font-size: 13px;
+      line-height: 1.5;
       word-break: break-word;
+    }
+    .chat-msg ul {
+      margin: 6px 0 0 16px;
+      padding: 0;
     }
     .chat-msg.bot {
       background: #ffffff;
-      color: #0f172a;
+      color: #222222;
       align-self: flex-start;
-      border-bottom-left-radius: 4px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-      border: 1px solid #e2e8f0;
+      border-radius: 12px 12px 12px 3px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
     .chat-msg.user {
-      background: linear-gradient(135deg, #0284c7, #8b5cf6);
+      background: #000000;
       color: #ffffff;
       align-self: flex-end;
-      border-bottom-right-radius: 4px;
-      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
+      border-radius: 12px 12px 3px 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     }
 
     .chat-whatsapp-action {
@@ -164,214 +300,153 @@ function initChatbotUI() {
       background: #25D366;
       color: #ffffff !important;
       text-decoration: none;
-      padding: 8px 16px;
+      padding: 7px 14px;
       border-radius: 999px;
-      font-weight: 800;
-      font-size: 0.8rem;
-      box-shadow: 0 6px 16px rgba(37, 211, 102, 0.35);
-      transition: transform 0.2s ease, filter 0.2s ease;
-    }
-    .chat-whatsapp-action:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.08);
+      font-weight: 700;
+      font-size: 12px;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35);
     }
 
     .chat-suggestions {
+      padding: 10px;
+      background: #ffffff;
+      border-top: 1px solid #eeeeee;
       display: flex;
+      flex-wrap: wrap;
       gap: 6px;
-      overflow-x: auto;
-      padding: 6px 14px 10px 14px;
-      scrollbar-width: none;
+      max-height: 105px;
+      overflow-y: auto;
     }
-    .chat-suggestions::-webkit-scrollbar { display: none; }
     .chat-chip {
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
-      padding: 4px 12px;
-      border-radius: 999px;
-      font-size: 0.74rem;
-      font-weight: 700;
-      color: #475569;
+      border: 1px solid #04C4D9;
+      background: #ffffff;
+      color: #111111;
+      padding: 6px 10px;
+      border-radius: 16px;
+      font-size: 11px;
+      font-weight: 600;
       cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
     }
     .chat-chip:hover {
-      background: #4f46e5;
-      color: #ffffff;
-      border-color: #4f46e5;
+      background: #04C4D9;
+      color: #000000;
     }
 
     .chat-typing {
       display: none;
       align-self: flex-start;
       background: #ffffff;
-      padding: 8px 14px;
-      border-radius: 16px;
-      border-bottom-left-radius: 4px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      border: 1px solid #e2e8f0;
-      gap: 4px;
-    }
-    .chat-typing span {
-      width: 6px;
-      height: 6px;
-      background: #94a3b8;
-      border-radius: 50%;
-      animation: chatBlink 1.4s infinite;
-    }
-    .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
-    .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes chatBlink {
-      0%, 100% { opacity: 0.3; transform: translateY(0); }
-      50% { opacity: 1; transform: translateY(-3px); }
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      color: #777777;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
 
     .chat-footer {
       display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
+      height: 54px;
+      border-top: 1px solid #dddddd;
       background: #ffffff;
-      border-top: 1.5px solid #e2e8f0;
     }
     .chat-input {
       flex: 1;
-      border: 1.5px solid #cbd5e1;
-      border-radius: 999px;
-      padding: 9px 16px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      outline: none;
-      color: #0f172a;
-    }
-    .chat-input:focus { border-color: #0284c7; }
-    .chat-send-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #0284c7, #8b5cf6);
       border: none;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 0.92rem;
-      transition: transform 0.2s;
+      outline: none;
+      padding: 12px;
+      font-size: 13px;
+      color: #222222;
     }
-    .chat-send-btn:hover { transform: scale(1.08); }
+    .chat-send-btn {
+      width: 52px;
+      border: none;
+      background: #000000;
+      color: #00e5ff;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.2s;
+    }
+    .chat-send-btn:hover {
+      background: #04C4D9;
+      color: #000000;
+    }
   `;
   document.head.appendChild(style);
 
   const botHTML = `
-    <button class="floating-chatbot-btn" id="exoticChatbotBtn" title="Ask Fish & Aquarium AI" aria-label="Open AI Chatbot">
-      <div class="chatbot-btn-pulse"></div>
-      <i class="fa-solid fa-robot"></i>
+    <button class="floating-chatbot-btn" id="exoticChatbotBtn" title="Ask EXOTIC GB HUB Assistant" aria-label="Open Chatbot">
+      <i class="fa-solid fa-comments"></i>
     </button>
 
     <div class="chatbot-window" id="exoticChatbotWindow">
       <div class="chat-header">
         <div class="chat-header-info">
-          <div class="chat-avatar-badge"><i class="fa-solid fa-fish-fins"></i></div>
-          <div class="chat-title-text">
-            <h4>EXOTIC AI Assistant</h4>
-            <span>Online • Fish & Tank Expert</span>
-          </div>
+          <strong>EXOTIC GB HUB</strong>
+          <small>Fish Assistant • FAQ Support</small>
         </div>
-        <button class="chat-close-btn" id="exoticChatClose" title="Close"><i class="fa-solid fa-xmark"></i></button>
+        <button class="chat-close-btn" id="exoticChatClose" title="Close">×</button>
       </div>
 
       <div class="chat-messages" id="exoticChatMessages">
         <div class="chat-msg bot">
-          Hello! 🐠 I am your EXOTIC GB HUB Assistant. Ask me about our Betta strains (Full Moon, Plakat, Crowntail), tanks, accessories, feeds, or fish care!
+          👋 <strong>Hello!</strong><br><br>
+          Welcome to <strong>EXOTIC GB HUB</strong>.<br><br>
+          I can help you with fish availability, shipping, orders, payment, and contact information.<br><br>
+          Choose an FAQ below or type your question.
         </div>
       </div>
 
       <div class="chat-suggestions">
-        <button class="chat-chip" onclick="sendQuickMessage('Tell me about your Full Moon Betta fish')">Full Moon Betta</button>
-        <button class="chat-chip" onclick="sendQuickMessage('What is Giant Plakat Betta?')">Giant Plakat</button>
-        <button class="chat-chip" onclick="sendQuickMessage('How do I size a rimless tank?')">Tank Sizing</button>
-        <button class="chat-chip" onclick="sendQuickMessage('Connect to WhatsApp admin')">WhatsApp Admin</button>
+        <button class="chat-chip" onclick="askFAQ('fish')">🐟 Available Fish</button>
+        <button class="chat-chip" onclick="askFAQ('shipping')">🚚 Shipping</button>
+        <button class="chat-chip" onclick="askFAQ('order')">📦 How to Order</button>
+        <button class="chat-chip" onclick="askFAQ('payment')">💳 Payment</button>
+        <button class="chat-chip" onclick="askFAQ('contact')">📞 Contact</button>
       </div>
 
-      <div class="chat-typing" id="exoticChatTyping">
-        <span></span><span></span><span></span>
-      </div>
+      <div class="chat-typing" id="exoticChatTyping">Typing...</div>
 
       <form class="chat-footer" id="exoticChatForm" onsubmit="handleChatSubmit(event)">
-        <input type="text" class="chat-input" id="exoticChatInput" placeholder="Ask about Full Moon, Plakat, tanks, food..." autocomplete="off" required />
+        <input type="text" class="chat-input" id="exoticChatInput" placeholder="Ask something..." autocomplete="off" required />
         <button type="submit" class="chat-send-btn" title="Send message"><i class="fa-solid fa-paper-plane"></i></button>
       </form>
     </div>
   `;
 
-  const div = document.createElement('div');
-  div.innerHTML = botHTML;
-  document.body.appendChild(div);
+  const container = document.createElement('div');
+  container.innerHTML = botHTML;
+  document.body.appendChild(container);
 
   document.getElementById('exoticChatbotBtn').addEventListener('click', toggleChatbotWindow);
   document.getElementById('exoticChatClose').addEventListener('click', toggleChatbotWindow);
-
-  window.addEventListener('resize', positionChatbotIcon);
-  window.addEventListener('scroll', positionChatbotIcon, { passive: true });
-  setTimeout(positionChatbotIcon, 100);
-}
-
-function positionChatbotIcon() {
-  const btn = document.getElementById('exoticChatbotBtn');
-  const win = document.getElementById('exoticChatbotWindow');
-  if (!btn) return;
-
-  const cartElement = document.querySelector('.floating-cart-pill') || document.querySelector('.floating-cart-btn');
-  if (!cartElement) return;
-
-  const isMobile = window.innerWidth <= 768;
-  const rect = cartElement.getBoundingClientRect();
-  if (rect.width === 0 && rect.height === 0) return;
-
-  if (isMobile) {
-    const rightOffset = Math.max(12, window.innerWidth - rect.right);
-    const bottomOffset = (window.innerHeight - rect.top) + 12;
-    btn.style.right = `${rightOffset}px`;
-    btn.style.bottom = `${bottomOffset}px`;
-    if (win) {
-      win.style.right = `${rightOffset}px`;
-      win.style.bottom = `${bottomOffset + 60}px`;
-    }
-  } else {
-    const rightOffset = (window.innerWidth - rect.left) + 14;
-    const bottomOffset = window.innerHeight - rect.bottom;
-    btn.style.right = `${rightOffset}px`;
-    btn.style.bottom = `${bottomOffset}px`;
-    if (win) {
-      win.style.right = `${rightOffset}px`;
-      win.style.bottom = `${bottomOffset + 62}px`;
-    }
-  }
 }
 
 function toggleChatbotWindow() {
   const win = document.getElementById('exoticChatbotWindow');
+  const btn = document.getElementById('exoticChatbotBtn');
   const isActive = win.classList.toggle('active');
+
   if (isActive) {
-    document.getElementById('exoticChatInput').focus();
-    positionChatbotIcon();
+    btn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+    setTimeout(() => document.getElementById('exoticChatInput').focus(), 100);
+  } else {
+    btn.innerHTML = '<i class="fa-solid fa-comments"></i>';
   }
 }
 
-function appendMessage(text, sender = 'bot', showWhatsApp = false) {
+function appendMessage(htmlContent, sender = 'bot', showWhatsApp = false) {
   const container = document.getElementById('exoticChatMessages');
   const msgEl = document.createElement('div');
   msgEl.className = `chat-msg ${sender}`;
-  msgEl.innerText = text;
+  msgEl.innerHTML = htmlContent;
 
   if (showWhatsApp) {
     const waWrap = document.createElement('div');
     waWrap.style.marginTop = "8px";
     waWrap.innerHTML = `
-      <a href="${WHATSAPP_URL}?text=${encodeURIComponent('Hi EXOTIC GB HUB Admin, I have an inquiry: ' + text)}" target="_blank" class="chat-whatsapp-action">
-        <i class="fa-brands fa-whatsapp"></i> Connect to WhatsApp
+      <a href="${WHATSAPP_URL}" target="_blank" class="chat-whatsapp-action">
+        <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp
       </a>
     `;
     msgEl.appendChild(waWrap);
@@ -381,61 +456,42 @@ function appendMessage(text, sender = 'bot', showWhatsApp = false) {
   container.scrollTop = container.scrollHeight;
 }
 
-function sendQuickMessage(text) {
-  document.getElementById('exoticChatInput').value = text;
-  handleChatSubmit(new Event('submit'));
-}
+function askFAQ(category) {
+  const faq = exoticFAQs[category];
+  if (!faq) return;
 
-async function handleChatSubmit(e) {
-  if (e) e.preventDefault();
-  const input = document.getElementById('exoticChatInput');
-  const userText = input.value.trim();
-  if (!userText) return;
-
-  appendMessage(userText, 'user');
-  input.value = '';
-
-  if (/whatsapp|admin|contact|call|phone|owner/i.test(userText)) {
-    appendMessage("You can chat directly with our store admin on WhatsApp:", 'bot', true);
-    return;
-  }
+  appendMessage(faq.question, 'user');
 
   const typing = document.getElementById('exoticChatTyping');
-  typing.style.display = 'flex';
+  typing.style.display = 'inline-block';
   const container = document.getElementById('exoticChatMessages');
   container.scrollTop = container.scrollHeight;
 
-  try {
-    console.log("[Chatbot] Requesting:", BACKEND_CHAT_URL);
-    const res = await fetch(BACKEND_CHAT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: userText, history: chatHistory })
-    });
-
+  setTimeout(() => {
     typing.style.display = 'none';
+    appendMessage(faq.answer, 'bot', category === 'contact');
+  }, 350);
+}
 
-    if (!res.ok) {
-      console.error("[Chatbot Error] HTTP:", res.status);
-      appendMessage("Backend server error (" + res.status + "). For more info contact admin.", 'bot', true);
-      return;
-    }
+function handleChatSubmit(e) {
+  if (e) e.preventDefault();
+  const input = document.getElementById('exoticChatInput');
+  const question = input.value.trim();
+  if (!question) return;
 
-    const data = await res.json();
-    console.log("[Chatbot Received]:", data);
+  appendMessage(question, 'user');
+  input.value = '';
 
-    const replyText = data.reply || "For more info contact admin.";
-    const showWA = data.showWhatsApp === true;
+  const typing = document.getElementById('exoticChatTyping');
+  typing.style.display = 'inline-block';
+  const container = document.getElementById('exoticChatMessages');
+  container.scrollTop = container.scrollHeight;
 
-    chatHistory.push({ role: "user", parts: [{ text: userText }] });
-    chatHistory.push({ role: "model", parts: [{ text: replyText }] });
-
-    appendMessage(replyText, 'bot', showWA);
-  } catch (err) {
+  setTimeout(() => {
     typing.style.display = 'none';
-    console.error("[Chatbot Network Error]:", err);
-    appendMessage("Could not reach backend at " + BACKEND_CHAT_URL + ". For immediate help, contact WhatsApp admin:", 'bot', true);
-  }
+    const result = findExoticAnswer(question);
+    appendMessage(result.text, 'bot', result.showWA);
+  }, 450);
 }
 
 if (document.readyState === 'loading') {
