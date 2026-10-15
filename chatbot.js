@@ -1,8 +1,13 @@
 /* ==========================================================================
-   EXOTIC GB HUB - AI AQUARIUM CHATBOT (RENDER BACKEND INTEGRATED)
+   EXOTIC GB HUB - AI AQUARIUM CHATBOT (AUTO-SWITCHES LOCALHOST & RENDER)
    ========================================================================== */
 
-const BACKEND_CHAT_URL = "https://exotic-gb-hub-backend-1.onrender.com/api/chat";
+// If running in browser locally (5500), talk to local backend (8000). Otherwise, talk to Render.
+const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+const BACKEND_CHAT_URL = isLocal 
+  ? "http://127.0.0.1:8000/api/chat" 
+  : "https://exotic-gb-hub-backend-1.onrender.com/api/chat";
+
 const WHATSAPP_URL = "https://wa.me/918884730939";
 
 let chatHistory = [];
@@ -401,27 +406,23 @@ async function handleChatSubmit(e) {
   container.scrollTop = container.scrollHeight;
 
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 25000);
-
+    console.log("[Chatbot] Requesting:", BACKEND_CHAT_URL);
     const res = await fetch(BACKEND_CHAT_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: userText, history: chatHistory }),
-      signal: controller.signal
+      body: JSON.stringify({ message: userText, history: chatHistory })
     });
-    clearTimeout(timeoutId);
 
     typing.style.display = 'none';
 
     if (!res.ok) {
-      console.error("[Chatbot Error] Backend returned HTTP:", res.status);
+      console.error("[Chatbot Error] HTTP:", res.status);
       appendMessage("Backend server error (" + res.status + "). For more info contact admin.", 'bot', true);
       return;
     }
 
     const data = await res.json();
-    console.log("[Chatbot Response]:", data);
+    console.log("[Chatbot Received]:", data);
 
     const replyText = data.reply || "For more info contact admin.";
     const showWA = data.showWhatsApp === true;
@@ -432,8 +433,8 @@ async function handleChatSubmit(e) {
     appendMessage(replyText, 'bot', showWA);
   } catch (err) {
     typing.style.display = 'none';
-    console.error("[Chatbot Error]:", err);
-    appendMessage("Connecting to server (Render free tier may take ~30s to wake up). You can also message admin directly on WhatsApp:", 'bot', true);
+    console.error("[Chatbot Network Error]:", err);
+    appendMessage("Could not reach backend at " + BACKEND_CHAT_URL + ". For immediate help, contact WhatsApp admin:", 'bot', true);
   }
 }
 
