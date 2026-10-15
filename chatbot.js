@@ -13,7 +13,6 @@ function initChatbotUI() {
   const style = document.createElement('style');
   style.id = 'exotic-chatbot-styles';
   style.innerHTML = `
-    /* Floating Chatbot Button */
     .floating-chatbot-btn {
       position: fixed;
       width: 54px;
@@ -50,7 +49,6 @@ function initChatbotUI() {
       100% { transform: scale(1.28); opacity: 0; }
     }
 
-    /* Base responsive rules before JS positioning runs */
     @media (min-width: 769px) {
       .floating-chatbot-btn { bottom: 20px; right: 86px; }
       body:has(.floating-cart-pill) .floating-chatbot-btn { bottom: 28px; right: 190px; }
@@ -60,7 +58,6 @@ function initChatbotUI() {
       body:has(.floating-cart-pill) .floating-chatbot-btn { bottom: 78px; right: 18px; }
     }
 
-    /* Chat Window */
     .chatbot-window {
       position: fixed;
       bottom: 86px;
@@ -282,14 +279,14 @@ function initChatbotUI() {
 
       <div class="chat-messages" id="exoticChatMessages">
         <div class="chat-msg bot">
-          Hello! 🐠 I am your EXOTIC GB HUB Assistant. Ask me about live fishes, tank sizes, accessories, feed, or water care!
+          Hello! 🐠 I am your EXOTIC GB HUB Assistant. Ask me about our Betta strains (Full Moon, Plakat, Crowntail), tanks, accessories, feeds, or fish care!
         </div>
       </div>
 
       <div class="chat-suggestions">
-        <button class="chat-chip" onclick="sendQuickMessage('What live fishes do you offer?')">Live Fishes</button>
+        <button class="chat-chip" onclick="sendQuickMessage('Tell me about your Full Moon Betta fish')">Full Moon Betta</button>
+        <button class="chat-chip" onclick="sendQuickMessage('What is Giant Plakat Betta?')">Giant Plakat</button>
         <button class="chat-chip" onclick="sendQuickMessage('How do I size a rimless tank?')">Tank Sizing</button>
-        <button class="chat-chip" onclick="sendQuickMessage('What accessories and filters are available?')">Equipment</button>
         <button class="chat-chip" onclick="sendQuickMessage('Connect to WhatsApp admin')">WhatsApp Admin</button>
       </div>
 
@@ -298,7 +295,7 @@ function initChatbotUI() {
       </div>
 
       <form class="chat-footer" id="exoticChatForm" onsubmit="handleChatSubmit(event)">
-        <input type="text" class="chat-input" id="exoticChatInput" placeholder="Ask about fish, tanks, food..." autocomplete="off" required />
+        <input type="text" class="chat-input" id="exoticChatInput" placeholder="Ask about Full Moon, Plakat, tanks, food..." autocomplete="off" required />
         <button type="submit" class="chat-send-btn" title="Send message"><i class="fa-solid fa-paper-plane"></i></button>
       </form>
     </div>
@@ -316,7 +313,6 @@ function initChatbotUI() {
   setTimeout(positionChatbotIcon, 100);
 }
 
-// Positions left of cart in laptop mode, and above cart in mobile mode
 function positionChatbotIcon() {
   const btn = document.getElementById('exoticChatbotBtn');
   const win = document.getElementById('exoticChatbotWindow');
@@ -327,27 +323,22 @@ function positionChatbotIcon() {
 
   const isMobile = window.innerWidth <= 768;
   const rect = cartElement.getBoundingClientRect();
-
   if (rect.width === 0 && rect.height === 0) return;
 
   if (isMobile) {
-    // MOBILE MODE: chatbot icon directly ABOVE the cart option
     const rightOffset = Math.max(12, window.innerWidth - rect.right);
     const bottomOffset = (window.innerHeight - rect.top) + 12;
     btn.style.right = `${rightOffset}px`;
     btn.style.bottom = `${bottomOffset}px`;
-
     if (win) {
       win.style.right = `${rightOffset}px`;
       win.style.bottom = `${bottomOffset + 60}px`;
     }
   } else {
-    // LAPTOP MODE: chatbot icon to the LEFT SIDE of the cart icon
     const rightOffset = (window.innerWidth - rect.left) + 14;
     const bottomOffset = window.innerHeight - rect.bottom;
     btn.style.right = `${rightOffset}px`;
     btn.style.bottom = `${bottomOffset}px`;
-
     if (win) {
       win.style.right = `${rightOffset}px`;
       win.style.bottom = `${bottomOffset + 62}px`;
@@ -368,15 +359,13 @@ function appendMessage(text, sender = 'bot', showWhatsApp = false) {
   const container = document.getElementById('exoticChatMessages');
   const msgEl = document.createElement('div');
   msgEl.className = `chat-msg ${sender}`;
-  
-  let formattedText = text.replace(/\[SHOW_WHATSAPP\]/g, '').trim();
-  msgEl.innerText = formattedText;
+  msgEl.innerText = text;
 
   if (showWhatsApp) {
     const waWrap = document.createElement('div');
     waWrap.style.marginTop = "8px";
     waWrap.innerHTML = `
-      <a href="${WHATSAPP_URL}?text=${encodeURIComponent('Hi EXOTIC GB HUB Admin, I have an inquiry: ' + formattedText)}" target="_blank" class="chat-whatsapp-action">
+      <a href="${WHATSAPP_URL}?text=${encodeURIComponent('Hi EXOTIC GB HUB Admin, I have an inquiry: ' + text)}" target="_blank" class="chat-whatsapp-action">
         <i class="fa-brands fa-whatsapp"></i> Connect to WhatsApp
       </a>
     `;
@@ -402,7 +391,7 @@ async function handleChatSubmit(e) {
   input.value = '';
 
   if (/whatsapp|admin|contact|call|phone|owner/i.test(userText)) {
-    appendMessage("For more info contact admin directly on WhatsApp:", 'bot', true);
+    appendMessage("You can chat directly with our store admin on WhatsApp:", 'bot', true);
     return;
   }
 
@@ -412,22 +401,30 @@ async function handleChatSubmit(e) {
   container.scrollTop = container.scrollHeight;
 
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 25000);
+
     const res = await fetch(BACKEND_CHAT_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: userText, history: chatHistory })
+      body: JSON.stringify({ message: userText, history: chatHistory }),
+      signal: controller.signal
     });
+    clearTimeout(timeoutId);
 
     typing.style.display = 'none';
 
     if (!res.ok) {
-      appendMessage("For more info contact admin.", 'bot', true);
+      console.error("[Chatbot Error] Backend returned HTTP:", res.status);
+      appendMessage("Backend server error (" + res.status + "). For more info contact admin.", 'bot', true);
       return;
     }
 
     const data = await res.json();
+    console.log("[Chatbot Response]:", data);
+
     const replyText = data.reply || "For more info contact admin.";
-    const showWA = data.showWhatsApp || /contact admin|for more info/i.test(replyText);
+    const showWA = data.showWhatsApp === true;
 
     chatHistory.push({ role: "user", parts: [{ text: userText }] });
     chatHistory.push({ role: "model", parts: [{ text: replyText }] });
@@ -435,7 +432,8 @@ async function handleChatSubmit(e) {
     appendMessage(replyText, 'bot', showWA);
   } catch (err) {
     typing.style.display = 'none';
-    appendMessage("For more info contact admin.", 'bot', true);
+    console.error("[Chatbot Error]:", err);
+    appendMessage("Connecting to server (Render free tier may take ~30s to wake up). You can also message admin directly on WhatsApp:", 'bot', true);
   }
 }
 
